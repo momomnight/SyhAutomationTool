@@ -1,0 +1,26 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "SimpleZIP",
+	"Description": "The file can be compressed and decompressed.",
+	"Category": "RenZhai",
+	"CreatedBy": "Renzhai",
+	"CreatedByURL": "https://renzhai.net/",
+	"DocsURL": "https://renzhai.net/119.html",
+	"MarketplaceURL": "https://renzhai.net/119.html",
+	"SupportURL": "https://www.aboutcg.org/courseDetails/764/introduce",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "SimpleZIP",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms": [
+				"Win64"
+			]
+		}
+	]
+}
