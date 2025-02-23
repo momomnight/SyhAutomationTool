@@ -1,3 +1,0 @@
-#include "SimpleProtobufEditorType.h"
-
-FSimpleMulticastDelegate OnResetComboBoxSelectDelegate;
