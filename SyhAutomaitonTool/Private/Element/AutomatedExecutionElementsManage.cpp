@@ -11,26 +11,13 @@ FAutomatedExecutionElementsManage::~FAutomatedExecutionElementsManage()
 {
 }
 
-TSharedPtr<FAutomatedExecutionElementsManage> FAutomatedExecutionElementsManage::Create()
+TSharedPtr<FAutomatedExecutionElementsManage> FAutomatedExecutionElementsManage::Get()
 {
 	if (!Instance.IsValid())
 	{
 		Instance = MakeShareable(new FAutomatedExecutionElementsManage);
-		Instance->Init();
 	}
 	return Instance;
-}
-
-TSharedPtr<FAutomatedExecutionElementsManage> FAutomatedExecutionElementsManage::Get()
-{
-	if (Instance.IsValid())
-	{
-		return Instance;
-	}
-	else
-	{
-		return FAutomatedExecutionElementsManage::Create();
-	}
 }
 
 void FAutomatedExecutionElementsManage::Destroy()

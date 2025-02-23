@@ -1,0 +1,27 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "SimpleConfig",
+	"Description": "",
+	"Category": "Other",
+	"CreatedBy": "RenZhai",
+	"CreatedByURL": "https://www.aboutcg.org/teacher/4202",
+	"DocsURL": "http://renzhai.net/",
+	"MarketplaceURL": "http://renzhai.net/",
+	"SupportURL": "https://www.aboutcg.org/teacher/4202",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "SimpleConfig",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms": [
+				"Win64"
+			]
+		}
+	]
+}

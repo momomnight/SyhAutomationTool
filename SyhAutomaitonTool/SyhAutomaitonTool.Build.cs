@@ -11,8 +11,9 @@ public class SyhAutomaitonTool : ModuleRules
 		PrivateDependencyModuleNames.Add("Projects");
 
 		// to link with CoreUObject module:
-		// PrivateDependencyModuleNames.Add("CoreUObject");
-
+		PrivateDependencyModuleNames.Add("CoreUObject");
+		PrivateDependencyModuleNames.Add("SimpleNetChannel");
+		PrivateDependencyModuleNames.Add("SimpleHTTPLIB");
 		// to enable tracing:
 		// AppendStringToPublicDefinition("UE_TRACE_ENABLED", "1");
 

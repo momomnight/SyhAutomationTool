@@ -1,0 +1,15 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8004: Output 目录未以斜杠结尾。  此生成实例将添加斜杠，因为必须有这个斜杠才能正确计算 Output 目录。
+  ZIP_SDK_Library.cpp
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.cpp(106,16): warning C4273: “zip_file_Callback_function”: dll 链接不一致
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(30,39): message : 参见“zip_file_Callback_function”的前一个定义
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.cpp(112,16): warning C4273: “clear_Callback_function”: dll 链接不一致
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(31,39): message : 参见“clear_Callback_function”的前一个定义
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.cpp(117,16): warning C4273: “WstringToString”: dll 链接不一致
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(24,39): message : 参见“WstringToString”的前一个定义
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.cpp(143,25): warning C4273: “zip_file_by_loacl”: dll 链接不一致
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(26,48): message : 参见“zip_file_by_loacl”的前一个定义
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.cpp(229,25): warning C4273: “unzip_file_by_loacl”: dll 链接不一致
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(27,48): message : 参见“unzip_file_by_loacl”的前一个定义
+    正在创建库 ../../../x32/Debug\ZIP_SDK_LIBRARY.lib 和对象 ../../../x32/Debug\ZIP_SDK_LIBRARY.exp
+  ZIP_SDK_LIBRARY.vcxproj -> D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\x32\Debug\ZIP_SDK_LIBRARY.dll

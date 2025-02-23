@@ -1,0 +1,21 @@
+﻿  unzip.cpp
+  zip.cpp
+  ZIP_SDK_Library.cpp
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.cpp(106,16): warning C4273: “zip_file_Callback_function”: dll 链接不一致
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(30,39): message : 参见“zip_file_Callback_function”的前一个定义
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.cpp(112,16): warning C4273: “clear_Callback_function”: dll 链接不一致
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(31,39): message : 参见“clear_Callback_function”的前一个定义
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.cpp(117,17): warning C4273: “WstringToString”: dll 链接不一致
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(24,40): message : 参见“WstringToString”的前一个定义
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.cpp(145,25): warning C4273: “zip_file_by_loacl”: dll 链接不一致
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(26,48): message : 参见“zip_file_by_loacl”的前一个定义
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.cpp(231,25): warning C4273: “unzip_file_by_loacl”: dll 链接不一致
+D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\xx\ZIP_SDK_LIBRARY\ZIP_SDK_Library.h(27,48): message : 参见“unzip_file_by_loacl”的前一个定义
+    正在创建库 ../../../x32/Release/ZIP_SDK_LIBRARY.lib 和对象 ../../../x32/Release/ZIP_SDK_LIBRARY.exp
+  正在生成代码
+  35 of 337 functions (10.4%) were compiled, the rest were copied from previous compilation.
+    33 functions were new in current compilation
+    11 functions had inline decision re-evaluated but remain unchanged
+  已完成代码的生成
+  ZIP_SDK_LIBRARY.vcxproj -> D:\UnrealEngine-5.3\Engine\Plugins\RENZHAI_PLUGIN\SimpleZIP\Source\ThirdParty\SimpleZIPLibrary\x32\Release\ZIP_SDK_LIBRARY.dll

@@ -1,0 +1,28 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.SimpleUnrealPakView.cpp.obj": [
+			"ProceduralMeshUnrealPakActor.gen.cpp.obj",
+			"SimpleUEViewConfigurationInfor.gen.cpp.obj",
+			"SimpleUnrealPakView.init.gen.cpp.obj",
+			"UI_ViewImage.gen.cpp.obj",
+			"UI_ViewMenu.gen.cpp.obj",
+			"UI_ViewWidget.gen.cpp.obj",
+			"ViewGameMode.gen.cpp.obj",
+			"ViewHUD.gen.cpp.obj",
+			"ViewPlayerController.gen.cpp.obj",
+			"ProceduralMeshUnrealPakActor.cpp.obj",
+			"ViewGameMode.cpp.obj",
+			"ViewHUD.cpp.obj",
+			"ViewPlayerController.cpp.obj",
+			"SimpleUEViewConfigurationInfor.cpp.obj",
+			"SimpleUnrealPakView.cpp.obj",
+			"SimpleUnrealPakViewCommands.cpp.obj",
+			"SimpleUnrealPakViewStyle.cpp.obj",
+			"SimpleUnrealPakViewType.cpp.obj",
+			"UI_ViewImage.cpp.obj",
+			"UI_ViewMenu.cpp.obj",
+			"UI_ViewWidget.cpp.obj"
+		]
+	}
+}
