@@ -1,0 +1,2 @@
+protoc.exe --version
+pause
