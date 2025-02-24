@@ -11,4 +11,9 @@ namespace AutomationJson
 
 	//用于反序列化
 	void DeserializeAllCommand(const FString& InString, TMultiMap<uint32, FString>& OutCommand);
+
+	bool JsonToAutomatedCallConfig(const FString& InString, FAutomatedCallConfig& OutConfig);
+
+	bool JsonToAutomatedCallConfig(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCallConfig& OutConfig);
+
 }
