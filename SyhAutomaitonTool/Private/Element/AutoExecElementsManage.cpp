@@ -1,0 +1,45 @@
+#include "Element/AutoExecElementsManage.h"
+#include "Core/SimpleAutomationTool.h"
+
+TSharedPtr<FAutoExecElementsManage> FAutoExecElementsManage::Instance = nullptr;
+
+FAutoExecElementsManage::FAutoExecElementsManage()
+{
+	bExecute = false;
+}
+
+FAutoExecElementsManage::~FAutoExecElementsManage()
+{
+}
+
+TSharedPtr<FAutoExecElementsManage> FAutoExecElementsManage::Get()
+{
+	if (!Instance.IsValid())
+	{
+		Instance = MakeShareable(new FAutoExecElementsManage);
+	}
+	return Instance;
+}
+
+void FAutoExecElementsManage::Destroy()
+{
+	if (Instance.IsValid())
+	{
+		Instance.Reset();
+	}
+}
+
+void FAutoExecElementsManage::HandleTask()
+{
+	if(bExecute && TaskCommand.Num() > 0)
+	{
+		SimpleAutomationTool::HandleTask(TaskCommand);
+	}
+	bExecute = false;
+}
+
+void FAutoExecElementsManage::Init()
+{
+	TaskCommand.Empty();
+	bExecute = SimpleAutomationTool::Init(TaskCommand);
+}

@@ -3,7 +3,7 @@
 #include "Global/SimpleNetGlobalInfo.h"
 #include "SimpleNetManage.h"
 #include "SNCObject/ListenServerObject.h"
-#include "Element/AutomatedExecutionElementsManage.h"
+#include "Element/AutoExecElementsManage.h"
 
 //UE_BUILD_DEBUG、UE_BUILD_DEVELOPMENT、UE_BUILD_TEST、UE_BUILD_SHIPPING
 
@@ -58,7 +58,7 @@ namespace AutomationMainFramework
 						
 						if (!ValidateTimePerDay(H, M, S))
 						{
-							UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-TimeSlotPerDay= Wrong time range, please use the time within the correct range. "));
+							UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-TimeSlotPerDay = Wrong time range, please use the time within the correct range. "));
 							return false;
 						}
 
@@ -69,7 +69,7 @@ namespace AutomationMainFramework
 					}
 					else
 					{
-						UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-TimeSlotPerDay= Wrong time format, please use the correct time format such as 22.33.44 22-33-44 22/33/44 22:33:44."));
+						UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-TimeSlotPerDay = Wrong time format, please use the correct time format such as 22.33.44 22-33-44 22/33/44 22:33:44."));
 						return false;
 					}
 				}
@@ -89,7 +89,6 @@ namespace AutomationMainFramework
 								FCString::Atoi(*Tokens[0]),
 								FCString::Atoi(*Tokens[1]),
 								FCString::Atoi(*Tokens[2]));
-						
 						}
 					}
 
@@ -128,7 +127,7 @@ namespace AutomationMainFramework
 			{
 				//2.创建服务器实例
 				ListenServer = FSimpleNetManage::CreateManage(ESimpleNetLinkState::LINKSTATE_LISTEN,
-					ESimpleSocketType::SIMPLESOCKETTYPE_TCP);
+					ESimpleSocketType::SIMPLESOCKETTYPE_UDP);//应该修改，以增加更多选择
 
 				//3.注册反射类
 				FSimpleChannel::SimpleControllerDelegate.BindLambda(
@@ -170,9 +169,9 @@ namespace AutomationMainFramework
 						TimeSlotDateTime += ETimespan::TicksPerDay;
 
 						//初始化,以读取最新的任务
-						FAutomatedExecutionElementsManage::Get()->Init();
+						FAutoExecElementsManage::Get()->Init();
 						//执行自动化任务
-						FAutomatedExecutionElementsManage::Get()->HandleTask();
+						FAutoExecElementsManage::Get()->HandleTask();
 
 						UE_LOG(SyhAutomaitonToolLog, Display, TEXT("The next time handling task is [%s]"), *FDateTime(TimeSlotDateTime).ToString());
 					}
@@ -199,9 +198,9 @@ namespace AutomationMainFramework
 			else
 			{
 				//初始化,以读取最新的任务
-				FAutomatedExecutionElementsManage::Get()->Init();
+				FAutoExecElementsManage::Get()->Init();
 				//非定时,直接执行
-				FAutomatedExecutionElementsManage::Get()->HandleTask();
+				FAutoExecElementsManage::Get()->HandleTask();
 				UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute successfully"));
 			}
 		}
