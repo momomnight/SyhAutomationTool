@@ -27,7 +27,7 @@ protected:
 	FAutoExecElementsManage& operator=(const FAutoExecElementsManage&) = delete;
 private:
 	static TSharedPtr<FAutoExecElementsManage> Instance;
-	//命令
+	//命令, 由协议号加Json字符串组成
 	TMultiMap<uint32, FString> TaskCommand;
 	bool bExecute;
 
