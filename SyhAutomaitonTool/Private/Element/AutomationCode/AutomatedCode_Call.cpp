@@ -9,13 +9,33 @@ FAutomatedCode_Call::~FAutomatedCode_Call()
 {
 }
 
+bool FAutomatedCode_Call::Init()
+{
+	return true;
+}
+
 bool FAutomatedCode_Call::BuildParameter(const FString& InJsonStr)
 {
 	return AutomationJson::JsonToAutomatedCallConfig(InJsonStr, Config);
-}
+}	
 
 bool FAutomatedCode_Call::BuildParameter()
 {
+	if (!FParse::Value(FCommandLine::Get(), TEXT("-CallType="), Config.CallType))
+	{
+		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-CallType= was not found the type."));
+		return false;
+	}
+	if (!FParse::Value(FCommandLine::Get(), TEXT("-CallPath="), Config.CallPath))
+	{
+		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-CallPath= was not found the path."));
+		return false;
+	}
+	if (!FParse::Value(FCommandLine::Get(), TEXT("-Parameters="), Config.Parameters))
+	{
+		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-Parameters= was not found parameters."));
+	}
+
 	return true;
 }
 
@@ -38,12 +58,12 @@ bool FAutomatedCode_Call::Execute()
 	else if (Config.CallType.Equals(TEXT("bat")))
 	{
 		//	cd /d %~dp0 :从当前的批处理开始，如果执行出现问题
-		// 会被阻塞
+		// 重开窗口
 		if (!FPlatformProcess::ExecElevatedProcess(*Config.CallPath, *Config.Parameters, &ReturnValue))
 		{
 			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("[cd /d %~dp0] Failure to start from the current batch, please check your file whether exist error."));
 		}
-		ReturnValue = (ReturnValue == 1) ? 0 : 1;
+		(ReturnValue == 1) ? ReturnValue = 0 : 1;
 	}
 
 	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------End Call----------"));

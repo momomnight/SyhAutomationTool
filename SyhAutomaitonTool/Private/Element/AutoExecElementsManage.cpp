@@ -31,7 +31,7 @@ void FAutoExecElementsManage::Destroy()
 
 void FAutoExecElementsManage::HandleTask()
 {
-	if(bExecute && TaskCommand.Num() > 0)
+	if(bExecute)
 	{
 		SimpleAutomationTool::HandleTask(TaskCommand);
 	}
@@ -40,6 +40,5 @@ void FAutoExecElementsManage::HandleTask()
 
 void FAutoExecElementsManage::Init()
 {
-	TaskCommand.Empty();
 	bExecute = SimpleAutomationTool::Init(TaskCommand);
 }

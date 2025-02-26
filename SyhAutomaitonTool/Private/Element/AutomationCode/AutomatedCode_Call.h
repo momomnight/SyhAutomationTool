@@ -11,6 +11,8 @@ public:
 	FAutomatedCode_Call();
 	virtual ~FAutomatedCode_Call();
 
+	virtual bool Init();
+
 	//通过Json构建参数
 	virtual bool BuildParameter(const class FString& InJsonStr);
 

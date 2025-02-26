@@ -23,7 +23,7 @@ public class SyhAutomaitonToolTarget : TargetRules
 
 		// Currently this app is not linking against the engine, so we'll compile out references from Core to the rest of the engine
 		bCompileAgainstEngine = false;
-		bCompileAgainstCoreUObject = false;
+		bCompileAgainstCoreUObject = true;
 		bCompileAgainstApplicationCore = false;
 		bCompileICU = false;
 

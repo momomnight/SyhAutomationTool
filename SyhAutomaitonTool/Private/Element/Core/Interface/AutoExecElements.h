@@ -15,6 +15,8 @@ public:
 	//抽象基类的析构应该为虚函数，但是必须提供定义
 	virtual ~FAutoExecElements(){};
 
+	virtual bool Init() = 0;
+
 	//通过Json构建参数
 	virtual bool BuildParameter(const class FString& InJsonStr) = 0;
 

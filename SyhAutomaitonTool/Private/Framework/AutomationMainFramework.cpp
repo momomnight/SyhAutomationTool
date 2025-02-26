@@ -4,13 +4,14 @@
 #include "SimpleNetManage.h"
 #include "SNCObject/ListenServerObject.h"
 #include "Element/AutoExecElementsManage.h"
+#include "Core/SimpleAutomationTool.h"
 
 //UE_BUILD_DEBUG、UE_BUILD_DEVELOPMENT、UE_BUILD_TEST、UE_BUILD_SHIPPING
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
-	#if PLATFORM_WINDOWS
-	#pragma optimize("", off)
-	#endif
+#if PLATFORM_WINDOWS
+#pragma optimize("", off)
+#endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
 
@@ -121,87 +122,101 @@ namespace AutomationMainFramework
 		}
 		else
 		{
-			//1.初始化SNC全局配置
-			FSimpleNetGlobalInfo::Get()->Init();
-			if (FParse::Param(FCommandLine::Get(), TEXT("SNCListen")))
+			FString CommandString;
+			if (FParse::Value(FCommandLine::Get(), TEXT("Command"), CommandString))
 			{
-				//2.创建服务器实例
-				ListenServer = FSimpleNetManage::CreateManage(ESimpleNetLinkState::LINKSTATE_LISTEN,
-					ESimpleSocketType::SIMPLESOCKETTYPE_UDP);//应该修改，以增加更多选择
+				//从外部传入单条命令
+				UE_LOG(SyhAutomaitonToolLog, Display, TEXT("-Command=%s"), *CommandString);
 
-				//3.注册反射类
-				FSimpleChannel::SimpleControllerDelegate.BindLambda(
-					[]()->UClass*
-					{
-						return UListenServerObject::StaticClass();
-					}
-				);
-				//4.初始化监听服务器
-				if (!ListenServer->Init())
-				{
-					delete ListenServer;
-					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Listen server is failure to init."));
-
-					return INDEX_NONE;
-				}
-
-			}
-			
-			if (FParse::Param(FCommandLine::Get(), TEXT("HTTPServer")))
-			{
-				
-			}
-			
-			if (FParse::Param(FCommandLine::Get(), TEXT("WebSocketServer")))
-			{
-
-			}
-
-			if (BuildTimePerDay())
-			{
-				double LastTime = FPlatformTime::Seconds();
-				while (!IsEngineExitRequested())
-				{
-					FDateTime CurrentDateTime = FDateTime::Now();
-					if (CurrentDateTime >= TimeSlotDateTime)
-					{
-						//向前递进一天
-						TimeSlotDateTime += ETimespan::TicksPerDay;
-
-						//初始化,以读取最新的任务
-						FAutoExecElementsManage::Get()->Init();
-						//执行自动化任务
-						FAutoExecElementsManage::Get()->HandleTask();
-
-						UE_LOG(SyhAutomaitonToolLog, Display, TEXT("The next time handling task is [%s]"), *FDateTime(TimeSlotDateTime).ToString());
-					}
-
-					if (ListenServer)
-					{
-						//http服务器有自己的检查
-
-						double Now = FPlatformTime::Seconds();
-						float DeltaSeconds = Now - LastTime;
-
-						//每帧检查链接
-						ListenServer->Tick(DeltaSeconds);
-
-						FPlatformProcess::Sleep(0.03f);
-					}
-					else
-					{
-						FPlatformProcess::Sleep(1.f);
-					}
-
-				}
+				//执行
+				SimpleAutomationTool::HandleTask(CommandString);
+				return 0;
 			}
 			else
 			{
-				//初始化,以读取最新的任务
-				FAutoExecElementsManage::Get()->Init();
-				//非定时,直接执行
-				FAutoExecElementsManage::Get()->HandleTask();
-				UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute successfully"));
+				//从Json执行多条命令
+				//1.初始化SNC全局配置
+				FSimpleNetGlobalInfo::Get()->Init();
+				if (FParse::Param(FCommandLine::Get(), TEXT("SNCListen")))
+				{
+					//2.创建服务器实例
+					ListenServer = FSimpleNetManage::CreateManage(ESimpleNetLinkState::LINKSTATE_LISTEN,
+						ESimpleSocketType::SIMPLESOCKETTYPE_UDP);//应该修改，以增加更多选择
+
+					//3.注册反射类
+					FSimpleChannel::SimpleControllerDelegate.BindLambda(
+						[]()->UClass*
+						{
+							return UListenServerObject::StaticClass();
+						}
+					);
+					//4.初始化监听服务器
+					if (!ListenServer->Init())
+					{
+						delete ListenServer;
+						UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Listen server is failure to init."));
+
+						return INDEX_NONE;
+					}
+
+				}
+
+				if (FParse::Param(FCommandLine::Get(), TEXT("HTTPServer")))
+				{
+
+				}
+
+				if (FParse::Param(FCommandLine::Get(), TEXT("WebSocketServer")))
+				{
+
+				}
+
+				if (BuildTimePerDay())
+				{
+					double LastTime = FPlatformTime::Seconds();
+					while (!IsEngineExitRequested())
+					{
+						FDateTime CurrentDateTime = FDateTime::Now();
+						if (CurrentDateTime >= TimeSlotDateTime)
+						{
+							//向前递进一天
+							TimeSlotDateTime += ETimespan::TicksPerDay;
+
+							//初始化,以读取最新的任务
+							FAutoExecElementsManage::Get()->Init();
+							//执行自动化任务
+							FAutoExecElementsManage::Get()->HandleTask();
+
+							UE_LOG(SyhAutomaitonToolLog, Display, TEXT("The next time handling task is [%s]"), *FDateTime(TimeSlotDateTime).ToString());
+						}
+
+						if (ListenServer)
+						{
+							//http服务器有自己的检查
+
+							double Now = FPlatformTime::Seconds();
+							float DeltaSeconds = Now - LastTime;
+
+							//每帧检查链接
+							ListenServer->Tick(DeltaSeconds);
+
+							FPlatformProcess::Sleep(0.03f);
+						}
+						else
+						{
+							FPlatformProcess::Sleep(1.f);
+						}
+
+					}
+				}
+				else
+				{
+					//初始化,以读取最新的任务
+					FAutoExecElementsManage::Get()->Init();
+					//非定时,直接执行
+					FAutoExecElementsManage::Get()->HandleTask();
+					UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute successfully"));
+				}
 			}
 		}
 

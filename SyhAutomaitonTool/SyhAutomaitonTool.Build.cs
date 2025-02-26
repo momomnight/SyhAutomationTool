@@ -12,6 +12,7 @@ public class SyhAutomaitonTool : ModuleRules
 
 		// to link with CoreUObject module:
 		PrivateDependencyModuleNames.Add("CoreUObject");
+		//PrivateDependencyModuleNames.Add("Engine");
 		PrivateDependencyModuleNames.Add("SimpleNetChannel");
 		PrivateDependencyModuleNames.Add("SimpleHTTPLIB");
 		// to enable tracing:

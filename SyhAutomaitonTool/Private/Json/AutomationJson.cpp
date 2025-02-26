@@ -2,17 +2,24 @@
 #include "Misc/AutomatedExecutionPath.h"
 #include "SyhAutomationToolType.h"
 
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", off)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+
 namespace AutomationJson
 {
+	//Call命令的Config转换到Json对象
 	TSharedPtr<FJsonObject> AutomatedCallConfigToJsonObject(const FAutomatedCallConfig& InConfig)
 	{
 		TSharedPtr<FJsonObject> RootObject = MakeShareable<FJsonObject>(new FJsonObject);
 
-		{
-			RootObject->SetStringField(*CommandKey, ProtocolToString(ECommandProtocol::CMD_Call));
-			RootObject->SetStringField(*CallPathKey, InConfig.CallPath);
-			RootObject->SetStringField(*ParametersKey, InConfig.Parameters);
-		}
+		RootObject->SetStringField(CommandKey, ProtocolToString(ECommandProtocol::CMD_Call));
+		RootObject->SetStringField(CallTypeKey, InConfig.CallType);
+		RootObject->SetStringField(CallPathKey, InConfig.CallPath);
+		RootObject->SetStringField(ParametersKey, InConfig.Parameters);
 
 		return RootObject;
 	}
@@ -21,7 +28,7 @@ namespace AutomationJson
 	{
 		if (InJsonObject.IsValid())
 		{
-			return StringToProtocol(InJsonObject->GetStringField(*CommandKey));
+			return StringToProtocol(InJsonObject->GetStringField(CommandKey));
 		}
 
 		return ECommandProtocol::CMD_None;
@@ -49,10 +56,18 @@ namespace AutomationJson
 		return ProtocolName;
 	}
 
-	ECommandProtocol StringToProtocol(const FString& InString)
+	ECommandProtocol StringToProtocol(const FString& InCommandString)
 	{
-		FString ProtocolName = ProtocolStringPrefix + InString;
-		return (ECommandProtocol)UEnum::LookupEnumName(FName(), *ProtocolName);
+		FString ProtocolName = ProtocolStringPrefix + InCommandString;
+		int64 Result = UEnum::LookupEnumName(FName(), *ProtocolName);
+		if (Result == INDEX_NONE)
+		{
+			return ECommandProtocol::CMD_None;
+		}
+		else
+		{
+			return (ECommandProtocol)Result;
+		}
 	}
 
 	void HandleJsonStringByProtocol(ECommandProtocol InProtocol, TSharedPtr<FJsonObject> InObject, FString& OutString)
@@ -96,7 +111,7 @@ namespace AutomationJson
 					if (Protocol != ECommandProtocol::CMD_None)
 					{
 						FString JsonString;
-						HandleJsonStringByProtocol(Protocol, Object, JsonString);
+						HandleJsonStringByProtocol(Protocol, Object, JsonString);//??
 						OutCommand.Add((uint32)Protocol, JsonString);
 					}
 				}
@@ -123,9 +138,9 @@ namespace AutomationJson
 	{
 		if (InJsonObject)
 		{
-			OutConfig.CallPath = InJsonObject->GetStringField(TEXT("CallPath"));
-			OutConfig.CallType = InJsonObject->GetStringField(TEXT("CallType"));
-			OutConfig.Parameters = InJsonObject->GetStringField(TEXT("Parameters"));
+			OutConfig.CallPath = InJsonObject->GetStringField(CallPathKey);
+			OutConfig.CallType = InJsonObject->GetStringField(CallTypeKey);
+			OutConfig.Parameters = InJsonObject->GetStringField(ParametersKey);
 			
 			//某些程序需要标准路径
 			FPaths::NormalizeFilename(OutConfig.CallPath);
@@ -134,3 +149,10 @@ namespace AutomationJson
 		return false;
 	}
 }
+
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", on)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
