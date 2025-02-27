@@ -27,7 +27,7 @@ namespace AutomationMainFramework
 
 	bool BuildTimePerDay()
 	{
-		if (FParse::Param(FCommandLine::Get(), TEXT("TimeLoop")))
+		if (FParse::Param(FCommandLine::Get(), TEXT("-TimeLoop")))
 		{
 			FString TimeSlotPerDay;
 			if (FParse::Value(FCommandLine::Get(), TEXT("-TimeSlotPerDay="), TimeSlotPerDay))
@@ -123,7 +123,7 @@ namespace AutomationMainFramework
 		else
 		{
 			FString CommandString;
-			if (FParse::Value(FCommandLine::Get(), TEXT("Command"), CommandString))
+			if (FParse::Value(FCommandLine::Get(), TEXT("-Command="), CommandString))
 			{
 				//从外部传入单条命令
 				UE_LOG(SyhAutomaitonToolLog, Display, TEXT("-Command=%s"), *CommandString);
@@ -137,7 +137,7 @@ namespace AutomationMainFramework
 				//从Json执行多条命令
 				//1.初始化SNC全局配置
 				FSimpleNetGlobalInfo::Get()->Init();
-				if (FParse::Param(FCommandLine::Get(), TEXT("SNCListen")))
+				if (FParse::Param(FCommandLine::Get(), TEXT("-SNCListen")))
 				{
 					//2.创建服务器实例
 					ListenServer = FSimpleNetManage::CreateManage(ESimpleNetLinkState::LINKSTATE_LISTEN,
@@ -161,12 +161,12 @@ namespace AutomationMainFramework
 
 				}
 
-				if (FParse::Param(FCommandLine::Get(), TEXT("HTTPServer")))
+				if (FParse::Param(FCommandLine::Get(), TEXT("-HTTPServer")))
 				{
 
 				}
 
-				if (FParse::Param(FCommandLine::Get(), TEXT("WebSocketServer")))
+				if (FParse::Param(FCommandLine::Get(), TEXT("-WebSocketServer")))
 				{
 
 				}

@@ -11,24 +11,11 @@
 
 namespace AutomationJson
 {
-	//Call命令的Config转换到Json对象
-	TSharedPtr<FJsonObject> AutomatedCallConfigToJsonObject(const FAutomatedCallConfig& InConfig)
-	{
-		TSharedPtr<FJsonObject> RootObject = MakeShareable<FJsonObject>(new FJsonObject);
-
-		RootObject->SetStringField(CommandKey, ProtocolToString(ECommandProtocol::CMD_Call));
-		RootObject->SetStringField(CallTypeKey, InConfig.CallType);
-		RootObject->SetStringField(CallPathKey, InConfig.CallPath);
-		RootObject->SetStringField(ParametersKey, InConfig.Parameters);
-
-		return RootObject;
-	}
-
 	ECommandProtocol GetCommandProtocol(TSharedPtr<FJsonObject> InJsonObject)
 	{
 		if (InJsonObject.IsValid())
 		{
-			return StringToProtocol(InJsonObject->GetStringField(CommandKey));
+			return StringToProtocol(InJsonObject->GetStringField(FCommandProtocolRelated::CommandKey));
 		}
 
 		return ECommandProtocol::CMD_None;
@@ -52,13 +39,13 @@ namespace AutomationJson
 	{
 		//"ECommandProtocol::CMD_Call" -> "Call"
 		FString ProtocolName = UEnum::GetValueAsName(InProtocol).ToString();
-		ProtocolName.RightChopInline(ProtocolStringPrefixLength);
+		ProtocolName.RightChopInline(FCommandProtocolRelated::ProtocolStringPrefixLength);
 		return ProtocolName;
 	}
 
-	ECommandProtocol StringToProtocol(const FString& InCommandString)
+	ECommandProtocol StringToProtocol(const FString& InShortCommandName)
 	{
-		FString ProtocolName = ProtocolStringPrefix + InCommandString;
+		FString ProtocolName = FCommandProtocolRelated::GetProtocolFullName(InShortCommandName);
 		int64 Result = UEnum::LookupEnumName(FName(), *ProtocolName);
 		if (Result == INDEX_NONE)
 		{
@@ -66,7 +53,7 @@ namespace AutomationJson
 		}
 		else
 		{
-			return (ECommandProtocol)Result;
+			return (ECommandProtocol)Result;//无法使用模板，模板需要常量表达式输入
 		}
 	}
 
@@ -84,8 +71,16 @@ namespace AutomationJson
 
 		//将所有操作转换为Json对象，并合并在JsonValue的数组中
 		{	//Call
-			FAutomatedCallConfig Config;
-			if (TSharedPtr<FJsonObject> JsonObject = AutomatedCallConfigToJsonObject(Config))
+			FAutomatedCallConfig Config;//可以转换为模板，但不确定是否需要其他操作
+			if (TSharedPtr<FJsonObject> JsonObject = AutomatedConfigToJsonObject(Config))
+			{
+				CommandArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(JsonObject)));
+			}
+		}
+
+		{	//Call Custom Content
+			FAutomatedCallCustomContentConfig Config;
+			if (TSharedPtr<FJsonObject> JsonObject = AutomatedConfigToJsonObject(Config))
 			{
 				CommandArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(JsonObject)));
 			}
@@ -121,32 +116,9 @@ namespace AutomationJson
 	
 	}
 
-	bool JsonToAutomatedCallConfig(const FString& InString, FAutomatedCallConfig& OutConfig)
-	{
-		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(InString);
-		TSharedPtr<FJsonObject> ReadRoot;
-
-		if (FJsonSerializer::Deserialize(Reader, ReadRoot))
-		{
-			return JsonToAutomatedCallConfig(ReadRoot, OutConfig);
-		}
-
-		return false;
-	}
-
-	bool JsonToAutomatedCallConfig(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCallConfig& OutConfig)
-	{
-		if (InJsonObject)
-		{
-			OutConfig.CallPath = InJsonObject->GetStringField(CallPathKey);
-			OutConfig.CallType = InJsonObject->GetStringField(CallTypeKey);
-			OutConfig.Parameters = InJsonObject->GetStringField(ParametersKey);
-			
-			//某些程序需要标准路径
-			FPaths::NormalizeFilename(OutConfig.CallPath);
-			return true;
-		}
-		return false;
+	void ConfigureCommandProtocol(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InProtocol)
+	{	
+		InJsonObject->SetStringField(FCommandProtocolRelated::CommandKey, ProtocolToString(InProtocol));
 	}
 }
 

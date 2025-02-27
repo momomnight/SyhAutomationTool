@@ -1,5 +1,6 @@
 #include "Element/AutoExecElementsFactory.h"
 #include "Element/AutomationCode/AutomatedCode_Call.h"
+#include "Element/AutomationCode/AutomatedCode_CallCustomContent.h"
 
 FAutoExecElementsFactory::FAutoExecElementsFactory()
 {
@@ -17,12 +18,10 @@ TSharedPtr<FAutoExecElements> FAutoExecElementsFactory::CreateAutomatedTask(uint
 	{
 	case ECommandProtocol::CMD_Call:
 		return CreateAutomatedTask<FAutomatedCode_Call>(InJson);
-
+	case ECommandProtocol::CMD_Call_Custom_Content:
+		return CreateAutomatedTask<FAutomatedCode_CallCustomContent>(InJson);
 	case ECommandProtocol::CMD_None:
 	default:
-		break;
+		return nullptr;
 	}
-
-
-	return nullptr;
 }
