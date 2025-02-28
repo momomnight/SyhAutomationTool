@@ -22,6 +22,9 @@ namespace AutomatedExecutionPath
 
 	FString GetBatPath()
 	{
-		return FString();
+		return FPaths::ConvertRelativePathToFull(
+			FPaths::ProjectDir() / TEXT("Automated") /
+			FGuid::NewGuid().ToString().RightChop(24) + TEXT(".bat")
+		);
 	}
 }

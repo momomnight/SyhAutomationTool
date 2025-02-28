@@ -3,6 +3,21 @@
 #include "CoreMinimal.h"
 #include "Json/AutomationJsonTemplate.h"
 
+//	Example:
+//	[
+//		{
+//			"Command": "Call",
+//			"CallType" : "bat",
+//			"CallPath" : "C:/MyProgram/UnrealEngine-5.3.2-release/SyhAutomaitonTool/1.bat",
+//			"Parameters" : ""
+//		},
+//		{
+//			"Command": "Call",
+//			"CallType" : "bat",
+//			"CallPath" : "C:/MyProgram/UnrealEngine-5.3.2-release/SyhAutomaitonTool/2.bat",
+//			"Parameters" : ""
+//		}
+//	]
 
 namespace AutomationJson
 {
@@ -46,9 +61,10 @@ namespace AutomationJson
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedCallConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCallConfig& InConfig)
 	{
-		InConfig.CallPath = InJsonObject->GetStringField(FAutomatedCallRelated::CallPathKey);
-		InConfig.CallType = InJsonObject->GetStringField(FAutomatedCallRelated::CallTypeKey);
-		InConfig.Parameters = InJsonObject->GetStringField(FAutomatedCallRelated::ParametersKey);
+		using RelatedString = FAutomatedCallConfig::RelatedString;
+		InConfig.CallPath = InJsonObject->GetStringField(RelatedString::CallPathKey);
+		InConfig.CallType = InJsonObject->GetStringField(RelatedString::CallTypeKey);
+		InConfig.Parameters = InJsonObject->GetStringField(RelatedString::ParametersKey);
 
 		//某些程序需要标准路径
 		FPaths::NormalizeFilename(InConfig.CallPath);
@@ -57,8 +73,9 @@ namespace AutomationJson
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedCallCustomContentConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCallCustomContentConfig& InConfig)
 	{
-		InConfig.WaitTime = InJsonObject->GetNumberField(FAutomatedCallCustomContentRelated::CallPathKey);
-		InConfig.Content = InJsonObject->GetStringField(FAutomatedCallCustomContentRelated::CallTypeKey);
+		using RelatedString = FAutomatedCallCustomContentConfig::RelatedString;
+		InConfig.WaitTime = InJsonObject->GetNumberField(RelatedString::WaitTimeKey);
+		InConfig.Content = InJsonObject->GetStringField(RelatedString::ContentKey);
 	}
 
 	template <class AutomatedConfigType>
@@ -74,6 +91,17 @@ namespace AutomationJson
 		return false;
 	}
 
+	//将Config转换为JsonObject填充JsonValueObject
+	template <class AutomatedConfigType>
+	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
+	{
+		AutomatedConfigType Config;//可以转换为模板，但不确定是否需要其他操作
+		if (TSharedPtr<FJsonObject> JsonObject = AutomatedConfigToJsonObject<AutomatedConfigType>(Config))
+		{
+			InCommandArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(JsonObject)));
+		}
+	}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//从Json对象中提取命令
@@ -83,10 +111,10 @@ namespace AutomationJson
 	ECommandProtocol GetCommandProtocol(const FString& InJsonString);
 
 	//从协议到去掉协议前缀的字符串
-	FString ProtocolToString(ECommandProtocol InProtocol);
+	FString CommandProtocolToString(ECommandProtocol InProtocol);
 
 	//从去掉协议前缀的字符串到协议
-	ECommandProtocol StringToProtocol(const FString& InShortCommandName);
+	ECommandProtocol StringToCommandProtocol(const FString& InShortCommandName);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//用于序列化

@@ -13,20 +13,24 @@ public:
 	using OwnConfig = FAutomatedCallCustomContentConfig;
 
 public:
-	FAutomatedCode_CallCustomContent();
-	virtual ~FAutomatedCode_CallCustomContent();
 
-	bool Init();
+	FAutomatedCode_CallCustomContent() : Super()
+	{
+	}
+
+	virtual ~FAutomatedCode_CallCustomContent() override;
+
+	virtual void Init() override;
 
 	//通过Json构建参数
-	virtual bool BuildParameter(const class FString& InJsonStr);
+	virtual bool BuildParameter(const class FString& InJsonStr) override;
 
 	//通过命令行参数传入
-	virtual bool BuildParameter();
+	virtual bool BuildParameter() override;
 
-	virtual bool Execute();
+	virtual bool Execute() override;
 
 public:
-	virtual uint32 GetType() const { return (uint32)ECommandProtocol::CMD_Call_Custom_Content; }
+	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_Call_Custom_Content; }
 
 };

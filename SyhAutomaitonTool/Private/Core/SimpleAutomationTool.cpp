@@ -114,7 +114,7 @@ namespace SimpleAutomationTool
 
 	void HandleTask(const FString& InTaskCommand)
 	{
-		uint32 Protocol =  (uint32)AutomationJson::StringToProtocol(InTaskCommand);
+		uint32 Protocol =  (uint32)AutomationJson::StringToCommandProtocol(InTaskCommand);
 
 		Execute(Protocol, TEXT(""));
 	}

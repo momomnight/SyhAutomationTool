@@ -15,7 +15,7 @@ namespace AutomationJson
 	{
 		if (InJsonObject.IsValid())
 		{
-			return StringToProtocol(InJsonObject->GetStringField(FCommandProtocolRelated::CommandKey));
+			return StringToCommandProtocol(InJsonObject->GetStringField(FCommandProtocolRelated::CommandKey));
 		}
 
 		return ECommandProtocol::CMD_None;
@@ -35,7 +35,7 @@ namespace AutomationJson
 		return ECommandProtocol::CMD_None;
 	}
 
-	FString ProtocolToString(ECommandProtocol InProtocol)
+	FString CommandProtocolToString(ECommandProtocol InProtocol)
 	{
 		//"ECommandProtocol::CMD_Call" -> "Call"
 		FString ProtocolName = UEnum::GetValueAsName(InProtocol).ToString();
@@ -43,7 +43,7 @@ namespace AutomationJson
 		return ProtocolName;
 	}
 
-	ECommandProtocol StringToProtocol(const FString& InShortCommandName)
+	ECommandProtocol StringToCommandProtocol(const FString& InShortCommandName)
 	{
 		FString ProtocolName = FCommandProtocolRelated::GetProtocolFullName(InShortCommandName);
 		int64 Result = UEnum::LookupEnumName(FName(), *ProtocolName);
@@ -70,21 +70,12 @@ namespace AutomationJson
 		TArray<TSharedPtr<FJsonValue>> CommandArray;
 
 		//将所有操作转换为Json对象，并合并在JsonValue的数组中
-		{	//Call
-			FAutomatedCallConfig Config;//可以转换为模板，但不确定是否需要其他操作
-			if (TSharedPtr<FJsonObject> JsonObject = AutomatedConfigToJsonObject(Config))
-			{
-				CommandArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(JsonObject)));
-			}
-		}
+		
+		//Call
+		FillJsonValue<FAutomatedCallConfig>(CommandArray);
 
-		{	//Call Custom Content
-			FAutomatedCallCustomContentConfig Config;
-			if (TSharedPtr<FJsonObject> JsonObject = AutomatedConfigToJsonObject(Config))
-			{
-				CommandArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(JsonObject)));
-			}
-		}
+		//Call Custom Content
+		FillJsonValue<FAutomatedCallCustomContentConfig>(CommandArray);
 
 		//将Writer绑定字符串流，再将JsonValue的数组写入流中
 		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutString);
@@ -118,7 +109,7 @@ namespace AutomationJson
 
 	void ConfigureCommandProtocol(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InProtocol)
 	{	
-		InJsonObject->SetStringField(FCommandProtocolRelated::CommandKey, ProtocolToString(InProtocol));
+		InJsonObject->SetStringField(FCommandProtocolRelated::CommandKey, CommandProtocolToString(InProtocol));
 	}
 }
 
