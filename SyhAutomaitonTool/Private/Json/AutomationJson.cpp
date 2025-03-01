@@ -77,6 +77,13 @@ namespace AutomationJson
 		//Call Custom Content
 		FillJsonValue<FAutomatedCallCustomContentConfig>(CommandArray);
 
+		//UE Project Refresh
+		FillJsonValue<FAutomatedUEProjectRefreshConfig>(CommandArray);
+
+		//Command Nesting
+		FillJsonValue<FAutomatedCommandNestingConfig>(CommandArray);
+
+
 		//将Writer绑定字符串流，再将JsonValue的数组写入流中
 		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutString);
 		FJsonSerializer::Serialize(CommandArray, Writer);

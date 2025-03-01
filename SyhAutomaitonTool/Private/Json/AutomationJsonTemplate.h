@@ -13,17 +13,23 @@ namespace AutomationJson
 		constexpr Transfer() {}
 	};
 
+	template <class AutomatedConfigType, class Test = typename std::enable_if_t<std::is_base_of<FAutomatedConfigBase, AutomatedConfigType>::value>>
+	using RelatedString = typename AutomatedConfigType::RelatedString;
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	// JsonObjectToAutomatedConfig用于从 自定义的Json文件 中读出配置
+	
 	/// <summary>
 	/// JsonObjectToAutomatedConfig函数模板用于配置非通用项, 仅配置自己, 无向上传递
 	/// </summary>
 	/// <param name="InJsonObject"> 传入的Json对象 </param>
 	/// <param name="InConfig"> 具体配置类型 </param>
 	template<class AutomatedConfigType>
-	void JsonObjectToAutomatedConfig(TSharedPtr<FJsonObject> InJsonObject, AutomatedConfigType& InConfig);
+	void JsonObjectToAutomatedConfig(TSharedPtr<FJsonObject> InJsonObject, AutomatedConfigType& OutConfig);
 
 	template<>
-	void JsonObjectToAutomatedConfig<FAutomatedConfigBase>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedConfigBase& InConfig)
+	void JsonObjectToAutomatedConfig<FAutomatedConfigBase>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedConfigBase& OutConfig)
 	{
 	}
 
@@ -34,41 +40,44 @@ namespace AutomationJson
 	/// <param name="InConfig"> 具体配置类型 </param>
 	/// <param name="Trans"> 标志，用于函数匹配 </param>
 	template<class AutomatedConfigType>
-	bool JsonObjectToAutomatedConfig(TSharedPtr<FJsonObject> InJsonObject, AutomatedConfigType& InConfig, Transfer Trans)
+	bool JsonObjectToAutomatedConfig(TSharedPtr<FJsonObject> InJsonObject, AutomatedConfigType& OutConfig, Transfer Trans)
 	{
 		if(InJsonObject.IsValid())
 		{
 			//配置父类
-			JsonObjectToAutomatedConfig<typename AutomatedConfigType::Super>(InJsonObject, static_cast<typename AutomatedConfigType::Super&>(InConfig), Trans);
+			JsonObjectToAutomatedConfig<typename AutomatedConfigType::Super>(InJsonObject, static_cast<typename AutomatedConfigType::Super&>(OutConfig), Trans);
 			//配置自己
-			JsonObjectToAutomatedConfig<AutomatedConfigType>(InJsonObject, InConfig);
+			JsonObjectToAutomatedConfig<AutomatedConfigType>(InJsonObject, OutConfig);
 			return true;
 		}
 		return false;
 	}
 
 	template<>
-	bool JsonObjectToAutomatedConfig<FAutomatedConfigBase>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedConfigBase& InConfig, Transfer Trans)
+	bool JsonObjectToAutomatedConfig<FAutomatedConfigBase>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedConfigBase& OutConfig, Transfer Trans)
 	{
 		if (InJsonObject.IsValid())
 		{
-			JsonObjectToAutomatedConfig<FAutomatedConfigBase>(InJsonObject, InConfig);
+			JsonObjectToAutomatedConfig<FAutomatedConfigBase>(InJsonObject, OutConfig);
 			return true;
 		}
 		return false;
 	}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	template<class AutomatedConfigType>
+	
+	// AutomatedConfigToJsonObject用于把默认的配置写入Json文件，Config类的默认配置在构造时初始化
+	
 	/// <summary>
 	/// ConfigureOthers函数模板用于配置非通用项, 仅配置自己, 无向上传递
 	/// </summary>
 	/// <param name="InJsonObject"> 传入的Json对象 </param>
 	/// <param name="InConfig"> 具体配置类型 </param>
 	template<class AutomatedConfigType>
-	void AutomatedConfigToJsonObject(TSharedPtr<FJsonObject> InJsonObject, const AutomatedConfigType& InConfig);
+	void AutomatedConfigToJsonObject(TSharedPtr<FJsonObject> OutJsonObject, const AutomatedConfigType& InConfig);
 
 	template<>
-	void AutomatedConfigToJsonObject<FAutomatedConfigBase>(TSharedPtr<FJsonObject> InJsonObject, const FAutomatedConfigBase& InConfig)
+	void AutomatedConfigToJsonObject<FAutomatedConfigBase>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedConfigBase& InConfig)
 	{
 	}
 
@@ -79,17 +88,19 @@ namespace AutomationJson
 	/// <param name="InConfig"> 具体配置类型 </param>
 	/// <param name="Trans"> 标志，用于函数匹配 </param>
 	template<class AutomatedConfigType>
-	void AutomatedConfigToJsonObject(TSharedPtr<FJsonObject> InJsonObject, const AutomatedConfigType& InConfig, Transfer Trans)
+	void AutomatedConfigToJsonObject(TSharedPtr<FJsonObject> OutJsonObject, const AutomatedConfigType& InConfig, Transfer Trans)
 	{
 		//配置父类
-		AutomatedConfigToJsonObject<typename AutomatedConfigType::Super>(InJsonObject, static_cast<const AutomatedConfigType::Super&>(InConfig), Trans);
+		AutomatedConfigToJsonObject<typename AutomatedConfigType::Super>(OutJsonObject, static_cast<const AutomatedConfigType::Super&>(InConfig), Trans);
 		//配置自己
-		AutomatedConfigToJsonObject<AutomatedConfigType>(InJsonObject, InConfig);
+		AutomatedConfigToJsonObject<AutomatedConfigType>(OutJsonObject, InConfig);
 	}
 
 	template<>
-	void AutomatedConfigToJsonObject<FAutomatedConfigBase>(TSharedPtr<FJsonObject> InJsonObject, const FAutomatedConfigBase& InConfig, Transfer Trans)
+	void AutomatedConfigToJsonObject<FAutomatedConfigBase>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedConfigBase& InConfig, Transfer Trans)
 	{
-		AutomatedConfigToJsonObject<FAutomatedConfigBase>(InJsonObject, InConfig);
+		AutomatedConfigToJsonObject<FAutomatedConfigBase>(OutJsonObject, InConfig);
 	}
+
+
 }

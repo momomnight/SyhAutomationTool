@@ -104,6 +104,30 @@ namespace SimpleAutomationTool
 		}
 	}
 
+
+	bool Init(TMultiMap<uint32, FString>& OutTaskCommand, const FString& InFileName)
+	{
+		if (InFileName.IsEmpty())
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Execute a empty command."));
+			return false;
+		}
+
+		FString CommandScriptPath = AutomatedExecutionPath::GetCommandPath() / (InFileName + TEXT(".json"));
+
+		if (IFileManager::Get().FileExists(*CommandScriptPath))
+		{
+			//脚本文件存在则反序列化到容器中，用于执行自动化命令
+			FString CommandString;
+			check(FFileHelper::LoadFileToString(CommandString, *CommandScriptPath));
+			AutomationJson::DeserializeAllCommand(CommandString, OutTaskCommand);
+			return OutTaskCommand.Num() > 0;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	void HandleTask(const TMultiMap<uint32, FString>& InTaskCommand)
 	{
 		for (auto& Temp : InTaskCommand)

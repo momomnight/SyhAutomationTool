@@ -4,9 +4,8 @@
 
 namespace SimpleAutomationTool
 {
-	//自动化核心逻辑处
 	bool Init(TMultiMap<uint32, FString>& OutTaskCommand);
-
+	bool Init(TMultiMap<uint32, FString>& OutTaskCommand, const FString& InFileName);
 	//多条命令
 	void HandleTask(const TMultiMap<uint32, FString>& InTaskCommand);
 

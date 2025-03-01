@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Json/AutomationJsonTemplate.h"
+#include "Misc/AutomatedExecutionPath.h"
 
 //	Example:
 //	[
@@ -21,24 +22,46 @@
 
 namespace AutomationJson
 {
+	template <class AutomatedConfigType>
+	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray);
+
 	/// <summary>
 	/// 增加模块时，只需特化AutomatedConfigToJsonObject
 	/// </summary>
 	/// <param name="InJsonObject"> 传入的Json对象 </param>
 	/// <param name="InConfig"> 具体配置类型 </param>
 	template<>
-	void AutomatedConfigToJsonObject<FAutomatedCallConfig>(TSharedPtr<FJsonObject> InJsonObject, const FAutomatedCallConfig& InConfig)
+	void AutomatedConfigToJsonObject<FAutomatedCallConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedCallConfig& InConfig)
 	{
-		InJsonObject->SetStringField(FAutomatedCallRelated::CallTypeKey, InConfig.CallType);
-		InJsonObject->SetStringField(FAutomatedCallRelated::CallPathKey, InConfig.CallPath);
-		InJsonObject->SetStringField(FAutomatedCallRelated::ParametersKey, InConfig.Parameters);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedCallConfig>::CallTypeKey, InConfig.CallType);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedCallConfig>::CallPathKey, InConfig.CallPath);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedCallConfig>::ParametersKey, InConfig.Parameters);
 	}
 
 	template<>
-	void AutomatedConfigToJsonObject<FAutomatedCallCustomContentConfig>(TSharedPtr<FJsonObject> InJsonObject, const FAutomatedCallCustomContentConfig& InConfig)
+	void AutomatedConfigToJsonObject<FAutomatedCallCustomContentConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedCallCustomContentConfig& InConfig)
 	{
-		InJsonObject->SetNumberField(FAutomatedCallCustomContentRelated::WaitTimeKey, InConfig.WaitTime);
-		InJsonObject->SetStringField(FAutomatedCallCustomContentRelated::ContentKey, InConfig.Content);
+		OutJsonObject->SetNumberField(RelatedString<FAutomatedCallCustomContentConfig>::WaitTimeKey, InConfig.WaitTime);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedCallCustomContentConfig>::ContentKey, InConfig.Content);
+	}
+
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedUEProjectRefreshConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedUEProjectRefreshConfig& InConfig)
+	{
+		OutJsonObject->SetStringField(RelatedString<FAutomatedUEProjectRefreshConfig>::UnrealBuildToolPathKey, InConfig.UnrealBuildToolPath);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedUEProjectRefreshConfig>::ProjectUProjectPathKey, InConfig.ProjectUProjectPath);
+	}
+
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedCommandNestingConfig& InConfig)
+	{
+		//上面的命令对于配置的无需更多处理
+		TArray<TSharedPtr<FJsonValue>> Array;
+		for (auto& Temp : InConfig.CommandList)
+		{
+			Array.Add(MakeShareable<FJsonValueString>(new FJsonValueString(Temp)));
+		}
+		OutJsonObject->SetArrayField(RelatedString<FAutomatedCommandNestingConfig>::CommandListKey, Array);
 	}
 
 	//用于配置命令字段
@@ -59,23 +82,49 @@ namespace AutomationJson
 	/// <param name="InJsonObject"> 传入的Json对象 </param>
 	/// <param name="InConfig"> 具体配置类型 </param>
 	template<>
-	void JsonObjectToAutomatedConfig<FAutomatedCallConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCallConfig& InConfig)
+	void JsonObjectToAutomatedConfig<FAutomatedCallConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCallConfig& OutConfig)
 	{
 		using RelatedString = FAutomatedCallConfig::RelatedString;
-		InConfig.CallPath = InJsonObject->GetStringField(RelatedString::CallPathKey);
-		InConfig.CallType = InJsonObject->GetStringField(RelatedString::CallTypeKey);
-		InConfig.Parameters = InJsonObject->GetStringField(RelatedString::ParametersKey);
+		OutConfig.CallPath = InJsonObject->GetStringField(RelatedString::CallPathKey);
+		OutConfig.CallType = InJsonObject->GetStringField(RelatedString::CallTypeKey);
+		OutConfig.Parameters = InJsonObject->GetStringField(RelatedString::ParametersKey);
 
 		//某些程序需要标准路径
-		FPaths::NormalizeFilename(InConfig.CallPath);
+		//从Json字符中读取的路径格式可能不对
+		FPaths::NormalizeFilename(OutConfig.CallPath);
+		FPaths::RemoveDuplicateSlashes(OutConfig.CallPath);
 	}
 
 	template<>
-	void JsonObjectToAutomatedConfig<FAutomatedCallCustomContentConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCallCustomContentConfig& InConfig)
+	void JsonObjectToAutomatedConfig<FAutomatedCallCustomContentConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCallCustomContentConfig& OutConfig)
 	{
-		using RelatedString = FAutomatedCallCustomContentConfig::RelatedString;
-		InConfig.WaitTime = InJsonObject->GetNumberField(RelatedString::WaitTimeKey);
-		InConfig.Content = InJsonObject->GetStringField(RelatedString::ContentKey);
+		OutConfig.WaitTime = InJsonObject->GetNumberField(RelatedString<FAutomatedCallCustomContentConfig>::WaitTimeKey);
+		OutConfig.Content = InJsonObject->GetStringField(RelatedString<FAutomatedCallCustomContentConfig>::ContentKey);
+	}
+
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedUEProjectRefreshConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedUEProjectRefreshConfig& OutConfig)
+	{
+		OutConfig.UnrealBuildToolPath = InJsonObject->GetStringField(RelatedString<FAutomatedUEProjectRefreshConfig>::UnrealBuildToolPathKey);
+		OutConfig.ProjectUProjectPath = InJsonObject->GetStringField(RelatedString<FAutomatedUEProjectRefreshConfig>::ProjectUProjectPathKey);
+		
+		//某些程序需要标准路径
+		//从Json字符中读取的路径格式可能不对
+		FPaths::NormalizeFilename(OutConfig.UnrealBuildToolPath);
+		FPaths::NormalizeFilename(OutConfig.ProjectUProjectPath);
+		FPaths::RemoveDuplicateSlashes(OutConfig.UnrealBuildToolPath);
+		FPaths::RemoveDuplicateSlashes(OutConfig.ProjectUProjectPath);
+	}
+
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCommandNestingConfig& OutConfig)
+	{
+		const TArray<TSharedPtr<FJsonValue>>& InArrayObject = InJsonObject->GetArrayField(RelatedString<FAutomatedCommandNestingConfig>::CommandListKey);
+	
+		for (auto& Temp : InArrayObject)
+		{
+			OutConfig.CommandList.Add(Temp->AsString());
+		}
 	}
 
 	template <class AutomatedConfigType>
@@ -90,6 +139,7 @@ namespace AutomationJson
 
 		return false;
 	}
+
 
 	//将Config转换为JsonObject填充JsonValueObject
 	template <class AutomatedConfigType>
