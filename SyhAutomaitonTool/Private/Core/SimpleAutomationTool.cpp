@@ -40,63 +40,53 @@ namespace SimpleAutomationTool
 	bool Init(TMultiMap<uint32, FString>& OutTaskCommand)
 	{
 		OutTaskCommand.Empty();
-		FString CommandScriptName;
+		FString CommandScriptRelativePath;
 
-		//使用默认文件名或者自己提供文件名
-		if (FParse::Value(FCommandLine::Get(), TEXT("-CommandScript="), CommandScriptName))
+		//如果在Command目录和其子目录中存在同名，那就必须指明相对Command的路径，否则使用Command目录下的文件
+		//可以不带文件后缀
+		if (FParse::Value(FCommandLine::Get(), TEXT("-CommandScript="), CommandScriptRelativePath))
 		{
-			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("-CommandScriptName = [%s]"), *CommandScriptName);
+			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("-CommandScriptName = [%s]"), *CommandScriptRelativePath);
 		}
 		else
 		{
-			CommandScriptName = TEXT("CommandScript");
+			CommandScriptRelativePath = TEXT("CommandScript.json");
+		}
+
+		return Init(OutTaskCommand, CommandScriptRelativePath);
+	}
+
+
+	bool Init(TMultiMap<uint32, FString>& OutTaskCommand, const FString& InRelativePath)
+	{
+		if (InRelativePath.IsEmpty())
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Need a non-empty relative path."));
+			return false;
 		}
 
 		FString CommandScriptPath;
-		bool bExistFile = false;
 
-		//文件查找
+		if (InRelativePath.EndsWith(TEXT(".json"), ESearchCase::CaseSensitive))
 		{
-			TArray<FString> FoundFilePaths;
-			IFileManager::Get().FindFilesRecursive(FoundFilePaths, *AutomatedExecutionPath::GetCommandPath(),
-				TEXT("*.json"), true, false);
-
-			for (auto& TempPath : FoundFilePaths)
-			{
-				FString TempFileName = FPaths::GetCleanFilename(TempPath);
-
-				if (!TempFileName.RemoveFromEnd(TEXT(".json")))
-				{
-					//没有.json扩展名，跳过
-					continue;
-				}
-
-				if (TempFileName.Equals(CommandScriptName))
-				{
-					bExistFile = true;//找到文件
-					CommandScriptPath = TempPath;
-					break;
-				}
-			}
+			CommandScriptPath = AutomatedExecutionPath::GetCommandPath() / InRelativePath;
+		}
+		else
+		{
+			CommandScriptPath = AutomatedExecutionPath::GetCommandPath() / (InRelativePath + TEXT(".json"));
 		}
 
-		//没有找到，拼接默认的路径与文件名
-		if (CommandScriptPath.IsEmpty())
+		//文件存在，则读取文件，并反序列化到TaskCommand中
+		//文件不存在，则序列化所有命令的格式到文件中，供外部修改
+		if (IFileManager::Get().FileExists(*CommandScriptPath))
 		{
-			CommandScriptPath = AutomatedExecutionPath::GetCommandPath() / (CommandScriptName + TEXT(".json"));
-		}
-
-		if (bExistFile)
-		{
-			//脚本文件存在则反序列化到容器中，用于执行自动化命令
 			FString CommandString;
 			check(FFileHelper::LoadFileToString(CommandString, *CommandScriptPath));
 			AutomationJson::DeserializeAllCommand(CommandString, OutTaskCommand);
 			return OutTaskCommand.Num() > 0;
 		}
 		else
-		{	
-			//脚本文件不存在则序列化到文件中，展示Json格式
+		{
 			FString CommandString;
 			AutomationJson::SerializeAllCommand(CommandString);
 			check(FFileHelper::SaveStringToFile(*CommandString, *CommandScriptPath));
@@ -104,30 +94,6 @@ namespace SimpleAutomationTool
 		}
 	}
 
-
-	bool Init(TMultiMap<uint32, FString>& OutTaskCommand, const FString& InFileName)
-	{
-		if (InFileName.IsEmpty())
-		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Execute a empty command."));
-			return false;
-		}
-
-		FString CommandScriptPath = AutomatedExecutionPath::GetCommandPath() / (InFileName + TEXT(".json"));
-
-		if (IFileManager::Get().FileExists(*CommandScriptPath))
-		{
-			//脚本文件存在则反序列化到容器中，用于执行自动化命令
-			FString CommandString;
-			check(FFileHelper::LoadFileToString(CommandString, *CommandScriptPath));
-			AutomationJson::DeserializeAllCommand(CommandString, OutTaskCommand);
-			return OutTaskCommand.Num() > 0;
-		}
-		else
-		{
-			return false;
-		}
-	}
 	void HandleTask(const TMultiMap<uint32, FString>& InTaskCommand)
 	{
 		for (auto& Temp : InTaskCommand)
