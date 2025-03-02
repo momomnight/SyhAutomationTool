@@ -3,6 +3,7 @@
 #include "Element/AutomationCode/AutomatedCode_CallCustomContent.h"
 #include "Element/AutomationCode/AutomatedCode_UEProjectRefresh.h"
 #include "Element/AutomationCode/AutomatedCode_CommandNesting.h"
+#include "Element/Deployment/AutomatedDeployment_Copy.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -32,6 +33,8 @@ TSharedPtr<FAutoExecElements> FAutoExecElementsFactory::CreateAutomatedTask(uint
 		return CreateAutomatedTask<FAutomatedCode_UEProjectRefresh>(InJson);
 	case ECommandProtocol::CMD_Command_Nesting:
 		return CreateAutomatedTask<FAutomatedCode_CommandNesting>(InJson);
+	case ECommandProtocol::CMD_Deployment_Copy:
+		return CreateAutomatedTask<FAutomatedCode_Deployment_Copy>(InJson);
 	case ECommandProtocol::CMD_None:
 	default:
 		return nullptr;

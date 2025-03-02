@@ -49,6 +49,15 @@ struct FAutomatedCommandNestingRelated
 	static const FString CommandListKey;
 };
 
+struct FAutomatedDeploymentCopyRelated
+{
+	static const FString  Folder_BooleanKey;
+	static const FString  DeleteMovedFiles_BooleanKey;
+	static const FString  FilesKey;
+	static const FString  SourceKey;
+	static const FString  DestinationKey;
+};
+
 
 
 //命令枚举
@@ -60,6 +69,8 @@ enum class ECommandProtocol : uint8
 	CMD_Call_Custom_Content		UMETA(DisplayName = "Call Custom Content"),
 	CMD_UE_Project_Refresh		UMETA(DisplayName = "UE Project Refresh"),
 	CMD_Command_Nesting			UMETA(DisplayName = "Command Nesting"),
+	CMD_Deployment_Copy			UMETA(DisplayName = "Deployment Copy"),
+	CMD_Deployment_Delete		UMETA(DisplayName = "Deployment Delete"),
 };
 
 // FAutomatedConfigBase总的基类
@@ -69,7 +80,7 @@ struct FAutomatedConfigBase
 	GENERATED_USTRUCT_BODY()
 };
 
-//呼叫配置
+//呼叫指定脚本
 USTRUCT(BlueprintType)
 struct FAutomatedCallConfig : public FAutomatedConfigBase
 {
@@ -91,7 +102,7 @@ struct FAutomatedCallConfig : public FAutomatedConfigBase
 
 };
 
-//呼叫自定义配置
+//输入脚本内容，自动生成bat脚本，并执行
 USTRUCT(BlueprintType)
 struct FAutomatedCallCustomContentConfig : public FAutomatedCallConfig
 {
@@ -109,7 +120,7 @@ struct FAutomatedCallCustomContentConfig : public FAutomatedCallConfig
 	int32 WaitTime;
 };
 
-//呼叫自定义配置
+//
 USTRUCT(BlueprintType)
 struct FAutomatedUEProjectRefreshConfig : public FAutomatedCallConfig
 {
@@ -146,6 +157,26 @@ struct FAutomatedCommandNestingConfig : public FAutomatedConfigBase
 	TArray<FString> CommandList;
 };
 
+USTRUCT(BlueprintType)
+struct FAutomatedDeploymentCopyConfig : public FAutomatedConfigBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	typedef FAutomatedConfigBase Super;
+	typedef FAutomatedDeploymentCopyRelated RelatedString;
+
+	FAutomatedDeploymentCopyConfig() : bFolder(false), bDeleteMovedFiles(true){}
+
+	UPROPERTY()
+	bool bFolder;
+
+	UPROPERTY()
+	bool bDeleteMovedFiles;			//是否删除Source文件
+
+	UPROPERTY()
+	TMap<FString, FString> Files;	//<dest, src>
+};
+
 /// <summary>
 ///	Traits
 /// </summary>
@@ -177,4 +208,10 @@ template <>
 struct FCommandProtocol<FAutomatedCommandNestingConfig>
 {
 	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Command_Nesting;
+};
+
+template <>
+struct FCommandProtocol<FAutomatedDeploymentCopyConfig>
+{
+	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Deployment_Copy;
 };

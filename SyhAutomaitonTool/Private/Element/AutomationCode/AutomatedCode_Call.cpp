@@ -82,7 +82,7 @@ bool FAutomatedCode_Call::Execute()
 
 bool FAutomatedCode_Call::Exit()
 {
-	return false;
+	return true;
 }
 
 

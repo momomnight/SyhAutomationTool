@@ -59,3 +59,9 @@ const FString FAutomatedUEProjectRefreshRelated::UnrealBuildToolPathKey = TEXT("
 const FString FAutomatedUEProjectRefreshRelated::ProjectUProjectPathKey = TEXT("ProjectUProjectPath");
 
 const FString FAutomatedCommandNestingRelated::CommandListKey = TEXT("CommandList");
+
+const FString  FAutomatedDeploymentCopyRelated::Folder_BooleanKey = TEXT("bFolder");
+const FString  FAutomatedDeploymentCopyRelated::DeleteMovedFiles_BooleanKey = TEXT("bDeleteMovedFiles");
+const FString  FAutomatedDeploymentCopyRelated::FilesKey = TEXT("Files");
+const FString  FAutomatedDeploymentCopyRelated::SourceKey = TEXT("Source");
+const FString  FAutomatedDeploymentCopyRelated::DestinationKey = TEXT("Destination");

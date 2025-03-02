@@ -83,6 +83,8 @@ namespace AutomationJson
 		//Command Nesting
 		FillJsonValue<FAutomatedCommandNestingConfig>(CommandArray);
 
+		//Deployment Copy
+		FillJsonValue<FAutomatedDeploymentCopyConfig>(CommandArray);
 
 		//将Writer绑定字符串流，再将JsonValue的数组写入流中
 		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutString);

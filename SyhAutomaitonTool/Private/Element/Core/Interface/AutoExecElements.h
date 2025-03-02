@@ -17,12 +17,7 @@ public:
 	using Self = FAutoExecElements;
 	using OwnConfig = FAutomatedConfigBase;
 
-public:
-	//将Config存放在最底层，具体类型通过构造的模板参数传入
-	//需要自己类型的Config时，临时转换
-	//具体想法，减少需要写的代码
-	FAutoExecElements(){}
-
+protected:
 	template <class AutomatedConfigType>
 	void CreateConfig()
 	{
@@ -35,6 +30,12 @@ public:
 	{
 		return StaticCastSharedPtr<AutomatedConfigType>(Z_C_o_n_f_i_g);
 	}
+
+public:
+	//将Config存放在最底层，具体类型通过构造的模板参数传入
+	//需要自己类型的Config时，临时转换
+	//具体想法，减少需要写的代码
+	FAutoExecElements() {}
 
 	//抽象基类的析构应该为虚函数，但是必须提供定义
 	virtual ~FAutoExecElements(){};

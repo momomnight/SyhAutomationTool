@@ -56,7 +56,8 @@ namespace SimpleAutomationTool
 		return Init(OutTaskCommand, CommandScriptRelativePath);
 	}
 
-
+	//给定一个文件相对于Command内部的相对路径
+	//文件存在则反序列化到命令列表中，不存在则序列化所有命令到文件中，展示命令格式
 	bool Init(TMultiMap<uint32, FString>& OutTaskCommand, const FString& InRelativePath)
 	{
 		if (InRelativePath.IsEmpty())

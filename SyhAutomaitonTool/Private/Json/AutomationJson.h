@@ -64,6 +64,40 @@ namespace AutomationJson
 		OutJsonObject->SetArrayField(RelatedString<FAutomatedCommandNestingConfig>::CommandListKey, Array);
 	}
 
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedDeploymentCopyConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedDeploymentCopyConfig& InConfig)
+	{
+		OutJsonObject->SetBoolField(RelatedString<FAutomatedDeploymentCopyConfig>::Folder_BooleanKey, InConfig.bFolder);
+		OutJsonObject->SetBoolField(RelatedString<FAutomatedDeploymentCopyConfig>::DeleteMovedFiles_BooleanKey, InConfig.bDeleteMovedFiles);
+		
+		/*"Files": [
+			{
+				"Src": "xx",
+				"Dest" : "YY"
+			},
+			{
+				"Src": "xx",
+				"Dest" : "YY"
+			}
+		]*/
+		TArray<TSharedPtr<FJsonValue>> JsonArray;
+
+		{
+
+			TSharedPtr<FJsonObject> TempJsonObjectA = MakeShareable<FJsonObject>(new FJsonObject);
+			TempJsonObjectA->SetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::SourceKey, FString("SourceA"));
+			TempJsonObjectA->SetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::DestinationKey, FString("DestinationA"));
+			JsonArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(TempJsonObjectA)));
+
+			TSharedPtr<FJsonObject> TempJsonObjectB = MakeShareable(new FJsonObject);
+			TempJsonObjectB->SetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::SourceKey, FString("SourceB"));
+			TempJsonObjectB->SetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::DestinationKey, FString("DestinationB"));
+			JsonArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(TempJsonObjectB)));
+		}
+
+		OutJsonObject->SetArrayField(RelatedString<FAutomatedDeploymentCopyConfig>::FilesKey, JsonArray);
+	}
+
 	//用于配置命令字段
 	void ConfigureCommandProtocol(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InProtocol);
 
@@ -125,6 +159,29 @@ namespace AutomationJson
 		{
 			OutConfig.CommandList.Add(Temp->AsString());
 		}
+	}
+
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedDeploymentCopyConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedDeploymentCopyConfig& OutConfig)
+	{
+		OutConfig.bDeleteMovedFiles = InJsonObject->GetBoolField(RelatedString<FAutomatedDeploymentCopyConfig>::DeleteMovedFiles_BooleanKey);
+		OutConfig.bDeleteMovedFiles = InJsonObject->GetBoolField(RelatedString<FAutomatedDeploymentCopyConfig>::Folder_BooleanKey);
+	
+		const TArray<TSharedPtr<FJsonValue>>& ObjectArray = InJsonObject->GetArrayField(RelatedString<FAutomatedDeploymentCopyConfig>::FilesKey);
+		for (auto& Temp : ObjectArray)
+		{
+			if (TSharedPtr<FJsonObject> TempObject = Temp->AsObject())
+			{
+				FString Source = TempObject->GetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::SourceKey);
+				FString Destination = TempObject->GetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::DestinationKey);
+				FPaths::NormalizeFilename(Source);
+				FPaths::NormalizeFilename(Destination);
+				FPaths::RemoveDuplicateSlashes(Source);
+				FPaths::RemoveDuplicateSlashes(Destination);
+				OutConfig.Files.Emplace(Source, Destination);
+			}
+		}
+	
 	}
 
 	template <class AutomatedConfigType>
