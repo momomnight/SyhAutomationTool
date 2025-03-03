@@ -51,7 +51,6 @@ struct FAutomatedCommandNestingRelated
 
 struct FAutomatedDeploymentCopyRelated
 {
-	static const FString  Folder_BooleanKey;
 	static const FString  DeleteMovedFiles_BooleanKey;
 	static const FString  FilesKey;
 	static const FString  SourceKey;
@@ -71,6 +70,8 @@ enum class ECommandProtocol : uint8
 	CMD_Command_Nesting			UMETA(DisplayName = "Command Nesting"),
 	CMD_Deployment_Copy			UMETA(DisplayName = "Deployment Copy"),
 	CMD_Deployment_Delete		UMETA(DisplayName = "Deployment Delete"),
+
+	CMD_Max						UMETA(DisplayName = "Max"),
 };
 
 // FAutomatedConfigBase总的基类
@@ -165,10 +166,7 @@ struct FAutomatedDeploymentCopyConfig : public FAutomatedConfigBase
 	typedef FAutomatedConfigBase Super;
 	typedef FAutomatedDeploymentCopyRelated RelatedString;
 
-	FAutomatedDeploymentCopyConfig() : bFolder(false), bDeleteMovedFiles(true){}
-
-	UPROPERTY()
-	bool bFolder;
+	FAutomatedDeploymentCopyConfig() : bDeleteMovedFiles(true){}
 
 	UPROPERTY()
 	bool bDeleteMovedFiles;			//是否删除Source文件
@@ -180,38 +178,80 @@ struct FAutomatedDeploymentCopyConfig : public FAutomatedConfigBase
 /// <summary>
 ///	Traits
 /// </summary>
+
+//如果有配置类型，我们能拿到什么
 template <class ConfigType>
-struct FCommandProtocol
+struct FCommandProtocol_ConfigType
 {
 	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_None;
 };
 
+//如果有枚举号，我们能拿到什么
+template <ECommandProtocol Protocol>
+struct FCommandProtocol_EnumType
+{
+	using ConfigType = FAutomatedConfigBase;
+};
+
 template <>
-struct FCommandProtocol<FAutomatedCallConfig>
+struct FCommandProtocol_ConfigType<FAutomatedCallConfig>
 {
 	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Call;
 };
 
 template <>
-struct FCommandProtocol<FAutomatedCallCustomContentConfig>
+struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Call>
+{
+	using ConfigType = FAutomatedCallConfig;
+};
+
+template <>
+struct FCommandProtocol_ConfigType<FAutomatedCallCustomContentConfig>
 {
 	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Call_Custom_Content;
 };
 
 template <>
-struct FCommandProtocol<FAutomatedUEProjectRefreshConfig>
+struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Call_Custom_Content>
+{
+	using ConfigType = FAutomatedCallCustomContentConfig;
+};
+
+template <>
+struct FCommandProtocol_ConfigType<FAutomatedUEProjectRefreshConfig>
 {
 	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_UE_Project_Refresh;
 };
 
 template <>
-struct FCommandProtocol<FAutomatedCommandNestingConfig>
+struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Project_Refresh>
+{
+	using ConfigType = FAutomatedUEProjectRefreshConfig;
+};
+
+template <>
+struct FCommandProtocol_ConfigType<FAutomatedCommandNestingConfig>
 {
 	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Command_Nesting;
 };
 
 template <>
-struct FCommandProtocol<FAutomatedDeploymentCopyConfig>
+struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Command_Nesting>
+{
+	using ConfigType = FAutomatedCommandNestingConfig;
+};
+
+template <>
+struct FCommandProtocol_ConfigType<FAutomatedDeploymentCopyConfig>
 {
 	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Deployment_Copy;
 };
+
+template <>
+struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Deployment_Copy>
+{
+	using ConfigType = FAutomatedDeploymentCopyConfig;
+};
+
+
+

@@ -44,7 +44,9 @@ const TArray<FString> FCommandProtocolRelated::CommandName =
 	TEXT("Call"),
 	TEXT("Call_Custom_Content"),
 	TEXT("UE_Project_Refresh"),
-	TEXT("Command_Nesting")	
+	TEXT("Command_Nesting"),
+	TEXT("Deployment_Copy"),
+	TEXT("Deployment_Delete"),
 };
 
 
@@ -60,7 +62,6 @@ const FString FAutomatedUEProjectRefreshRelated::ProjectUProjectPathKey = TEXT("
 
 const FString FAutomatedCommandNestingRelated::CommandListKey = TEXT("CommandList");
 
-const FString  FAutomatedDeploymentCopyRelated::Folder_BooleanKey = TEXT("bFolder");
 const FString  FAutomatedDeploymentCopyRelated::DeleteMovedFiles_BooleanKey = TEXT("bDeleteMovedFiles");
 const FString  FAutomatedDeploymentCopyRelated::FilesKey = TEXT("Files");
 const FString  FAutomatedDeploymentCopyRelated::SourceKey = TEXT("Source");

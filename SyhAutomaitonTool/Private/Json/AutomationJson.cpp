@@ -71,20 +71,22 @@ namespace AutomationJson
 
 		//将所有操作转换为Json对象，并合并在JsonValue的数组中
 		
-		//Call
-		FillJsonValue<FAutomatedCallConfig>(CommandArray);
+		FillJsonValue<static_cast<uint8>(ECommandProtocol::CMD_Max) - 1>(CommandArray);
 
-		//Call Custom Content
-		FillJsonValue<FAutomatedCallCustomContentConfig>(CommandArray);
+		////Call
+		//FillJsonValue<FAutomatedCallConfig>(CommandArray);
 
-		//UE Project Refresh
-		FillJsonValue<FAutomatedUEProjectRefreshConfig>(CommandArray);
+		////Call Custom Content
+		//FillJsonValue<FAutomatedCallCustomContentConfig>(CommandArray);
 
-		//Command Nesting
-		FillJsonValue<FAutomatedCommandNestingConfig>(CommandArray);
+		////UE Project Refresh
+		//FillJsonValue<FAutomatedUEProjectRefreshConfig>(CommandArray);
 
-		//Deployment Copy
-		FillJsonValue<FAutomatedDeploymentCopyConfig>(CommandArray);
+		////Command Nesting
+		//FillJsonValue<FAutomatedCommandNestingConfig>(CommandArray);
+
+		////Deployment Copy
+		//FillJsonValue<FAutomatedDeploymentCopyConfig>(CommandArray);
 
 		//将Writer绑定字符串流，再将JsonValue的数组写入流中
 		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutString);

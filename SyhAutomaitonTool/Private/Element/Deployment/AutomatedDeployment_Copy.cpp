@@ -1,6 +1,7 @@
 #include "Element/Deployment/AutomatedDeployment_Copy.h"
 #include "SyhAutomationToolLog.h"
 #include "Containers\Map.h"
+#include "GenericPlatform\GenericPlatformFile.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -17,8 +18,10 @@ struct FMoveToFileCopyProgress : public FCopyProgress
 	virtual bool Poll(float Fraction) override
 	{
 		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("[%.f%%][%s]->[%s]."), Fraction * 100.f, *Src, *Dest);
+		return true;
 	}
 
+	virtual ~FMoveToFileCopyProgress(){}
 };
 
 void FAutomatedCode_Deployment_Copy::Init()
@@ -35,18 +38,39 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
-	if (!FParse::Bool(FCommandLine::Get(), TEXT("-Folder"), SelfConfig->bFolder))
+	if (!FParse::Bool(FCommandLine::Get(), TEXT("-DeleteMovedFiles="), SelfConfig->bDeleteMovedFiles))
 	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-Folder was not found the value."));
-		return false;
-	}
-	if (!FParse::Bool(FCommandLine::Get(), TEXT("-DeleteMovedFiles"), SelfConfig->bDeleteMovedFiles))
-	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-DeleteMovedFiles was not found the value."));
+		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-DeleteMovedFiles= was not found the value."));
 		return false;
 	}
 
-	return true;
+	TArray<FString> Source;
+	TArray<FString> Destination;
+
+	if (!ParseArrayStrings(TEXT("-Source="), Source) || !ParseArrayStrings(TEXT("-Destination="), Destination))
+	{
+		return false;
+	}
+	else
+	{
+		if (Source.Num() == Destination.Num())
+		{
+			for (int32 i = 0; i < Source.Num(); i++)
+			{
+				FPaths::NormalizeFilename(Source[i]);
+				FPaths::RemoveDuplicateSlashes(Source[i]);
+				FPaths::NormalizeFilename(Destination[i]);
+				FPaths::RemoveDuplicateSlashes(Destination[i]);
+				SelfConfig->Files.Add(Source[i], Destination[i]);
+			}
+			return true;
+		}
+		else
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("The number of source path and destination path is not equal."));
+			return false;
+		}
+	}
 }
 
 bool FAutomatedCode_Deployment_Copy::Execute()
@@ -59,116 +83,149 @@ bool FAutomatedCode_Deployment_Copy::Execute()
 		return false;
 	}
 
-	for (auto& Temp : SelfConfig->Files)
+	TMap<FString, FString> Content;
+
+	//检查路径，并添加所有文件的具体路径
+	for (auto& TempPath : SelfConfig->Files)
 	{
-		FString Source = Temp.Key;
-		FString Destination = Temp.Value;
-
-		//是否存在命令替换
-		HandleTimePath(Source);
-		HandleTimePath(Destination);
-
-		TMap<FString, FString> Content;
+		FString SourcePath = TempPath.Key;
+		FString DestinationPath = TempPath.Value;
 		
-		if (SelfConfig->bFolder)
+		//是否存在命令替换
+		HandleTimePath(SourcePath);
+		HandleTimePath(DestinationPath);
+		FFileStatData SourceFileStatData = IFileManager::Get().GetStatData(*SourcePath);
+		FFileStatData DestinationFileStatData = IFileManager::Get().GetStatData(*DestinationPath);
+
+		//原文件需要存在
+		//目录路径如果存在，则删除
+		if (!SourceFileStatData.bIsValid)
 		{
-			if (!IFileManager::Get().DirectoryExists(*Source))
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("No exist the source folder : %s."), *SourcePath);
+			return false;
+		}
+
+		if (SourceFileStatData.bIsDirectory)
+		{
+			//1.txt文件夹和1.txt文件属于重名
+			if (!DeletePath(DestinationFileStatData, DestinationPath))
 			{
-				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("No exist the source folder : %s."), *Source);
+				//无法删除路径
 				return false;
 			}
 
-			if (IFileManager::Get().DirectoryExists(*Destination))
-			{
-				if (IFileManager::Get().DeleteDirectory(*Destination))
-				{
-					UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Exist the destination folder : %s. Deleted the folder."), *Destination);
-				}
-				else
-				{
-					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Exist the destination folder : %s. Failure to deleted the folder."), *Destination);
-					return false;
-				}
-			}
-
 			TArray<FString> FoundFiles;
-			IFileManager::Get().FindFilesRecursive(FoundFiles, *Source, TEXT("*"), true, false);
+			IFileManager::Get().FindFilesRecursive(FoundFiles, *SourcePath, TEXT("*"), true, false);
 
 			for (auto& SubTemp : FoundFiles)
 			{
 				FString LocalFile = SubTemp;
-				SubTemp.RemoveFromStart(Source);
-				Content.Add(LocalFile, Destination + SubTemp);
+				SubTemp.RemoveFromStart(SourcePath);
+				Content.Add(LocalFile, DestinationPath + SubTemp);
 			}
-
 		}
 		else
 		{
-			if (!IFileManager::Get().FileExists(*Source))
+			if (!DeletePath(DestinationFileStatData, DestinationPath))
 			{
-				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("No exist the source file : %s."), *Source);
+				//无法删除路径
 				return false;
 			}
+			Content.Add(SourcePath, DestinationPath);
+		}
+	}
 
-			if (IFileManager::Get().FileExists(*Destination))
+
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------Start Deployment----------"));
+
+
+	for (auto& SubTemp : Content)
+	{
+		FMoveToFileCopyProgress Progress;
+		Progress.Src = SubTemp.Key;
+		Progress.Dest = SubTemp.Value;
+			
+		uint32 Return = IFileManager::Get().Copy(*SubTemp.Value, *SubTemp.Key, true, false, false, &Progress);
+		
+		if (Return == COPY_OK)
+		{
+			UE_LOG(SyhAutomaitonToolLog, Log, TEXT("[%s]->[%s]"), *SubTemp.Key, *SubTemp.Value);
+			if (SelfConfig->bDeleteMovedFiles)
 			{
-				if (IFileManager::Get().Delete(*Destination))
+				if (IFileManager::Get().Delete(*SubTemp.Key))
 				{
-					UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Exist the destination file : %s. Deleted the file."), *Destination);
+					UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Delete [%s]"),  *SubTemp.Key);
 				}
 				else
 				{
-					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Exist the destination file : %s. Failure to deleted the file."), *Destination);
-					return false;
-				}		
-			}
-			Content.Add(Source, Destination);
-		}
-
-
-
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------Start Deployment----------"));
-
-
-		for (auto& SubTemp : Content)
-		{
-			FMoveToFileCopyProgress Progress;
-			Progress.Src = SubTemp.Key;
-			Progress.Dest = SubTemp.Value;
-			
-			uint32 Return = IFileManager::Get().Copy(*SubTemp.Value, *SubTemp.Key, true, false, false, &Progress);
-		
-			if (Return == COPY_OK)
-			{
-				UE_LOG(SyhAutomaitonToolLog, Log, TEXT("[%s]->[%s]"), *SubTemp.Key, *SubTemp.Value);
-				if (SelfConfig->bDeleteMovedFiles)
-				{
-					if (IFileManager::Get().Delete(*SubTemp.Key))
-					{
-						UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Delete [%s]"),  *SubTemp.Key);
-					}
-					else
-					{
-						UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to delete [%s]"), *SubTemp.Key);
-					}
+					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to delete [%s]"), *SubTemp.Key);
 				}
 			}
-			else if (Return == COPY_Fail)
-			{
-				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to copy [%s] "), *SubTemp.Key);
-			}
-		
-		
 		}
-
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------Start Deployment----------"));
-
+		else if (Return == COPY_Fail)
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to copy [%s] "), *SubTemp.Key);
+		}
+		else if (Return == COPY_Canceled)
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Copying [%s] to [%s] is canceled."), *SubTemp.Key, *SubTemp.Value);
+		}
+		else
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Unknown error"));
+		}
+		
+		
 	}
 
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------End Deployment----------"));
+	return true;
 }
+
 
 bool FAutomatedCode_Deployment_Copy::Exit()
 {
+	return true;
+}
+
+bool FAutomatedCode_Deployment_Copy::DeletePath(const FFileStatData& InFileStatData, const FString& InPath)
+{
+	if (InFileStatData.bIsValid)
+	{
+		if (InFileStatData.bIsDirectory)
+		{
+			if (IFileManager::Get().DeleteDirectory(*InPath))
+			{
+				//存在，删除成功
+				UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Exist the destination directory : %s. Deleted the folder."), *InPath);
+				return true;
+			}
+			else
+			{
+				//存在，删除不成功
+				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Exist the destination directory : %s. Failure to deleted the folder."), *InPath);
+				return false;
+			}
+		}
+		else
+		{
+
+			if (IFileManager::Get().Delete(*InPath))
+			{
+				//存在，删除成功
+				UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Exist the destination file : %s. Deleted the file."), *InPath);
+				return true;
+			}
+			else
+			{
+				//存在，删除不成功
+				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Exist the destination file : %s. Failure to deleted the file."), *InPath);
+				return false;
+			}
+
+		}
+	}
+	//不存在，无需删除
 	return true;
 }
 

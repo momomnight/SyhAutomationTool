@@ -55,8 +55,8 @@ public:
 	virtual uint32 GetType() const = 0;
 
 public:
-	void HandleTimePath(class FString& InPath);
-
+	void HandleTimePath(FString& InPath);
+	bool ParseArrayStrings(const FString& InKey, TArray<FString>& InArray);
 protected:
 	//Config，如此命名为的是在代码提示中隐藏
 	TSharedPtr<FAutomatedConfigBase> Z_C_o_n_f_i_g;
