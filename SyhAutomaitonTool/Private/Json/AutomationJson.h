@@ -81,20 +81,31 @@ namespace AutomationJson
 		]*/
 		TArray<TSharedPtr<FJsonValue>> JsonArray;
 
+		for (auto& Temp : InConfig.Files)
 		{
-
-			TSharedPtr<FJsonObject> TempJsonObjectA = MakeShareable<FJsonObject>(new FJsonObject);
-			TempJsonObjectA->SetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::SourceKey, FString("SourceA"));
-			TempJsonObjectA->SetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::DestinationKey, FString("DestinationA"));
-			JsonArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(TempJsonObjectA)));
-
-			TSharedPtr<FJsonObject> TempJsonObjectB = MakeShareable(new FJsonObject);
-			TempJsonObjectB->SetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::SourceKey, FString("SourceB"));
-			TempJsonObjectB->SetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::DestinationKey, FString("DestinationB"));
-			JsonArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(TempJsonObjectB)));
+			TSharedPtr<FJsonObject> TempJsonObject = MakeShareable<FJsonObject>(new FJsonObject);
+			TempJsonObject->SetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::SourceKey, Temp.Key);
+			TempJsonObject->SetStringField(RelatedString<FAutomatedDeploymentCopyConfig>::DestinationKey, Temp.Value);
+			JsonArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(TempJsonObject)));
 		}
 
 		OutJsonObject->SetArrayField(RelatedString<FAutomatedDeploymentCopyConfig>::FilesKey, JsonArray);
+	}
+
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedDeploymentDeleteConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedDeploymentDeleteConfig& InConfig)
+	{
+		/*"Files": [
+				"xx",
+				"yy",
+		]*/
+		TArray<TSharedPtr<FJsonValue>> JsonArray;
+
+		for (auto& Temp : InConfig.Files)
+		{
+			JsonArray.Add(MakeShareable<FJsonValueString>(new FJsonValueString(Temp)));
+		}
+		OutJsonObject->SetArrayField(RelatedString<FAutomatedDeploymentDeleteConfig>::FilesKey, JsonArray);
 	}
 
 	//用于配置命令字段
@@ -103,11 +114,44 @@ namespace AutomationJson
 	template<class AutomatedConfigType>
 	TSharedPtr<FJsonObject> AutomatedConfigToJsonObject(const AutomatedConfigType& InConfig)
 	{
-		TSharedPtr<FJsonObject> RootObject = MakeShareable<FJsonObject>(new FJsonObject);
-		ConfigureCommandProtocol(RootObject, FCommandProtocol_ConfigType<AutomatedConfigType>::Value);
-		AutomatedConfigToJsonObject<AutomatedConfigType>(RootObject, InConfig, Transfer{});
-		return RootObject;
+		if constexpr (FCommandProtocol_ConfigType<AutomatedConfigType>::Value != ECommandProtocol::CMD_None)
+		{
+			TSharedPtr<FJsonObject> RootObject = MakeShareable<FJsonObject>(new FJsonObject);
+			ConfigureCommandProtocol(RootObject, FCommandProtocol_ConfigType<AutomatedConfigType>::Value);
+			AutomatedConfigToJsonObject<AutomatedConfigType>(RootObject, InConfig, Transfer{});
+			return RootObject;
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
+
+	//将Config转换为JsonObject填充JsonValueObject
+	template <class AutomatedConfigType>
+	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
+	{
+		static_assert(std::is_base_of<FAutomatedConfigBase, AutomatedConfigType>::value, "AutomatedConfigType is not base of FAutomatedConfigBase.");
+		AutomatedConfigType Config;//可以转换为模板，但不确定是否需要其他操作
+		if (TSharedPtr<FJsonObject> JsonObject = AutomatedConfigToJsonObject<AutomatedConfigType>(Config))
+		{
+			InCommandArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(JsonObject)));
+		}
+	}
+
+	template <uint8 N>
+	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
+	{
+		FillJsonValue<N - 1>(InCommandArray);
+		FillJsonValue<typename FCommandProtocol_EnumType<static_cast<ECommandProtocol>(N - 1)>::ConfigType>(InCommandArray);
+	}
+
+	template <>
+	void FillJsonValue<0>(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
+	{
+	}
+
+
 
 	/// <summary>
 	/// 增加模块时，只需特化JsonObjectToAutomatedConfig
@@ -153,7 +197,7 @@ namespace AutomationJson
 	void JsonObjectToAutomatedConfig<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCommandNestingConfig& OutConfig)
 	{
 		const TArray<TSharedPtr<FJsonValue>>& InArrayObject = InJsonObject->GetArrayField(RelatedString<FAutomatedCommandNestingConfig>::CommandListKey);
-	
+		OutConfig.CommandList.Empty();
 		for (auto& Temp : InArrayObject)
 		{
 			OutConfig.CommandList.Add(Temp->AsString());
@@ -164,7 +208,7 @@ namespace AutomationJson
 	void JsonObjectToAutomatedConfig<FAutomatedDeploymentCopyConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedDeploymentCopyConfig& OutConfig)
 	{
 		OutConfig.bDeleteMovedFiles = InJsonObject->GetBoolField(RelatedString<FAutomatedDeploymentCopyConfig>::DeleteMovedFiles_BooleanKey);
-	
+		OutConfig.Files.Empty();
 		const TArray<TSharedPtr<FJsonValue>>& ObjectArray = InJsonObject->GetArrayField(RelatedString<FAutomatedDeploymentCopyConfig>::FilesKey);
 		for (auto& Temp : ObjectArray)
 		{
@@ -182,6 +226,20 @@ namespace AutomationJson
 	
 	}
 
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedDeploymentDeleteConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedDeploymentDeleteConfig& OutConfig)
+	{
+		const TArray<TSharedPtr<FJsonValue>>& ObjectArray = InJsonObject->GetArrayField(RelatedString<FAutomatedDeploymentDeleteConfig>::FilesKey);
+		OutConfig.Files.Empty();
+		for (auto& Temp : ObjectArray)
+		{
+			FString Str = Temp->AsString();
+			FPaths::NormalizeFilename(Str);
+			FPaths::RemoveDuplicateSlashes(Str);
+			OutConfig.Files.Add(Str);
+		}
+	}
+
 	template <class AutomatedConfigType>
 	bool JsonStringToAutomatedConfig(const FString& InString, AutomatedConfigType& OutConfig)
 	{
@@ -193,31 +251,6 @@ namespace AutomationJson
 		}
 
 		return false;
-	}
-
-
-	//将Config转换为JsonObject填充JsonValueObject
-	template <class AutomatedConfigType>
-	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
-	{
-		static_assert(std::is_base_of<FAutomatedConfigBase, AutomatedConfigType>::value, "AutomatedConfigType is not base of FAutomatedConfigBase.");
-		AutomatedConfigType Config;//可以转换为模板，但不确定是否需要其他操作
-		if (TSharedPtr<FJsonObject> JsonObject = AutomatedConfigToJsonObject<AutomatedConfigType>(Config))
-		{
-			InCommandArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(JsonObject)));
-		}
-	}
-
-	template <uint8 N>
-	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
-	{
-		FillJsonValue<N - 1>(InCommandArray);
-		FillJsonValue<typename FCommandProtocol_EnumType<static_cast<ECommandProtocol>(N - 1)>::ConfigType>(InCommandArray);
-	}
-
-	template <>
-	void FillJsonValue<0>(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
-	{
 	}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

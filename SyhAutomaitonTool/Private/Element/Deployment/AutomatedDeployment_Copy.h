@@ -28,7 +28,4 @@ public:
 
 	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_Deployment_Copy; }
 
-private:
-
-	bool DeletePath(const struct FFileStatData& InFileStatData, const FString& InPath);
 };

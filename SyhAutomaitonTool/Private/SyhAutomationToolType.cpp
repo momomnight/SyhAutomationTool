@@ -62,7 +62,8 @@ const FString FAutomatedUEProjectRefreshRelated::ProjectUProjectPathKey = TEXT("
 
 const FString FAutomatedCommandNestingRelated::CommandListKey = TEXT("CommandList");
 
-const FString  FAutomatedDeploymentCopyRelated::DeleteMovedFiles_BooleanKey = TEXT("bDeleteMovedFiles");
-const FString  FAutomatedDeploymentCopyRelated::FilesKey = TEXT("Files");
+const FString  FAutomatedDeploymentRelated::FilesKey = TEXT("Files");
+
 const FString  FAutomatedDeploymentCopyRelated::SourceKey = TEXT("Source");
+const FString  FAutomatedDeploymentCopyRelated::DeleteMovedFiles_BooleanKey = TEXT("bDeleteMovedFiles");
 const FString  FAutomatedDeploymentCopyRelated::DestinationKey = TEXT("Destination");

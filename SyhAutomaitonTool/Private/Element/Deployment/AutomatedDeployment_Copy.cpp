@@ -67,7 +67,7 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 		}
 		else
 		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("The number of source path and destination path is not equal."));
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("The number of the source path is not equal to the number of the destination path."));
 			return false;
 		}
 	}
@@ -188,46 +188,6 @@ bool FAutomatedCode_Deployment_Copy::Exit()
 	return true;
 }
 
-bool FAutomatedCode_Deployment_Copy::DeletePath(const FFileStatData& InFileStatData, const FString& InPath)
-{
-	if (InFileStatData.bIsValid)
-	{
-		if (InFileStatData.bIsDirectory)
-		{
-			if (IFileManager::Get().DeleteDirectory(*InPath))
-			{
-				//存在，删除成功
-				UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Exist the destination directory : %s. Deleted the folder."), *InPath);
-				return true;
-			}
-			else
-			{
-				//存在，删除不成功
-				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Exist the destination directory : %s. Failure to deleted the folder."), *InPath);
-				return false;
-			}
-		}
-		else
-		{
-
-			if (IFileManager::Get().Delete(*InPath))
-			{
-				//存在，删除成功
-				UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Exist the destination file : %s. Deleted the file."), *InPath);
-				return true;
-			}
-			else
-			{
-				//存在，删除不成功
-				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Exist the destination file : %s. Failure to deleted the file."), *InPath);
-				return false;
-			}
-
-		}
-	}
-	//不存在，无需删除
-	return true;
-}
 
 
 

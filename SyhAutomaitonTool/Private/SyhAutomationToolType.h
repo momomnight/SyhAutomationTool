@@ -49,13 +49,21 @@ struct FAutomatedCommandNestingRelated
 	static const FString CommandListKey;
 };
 
-struct FAutomatedDeploymentCopyRelated
+struct FAutomatedDeploymentRelated
+{
+	static const FString  FilesKey;
+};
+
+struct FAutomatedDeploymentCopyRelated : public FAutomatedDeploymentRelated
 {
 	static const FString  DeleteMovedFiles_BooleanKey;
-	static const FString  FilesKey;
 	static const FString  SourceKey;
 	static const FString  DestinationKey;
 };
+struct FAutomatedDeploymentDeleteRelated : public FAutomatedDeploymentRelated
+{
+};
+
 
 
 
@@ -152,7 +160,11 @@ struct FAutomatedCommandNestingConfig : public FAutomatedConfigBase
 	typedef FAutomatedConfigBase Super;
 	typedef FAutomatedCommandNestingRelated RelatedString;
 
-	FAutomatedCommandNestingConfig() {}
+	FAutomatedCommandNestingConfig() 
+	{
+		CommandList.Add(TEXT("CommandFile1.json"));
+		CommandList.Add(TEXT("CommandFile2"));
+	}
 
 	UPROPERTY()
 	TArray<FString> CommandList;
@@ -166,13 +178,35 @@ struct FAutomatedDeploymentCopyConfig : public FAutomatedConfigBase
 	typedef FAutomatedConfigBase Super;
 	typedef FAutomatedDeploymentCopyRelated RelatedString;
 
-	FAutomatedDeploymentCopyConfig() : bDeleteMovedFiles(true){}
+	FAutomatedDeploymentCopyConfig() : bDeleteMovedFiles(true)
+	{
+		Files.Add(TEXT("SourcePath_1"), TEXT("DestinationPath_1"));
+		Files.Add(TEXT("SourcePath_2"), TEXT("DestinationPath_2"));
+	}
 
 	UPROPERTY()
 	bool bDeleteMovedFiles;			//是否删除Source文件
 
 	UPROPERTY()
 	TMap<FString, FString> Files;	//<dest, src>
+};
+
+USTRUCT(BlueprintType)
+struct FAutomatedDeploymentDeleteConfig : public FAutomatedConfigBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	typedef FAutomatedConfigBase Super;
+	typedef FAutomatedDeploymentDeleteRelated RelatedString;
+
+	FAutomatedDeploymentDeleteConfig()
+	{
+		Files.Add(TEXT("Path_1"));
+		Files.Add(TEXT("Path_2"));
+	}
+
+	UPROPERTY()
+	TArray<FString> Files;	//<src>
 };
 
 /// <summary>
@@ -253,5 +287,16 @@ struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Deployment_Copy>
 	using ConfigType = FAutomatedDeploymentCopyConfig;
 };
 
+template <>
+struct FCommandProtocol_ConfigType<FAutomatedDeploymentDeleteConfig>
+{
+	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Deployment_Delete;
+};
+
+template <>
+struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Deployment_Delete>
+{
+	using ConfigType = FAutomatedDeploymentDeleteConfig;
+};
 
 

@@ -71,7 +71,7 @@ namespace AutomationJson
 
 		//将所有操作转换为Json对象，并合并在JsonValue的数组中
 		
-		FillJsonValue<static_cast<uint8>(ECommandProtocol::CMD_Max) - 1>(CommandArray);
+		FillJsonValue<static_cast<uint8>(ECommandProtocol::CMD_Max)>(CommandArray);
 
 		////Call
 		//FillJsonValue<FAutomatedCallConfig>(CommandArray);

@@ -38,3 +38,45 @@ bool FAutoExecElements::ParseArrayStrings(const FString& InKey, TArray<FString>&
 	}
 
 }
+
+bool FAutoExecElements::DeletePath(const FFileStatData& InFileStatData, const FString& InPath)
+{
+	if (InFileStatData.bIsValid)
+	{
+		if (InFileStatData.bIsDirectory)
+		{
+			if (IFileManager::Get().DeleteDirectory(*InPath, false, true))
+			{
+				//存在，删除成功
+				UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Exist the destination directory : %s. Deleted the folder."), *InPath);
+				return true;
+			}
+			else
+			{
+				//存在，删除不成功
+				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Exist the destination directory : %s. Failure to deleted the folder."), *InPath);
+				return false;
+			}
+		}
+		else
+		{
+
+			if (IFileManager::Get().Delete(*InPath))
+			{
+				//存在，删除成功
+				UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Exist the destination file : %s. Deleted the file."), *InPath);
+				return true;
+			}
+			else
+			{
+				//存在，删除不成功
+				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Exist the destination file : %s. Failure to deleted the file."), *InPath);
+				return false;
+			}
+
+		}
+	}
+	//不存在，无需删除
+	UE_LOG(SyhAutomaitonToolLog, Log, TEXT("[%s] does not exist. Not need to delete."), *InPath);
+	return true;
+}
