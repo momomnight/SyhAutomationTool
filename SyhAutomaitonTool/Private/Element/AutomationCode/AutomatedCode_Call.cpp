@@ -74,6 +74,10 @@ bool FAutomatedCode_Call::Execute()
 		}
 		(ReturnValue == 1) ? ReturnValue = 0 : 1;
 	}
+	else if (SelfConfig->CallType.Equals(TEXT("sh")))
+	{
+
+	}
 
 	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------End Call----------"));
 

@@ -12,7 +12,9 @@ namespace AutomatedExecutionPath
 
 	FString GetVisualStudioLogPath()
 	{
-		return FString();
+		return FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() / TEXT("Saved/Logs")
+			/ FGuid::NewGuid().ToString().RightChop(24) + TEXT(".txt")
+		);
 	}
 
 	FString GetShPath()

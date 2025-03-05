@@ -60,8 +60,16 @@ struct FAutomatedDeploymentCopyRelated : public FAutomatedDeploymentRelated
 	static const FString  SourceKey;
 	static const FString  DestinationKey;
 };
+
 struct FAutomatedDeploymentDeleteRelated : public FAutomatedDeploymentRelated
 {
+};
+
+struct FAutomatedVSCompileRelated : public FAutomatedCallRelated
+{
+	static const FString  BuildKey;
+	static const FString  SlnProjectPathKey;
+	static const FString  ProjectKey;
 };
 
 
@@ -78,6 +86,7 @@ enum class ECommandProtocol : uint8
 	CMD_Command_Nesting			UMETA(DisplayName = "Command Nesting"),
 	CMD_Deployment_Copy			UMETA(DisplayName = "Deployment Copy"),
 	CMD_Deployment_Delete		UMETA(DisplayName = "Deployment Delete"),
+	CMD_VS_Compile				UMETA(DisplayName = "VS Compile"),
 
 	CMD_Max						UMETA(DisplayName = "Max"),
 };
@@ -98,7 +107,12 @@ struct FAutomatedCallConfig : public FAutomatedConfigBase
 	typedef FAutomatedConfigBase Super;
 	typedef FAutomatedCallRelated RelatedString;
 
-	FAutomatedCallConfig() : CallType(TEXT("bat")){}
+	FAutomatedCallConfig()
+	{
+		CallType = TEXT("bat、exe、sh");
+		Parameters = TEXT("some input program parameters");
+		CallPath = TEXT("the path of the file of bat or exe.");
+	}
 	
 	UPROPERTY()
 	FString CallType;
@@ -120,7 +134,11 @@ struct FAutomatedCallCustomContentConfig : public FAutomatedCallConfig
 	typedef FAutomatedCallConfig Super;
 	typedef FAutomatedCallCustomContentRelated RelatedString;
 
-	FAutomatedCallCustomContentConfig() : WaitTime(10) {}
+	FAutomatedCallCustomContentConfig()
+	{
+		Content = TEXT("Generate automatedly a bat file and call it. In content, input batch processing language you need.");
+		WaitTime = 10;
+	}
 
 	UPROPERTY()
 	FString Content;
@@ -142,6 +160,7 @@ struct FAutomatedUEProjectRefreshConfig : public FAutomatedCallConfig
 	{
 		UnrealBuildToolPath = RelatedString::GetUnrealBuildToolPath(FPaths::EngineDir());
 		ProjectUProjectPath = RelatedString::GetProjectUProjectPath(FPaths::ProjectDir());
+		CallType = TEXT("exe");
 	}
 
 	UPROPERTY()
@@ -150,7 +169,6 @@ struct FAutomatedUEProjectRefreshConfig : public FAutomatedCallConfig
 	UPROPERTY()
 	FString ProjectUProjectPath;
 };
-
 
 USTRUCT(BlueprintType)
 struct FAutomatedCommandNestingConfig : public FAutomatedConfigBase
@@ -207,6 +225,33 @@ struct FAutomatedDeploymentDeleteConfig : public FAutomatedConfigBase
 
 	UPROPERTY()
 	TArray<FString> Files;	//<src>
+};
+
+USTRUCT(BlueprintType)
+struct FAutomatedVSCompileConfig : public FAutomatedCallConfig
+{
+	GENERATED_USTRUCT_BODY()
+
+	typedef FAutomatedCallConfig Super;
+	typedef FAutomatedVSCompileRelated RelatedString;
+
+	FAutomatedVSCompileConfig()
+	{
+		CallType = TEXT("exe");
+		Build = TEXT("Development");
+		SlnProjectPath = TEXT(".sln file path");
+		Project = TEXT("project name");
+	}
+
+	UPROPERTY()
+	FString Build;
+
+	UPROPERTY()
+	FString SlnProjectPath;
+
+	UPROPERTY()
+	FString Project;//子项
+
 };
 
 /// <summary>
@@ -298,5 +343,18 @@ struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Deployment_Delete>
 {
 	using ConfigType = FAutomatedDeploymentDeleteConfig;
 };
+
+template <>
+struct FCommandProtocol_ConfigType<FAutomatedVSCompileConfig>
+{
+	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_VS_Compile;
+};
+
+template <>
+struct FCommandProtocol_EnumType<ECommandProtocol::CMD_VS_Compile>
+{
+	using ConfigType = FAutomatedVSCompileConfig;
+};
+
 
 

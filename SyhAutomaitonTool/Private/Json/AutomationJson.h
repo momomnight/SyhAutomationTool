@@ -108,6 +108,14 @@ namespace AutomationJson
 		OutJsonObject->SetArrayField(RelatedString<FAutomatedDeploymentDeleteConfig>::FilesKey, JsonArray);
 	}
 
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedVSCompileConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedVSCompileConfig& InConfig)
+	{
+		OutJsonObject->SetStringField(RelatedString<FAutomatedVSCompileConfig>::BuildKey, InConfig.Build);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedVSCompileConfig>::SlnProjectPathKey, InConfig.SlnProjectPath);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedVSCompileConfig>::ProjectKey, InConfig.Project);
+	}
+
 	//用于配置命令字段
 	void ConfigureCommandProtocol(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InProtocol);
 
@@ -238,6 +246,16 @@ namespace AutomationJson
 			FPaths::RemoveDuplicateSlashes(Str);
 			OutConfig.Files.Add(Str);
 		}
+	}
+
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedVSCompileConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedVSCompileConfig& OutConfig)
+	{
+		OutConfig.Build = InJsonObject->GetStringField(RelatedString<FAutomatedVSCompileConfig>::BuildKey);
+		OutConfig.SlnProjectPath = InJsonObject->GetStringField(RelatedString<FAutomatedVSCompileConfig>::SlnProjectPathKey);
+		OutConfig.Project = InJsonObject->GetStringField(RelatedString<FAutomatedVSCompileConfig>::ProjectKey);
+		FPaths::NormalizeFilename(OutConfig.SlnProjectPath);
+		FPaths::RemoveDuplicateSlashes(OutConfig.SlnProjectPath);
 	}
 
 	template <class AutomatedConfigType>

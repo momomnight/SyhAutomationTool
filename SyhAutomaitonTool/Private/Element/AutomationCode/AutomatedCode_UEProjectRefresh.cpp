@@ -47,14 +47,11 @@ bool FAutomatedCode_UEProjectRefresh::Execute()
 
 	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------Start UE Project Refresh----------"));
 
-	SelfConfig->Parameters = FString::Printf(TEXT(" -projectfiles -project=\"%s\" -game -engine -progress "), *SelfConfig->ProjectUProjectPath);
-
-	if (SelfConfig->CallType.IsEmpty() || SelfConfig->CallType.Equals(TEXT("bat")))
-	{
-		SelfConfig->CallType = TEXT("exe");
-	}
+	SelfConfig->CallType = TEXT("exe");
 
 	SelfConfig->CallPath = SelfConfig->UnrealBuildToolPath;
+
+	SelfConfig->Parameters = FString::Printf(TEXT(" -projectfiles -project=\"%s\" -game -engine -progress "), *SelfConfig->ProjectUProjectPath);
 
 	ReturnValue = Super::Execute();
 

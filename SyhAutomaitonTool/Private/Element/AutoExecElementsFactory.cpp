@@ -5,6 +5,7 @@
 #include "Element/AutomationCode/AutomatedCode_CommandNesting.h"
 #include "Element/Deployment/AutomatedDeployment_Copy.h"
 #include "Element/Deployment/AutomatedDeployment_Delete.h"
+#include "Element/VisualStudio/AutomatedCompile_VsCompile.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -38,6 +39,8 @@ TSharedPtr<FAutoExecElements> FAutoExecElementsFactory::CreateAutomatedTask(uint
 		return CreateAutomatedTask<FAutomatedCode_Deployment_Copy>(InJson);
 	case ECommandProtocol::CMD_Deployment_Delete:
 		return CreateAutomatedTask<FAutomatedCode_Deployment_Delete>(InJson);
+	case ECommandProtocol::CMD_VS_Compile:
+		return CreateAutomatedTask<FAutomatedCode_VS_Compile>(InJson);
 	case ECommandProtocol::CMD_None:
 	default:
 		return nullptr;
