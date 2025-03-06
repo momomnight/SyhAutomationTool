@@ -48,7 +48,7 @@ const TArray<FString> FCommandProtocolRelated::CommandName =
 	TEXT("Deployment_Copy"),
 	TEXT("Deployment_Delete"),
 	TEXT("VS_Compile"),
-	
+	TEXT("Git"),
 };
 
 
@@ -70,6 +70,9 @@ const FString  FAutomatedDeploymentCopyRelated::SourceKey = TEXT("Source");
 const FString  FAutomatedDeploymentCopyRelated::DeleteMovedFiles_BooleanKey = TEXT("bDeleteMovedFiles");
 const FString  FAutomatedDeploymentCopyRelated::DestinationKey = TEXT("Destination");
 
-const FString FAutomatedVSCompileRelated::BuildKey = TEXT("Build");
+const FString FAutomatedVSCompileRelated::BuildStateKey = TEXT("BuildState");
 const FString FAutomatedVSCompileRelated::SlnProjectPathKey = TEXT("SlnProjectPath");
 const FString FAutomatedVSCompileRelated::ProjectKey = TEXT("Project");
+
+const FString  FAutomatedGitRelated::ProjectPathKey = TEXT("ProjectPath");
+const FString  FAutomatedGitRelated::GitCommandsKey = TEXT("GitCommands");

@@ -1,5 +1,13 @@
 #include "Element/VisualStudio/AutomatedCompile_VsCompile.h"
 
+
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", off)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+
 FAutomatedCode_VS_Compile::~FAutomatedCode_VS_Compile()
 {
 }
@@ -29,7 +37,7 @@ bool FAutomatedCode_VS_Compile::BuildParameter()
 		return false;
 	}
 
-	if (!FParse::Value(FCommandLine::Get(), TEXT("-Build="), SelfConfig->Build))
+	if (!FParse::Value(FCommandLine::Get(), TEXT("-Build="), SelfConfig->BuildState))
 	{
 		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-Build= was not found the value."));
 		return false;
@@ -52,7 +60,7 @@ bool FAutomatedCode_VS_Compile::Execute()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	check(!SelfConfig->CallPath.IsEmpty());
-	check(!SelfConfig->Build.IsEmpty());
+	check(!SelfConfig->BuildState.IsEmpty());
 	check(!SelfConfig->SlnProjectPath.IsEmpty());
 
 	SelfConfig->CallType = TEXT("exe");
@@ -62,7 +70,7 @@ bool FAutomatedCode_VS_Compile::Execute()
 
 	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------Start Compilation----------"));
 
-	FString VSParameter = FString::Printf(TEXT(" %s /Rebuild %s /Out %s"), *SelfConfig->SlnProjectPath, *SelfConfig->Build, *VSLogPath);
+	FString VSParameter = FString::Printf(TEXT(" %s /Rebuild %s /Out %s"), *SelfConfig->SlnProjectPath, *SelfConfig->BuildState, *VSLogPath);
 
 	if (!SelfConfig->Project.IsEmpty())
 	{
@@ -77,3 +85,9 @@ bool FAutomatedCode_VS_Compile::Execute()
 
 	return Result;
 }
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", on)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT

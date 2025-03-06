@@ -67,12 +67,16 @@ struct FAutomatedDeploymentDeleteRelated : public FAutomatedDeploymentRelated
 
 struct FAutomatedVSCompileRelated : public FAutomatedCallRelated
 {
-	static const FString  BuildKey;
+	static const FString  BuildStateKey;
 	static const FString  SlnProjectPathKey;
 	static const FString  ProjectKey;
 };
 
-
+struct FAutomatedGitRelated : public FAutomatedCallRelated
+{
+	static const FString  ProjectPathKey;
+	static const FString  GitCommandsKey;
+};
 
 
 //命令枚举
@@ -87,6 +91,9 @@ enum class ECommandProtocol : uint8
 	CMD_Deployment_Copy			UMETA(DisplayName = "Deployment Copy"),
 	CMD_Deployment_Delete		UMETA(DisplayName = "Deployment Delete"),
 	CMD_VS_Compile				UMETA(DisplayName = "VS Compile"),
+	CMD_Git						UMETA(DisplayName = "Git"),
+
+
 
 	CMD_Max						UMETA(DisplayName = "Max"),
 };
@@ -136,6 +143,9 @@ struct FAutomatedCallCustomContentConfig : public FAutomatedCallConfig
 
 	FAutomatedCallCustomContentConfig()
 	{
+		CallType = TEXT("bat");
+		CallPath = TEXT("autofill");
+		Parameters = TEXT("autofill");
 		Content = TEXT("Generate automatedly a bat file and call it. In content, input batch processing language you need.");
 		WaitTime = 10;
 	}
@@ -158,9 +168,11 @@ struct FAutomatedUEProjectRefreshConfig : public FAutomatedCallConfig
 
 	FAutomatedUEProjectRefreshConfig() 
 	{
+		CallType = TEXT("autofill");
+		CallPath = TEXT("autofill");
+		Parameters = TEXT("autofill");
 		UnrealBuildToolPath = RelatedString::GetUnrealBuildToolPath(FPaths::EngineDir());
 		ProjectUProjectPath = RelatedString::GetProjectUProjectPath(FPaths::ProjectDir());
-		CallType = TEXT("exe");
 	}
 
 	UPROPERTY()
@@ -237,20 +249,49 @@ struct FAutomatedVSCompileConfig : public FAutomatedCallConfig
 
 	FAutomatedVSCompileConfig()
 	{
-		CallType = TEXT("exe");
-		Build = TEXT("Development");
+		CallType = TEXT("autofill");
+		CallPath = TEXT("the path of devenv.exe");
+		Parameters = TEXT("autofill");
+		BuildState = TEXT("development or others");
 		SlnProjectPath = TEXT(".sln file path");
 		Project = TEXT("project name");
 	}
 
 	UPROPERTY()
-	FString Build;
+	FString BuildState;
 
 	UPROPERTY()
 	FString SlnProjectPath;
 
 	UPROPERTY()
 	FString Project;//子项
+
+};
+
+USTRUCT(BlueprintType)
+struct FAutomatedGitConfig : public FAutomatedCallConfig
+{
+	GENERATED_USTRUCT_BODY()
+
+	typedef FAutomatedCallConfig Super;
+	typedef FAutomatedGitRelated RelatedString;
+
+	FAutomatedGitConfig()
+	{
+		CallType = TEXT("bat");
+		CallPath = TEXT("autofill");
+		Parameters = TEXT("autofill");
+		ProjectPath = TEXT("");
+		GitCommands.Add(TEXT("command 1"));
+		GitCommands.Add(TEXT("command 2"));
+	}
+
+	UPROPERTY()
+	FString ProjectPath;
+
+	UPROPERTY()
+	TArray<FString> GitCommands;
+
 
 };
 
@@ -354,6 +395,18 @@ template <>
 struct FCommandProtocol_EnumType<ECommandProtocol::CMD_VS_Compile>
 {
 	using ConfigType = FAutomatedVSCompileConfig;
+};
+
+template <>
+struct FCommandProtocol_ConfigType<FAutomatedGitConfig>
+{
+	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Git;
+};
+
+template <>
+struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Git>
+{
+	using ConfigType = FAutomatedGitConfig;
 };
 
 

@@ -111,9 +111,24 @@ namespace AutomationJson
 	template<>
 	void AutomatedConfigToJsonObject<FAutomatedVSCompileConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedVSCompileConfig& InConfig)
 	{
-		OutJsonObject->SetStringField(RelatedString<FAutomatedVSCompileConfig>::BuildKey, InConfig.Build);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedVSCompileConfig>::BuildStateKey, InConfig.BuildState);
 		OutJsonObject->SetStringField(RelatedString<FAutomatedVSCompileConfig>::SlnProjectPathKey, InConfig.SlnProjectPath);
 		OutJsonObject->SetStringField(RelatedString<FAutomatedVSCompileConfig>::ProjectKey, InConfig.Project);
+	}
+
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedGitConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedGitConfig& InConfig)
+	{
+		
+		OutJsonObject->SetStringField(RelatedString<FAutomatedGitConfig>::ProjectPathKey, InConfig.ProjectPath);
+
+		TArray<TSharedPtr<FJsonValue>> Array;
+		for (auto& Temp : InConfig.GitCommands)
+		{
+			Array.Add(MakeShareable<FJsonValueString>(new FJsonValueString(Temp)));
+		}
+
+		OutJsonObject->SetArrayField(RelatedString<FAutomatedGitConfig>::GitCommandsKey, Array);
 	}
 
 	//用于配置命令字段
@@ -251,11 +266,26 @@ namespace AutomationJson
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedVSCompileConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedVSCompileConfig& OutConfig)
 	{
-		OutConfig.Build = InJsonObject->GetStringField(RelatedString<FAutomatedVSCompileConfig>::BuildKey);
+		OutConfig.BuildState = InJsonObject->GetStringField(RelatedString<FAutomatedVSCompileConfig>::BuildStateKey);
 		OutConfig.SlnProjectPath = InJsonObject->GetStringField(RelatedString<FAutomatedVSCompileConfig>::SlnProjectPathKey);
 		OutConfig.Project = InJsonObject->GetStringField(RelatedString<FAutomatedVSCompileConfig>::ProjectKey);
 		FPaths::NormalizeFilename(OutConfig.SlnProjectPath);
 		FPaths::RemoveDuplicateSlashes(OutConfig.SlnProjectPath);
+	}
+
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedGitConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedGitConfig& OutConfig)
+	{
+		OutConfig.ProjectPath = InJsonObject->GetStringField(RelatedString<FAutomatedGitConfig>::ProjectPathKey);
+		FPaths::NormalizeFilename(OutConfig.ProjectPath);
+		FPaths::RemoveDuplicateSlashes(OutConfig.ProjectPath);
+		const TArray<TSharedPtr<FJsonValue>>& Array = InJsonObject->GetArrayField(RelatedString<FAutomatedGitConfig>::GitCommandsKey);
+		OutConfig.GitCommands.Empty();
+		for (auto& Temp : Array)
+		{
+			OutConfig.GitCommands.Add(Temp->AsString());
+		}
+
 	}
 
 	template <class AutomatedConfigType>

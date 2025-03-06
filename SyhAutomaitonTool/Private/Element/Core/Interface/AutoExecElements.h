@@ -13,7 +13,7 @@
 class FAutoExecElements : public TSharedFromThis<FAutoExecElements>
 {
 public:
-	using Super = FAutoExecElements;
+	//using Super = FAutoExecElements;
 	using Self = FAutoExecElements;
 	using OwnConfig = FAutomatedConfigBase;
 
@@ -50,9 +50,9 @@ public:
 
 	virtual bool Execute() = 0;
 
-	virtual bool Exit() = 0;
+	virtual bool Exit(){return true;}
 
-	virtual uint32 GetType() const = 0;
+	virtual uint32 GetType() const { return (uint32)ECommandProtocol::CMD_None; };
 
 public:
 	void HandleTimePath(FString& InPath);

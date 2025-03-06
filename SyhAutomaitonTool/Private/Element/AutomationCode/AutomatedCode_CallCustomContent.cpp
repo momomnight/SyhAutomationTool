@@ -47,7 +47,7 @@ bool FAutomatedCode_CallCustomContent::Execute()
 		CallContent.Add(FString::Printf(TEXT("timeout /t %i /nobreak > NUL"), SelfConfig->WaitTime));
 		CallContent.Add(TEXT("exit 0"));
 
-		if (FFileHelper::SaveStringArrayToFile(CallContent, *CallPath, FFileHelper::EEncodingOptions::ForceUTF8))
+		if (FFileHelper::SaveStringArrayToFile(CallContent, *CallPath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM))
 		{
 			SelfConfig->CallPath = CallPath;
 		}

@@ -19,12 +19,17 @@ namespace AutomatedExecutionPath
 
 	FString GetShPath()
 	{
-		return FString();
+		return FPaths::ConvertRelativePathToFull
+		(
+			FPaths::ProjectDir() / TEXT("Automated") /
+			FGuid::NewGuid().ToString().RightChop(24) + TEXT(".sh")
+		);
 	}
 
 	FString GetBatPath()
 	{
-		return FPaths::ConvertRelativePathToFull(
+		return FPaths::ConvertRelativePathToFull
+		(
 			FPaths::ProjectDir() / TEXT("Automated") /
 			FGuid::NewGuid().ToString().RightChop(24) + TEXT(".bat")
 		);
