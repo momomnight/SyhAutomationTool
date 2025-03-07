@@ -55,6 +55,11 @@ bool FAutomatedCode_Call::Execute()
 	check(!SelfConfig->CallPath.IsEmpty());
 	check(!SelfConfig->CallType.IsEmpty());
 
+	if (SelfConfig->Parameters.Equals(TEXT("autofill"), ESearchCase::IgnoreCase))
+	{
+		SelfConfig->Parameters.Empty();
+	}
+
 	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------Start Call----------"));
 
 	if (SelfConfig->CallType.Equals(TEXT("exe")))

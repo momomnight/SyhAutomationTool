@@ -64,7 +64,6 @@ bool FAutomatedCode_Git::Execute()
 	SelfConfig->CallType = TEXT("bat");
 	SelfConfig->CallPath = BatPath;
 
-
 	return Super::Execute();
 }
 
