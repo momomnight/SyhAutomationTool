@@ -58,6 +58,15 @@ bool FAutomatedCode_Git::Execute()
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	if (SelfConfig->GitCommands.Num() > 0 && !SelfConfig->ProjectPath.IsEmpty())
 	{
+		//对于路径可以在双引号内加空格
+		SelfConfig->ProjectPath = TEXT("\"") + SelfConfig->ProjectPath + TEXT("\"");
+
+		//对于git命令中的字符串空格，如git commit -m "first commit"，无能为力，转义字符都试过没用，故使用"String(xxx)"方式替代
+		for (auto& Temp : SelfConfig->GitCommands)
+		{
+			CommandArgsStringWithSpaceAdaptation(Temp);
+		}
+
 		BuildExecutableFile(SelfConfig->ProjectPath, SelfConfig->GitCommands);
 	}
 

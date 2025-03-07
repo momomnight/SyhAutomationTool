@@ -284,6 +284,7 @@ struct FAutomatedGitConfig : public FAutomatedCallConfig
 		ProjectPath = TEXT("");
 		GitCommands.Add(TEXT("command 1"));
 		GitCommands.Add(TEXT("command 2"));
+		GitCommands.Add(TEXT("please use String(xxx) to replace \"xxx xxx\""));
 	}
 
 	UPROPERTY()

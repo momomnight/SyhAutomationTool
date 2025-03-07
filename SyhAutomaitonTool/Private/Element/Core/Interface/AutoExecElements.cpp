@@ -80,3 +80,24 @@ bool FAutoExecElements::DeletePath(const FFileStatData& InFileStatData, const FS
 	UE_LOG(SyhAutomaitonToolLog, Log, TEXT("[%s] does not exist. Not need to delete."), *InPath);
 	return true;
 }
+
+void FAutoExecElements::CommandArgsStringWithSpaceAdaptation(FString& InKey)
+{
+	FString Result;
+	int32 Pos = InKey.Find(TEXT("String("), ESearchCase::CaseSensitive);
+	int32 StartPos = Pos + FCString::Strlen(TEXT("String("));
+	int32 EndPos = InKey.Find(TEXT(")"), ESearchCase::CaseSensitive, ESearchDir::FromStart, Pos);
+
+	if (Pos == INDEX_NONE || EndPos == INDEX_NONE || EndPos < StartPos)
+	{
+		//EndPos可以等于StartPos
+		return;
+	}
+
+	Result.Append(*InKey, Pos);
+	Result += TEXT("\"");
+	Result.Append(*InKey + StartPos, EndPos - StartPos);
+	Result += TEXT("\"");
+	Result.Append(*InKey + EndPos + 1);
+	InKey = MoveTempIfPossible(Result);
+}

@@ -57,8 +57,14 @@ public:
 public:
 	void HandleTimePath(FString& InPath);
 	bool ParseArrayStrings(const FString& InKey, TArray<FString>& InArray);
+
 	bool DeletePath(const struct FFileStatData& InFileStatData, const FString& InPath);
 protected:
+	//String(xxxx xxxx)-> "xxxx xxxx"
+	//对于.bat文件，使用"xxx/xxx xxx/xx"就可以读取
+	//对于.sh文件
+	void CommandArgsStringWithSpaceAdaptation(FString& InKey);
+
 	//Config，如此命名为的是在代码提示中隐藏
 	TSharedPtr<FAutomatedConfigBase> Z_C_o_n_f_i_g;
 };
