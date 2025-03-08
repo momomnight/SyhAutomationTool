@@ -81,7 +81,7 @@ bool FAutoExecElements::DeletePath(const FFileStatData& InFileStatData, const FS
 	return true;
 }
 
-void FAutoExecElements::CommandArgsStringWithSpaceAdaptation(FString& InKey)
+void FAutoExecElements::AdaptCommandArgsStringWithSpace(FString& InKey)
 {
 	FString Result;
 	int32 Pos = InKey.Find(TEXT("String("), ESearchCase::CaseSensitive);
@@ -100,4 +100,18 @@ void FAutoExecElements::CommandArgsStringWithSpaceAdaptation(FString& InKey)
 	Result += TEXT("\"");
 	Result.Append(*InKey + EndPos + 1);
 	InKey = MoveTempIfPossible(Result);
+}
+
+void FAutoExecElements::GetBatPathString(FString& InPath)
+{
+	if (InPath.StartsWith(TEXT("\"")) && InPath.EndsWith(TEXT("\"")))
+	{
+		return;
+	}
+	else
+	{
+		InPath = TEXT("\"") + InPath + TEXT("\"");
+	}
+
+
 }

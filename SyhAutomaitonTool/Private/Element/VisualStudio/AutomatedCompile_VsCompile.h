@@ -4,7 +4,7 @@
 #include "Element/AutomationCode/AutomatedCode_Call.h"
 #include "SyhAutomationToolType.h"
 
-//不支持A程序调用B程序
+//针对UE独立程序
 class FAutomatedCode_VS_Compile : public FAutomatedCode_Call
 {
 public:

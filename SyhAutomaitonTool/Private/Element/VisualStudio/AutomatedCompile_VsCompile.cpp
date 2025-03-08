@@ -25,35 +25,21 @@ bool FAutomatedCode_VS_Compile::BuildParameter(const FString& InJsonStr)
 bool FAutomatedCode_VS_Compile::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	if (!FParse::Value(FCommandLine::Get(), TEXT("-CallPath="), SelfConfig->CallPath))
+	bool Result = true;
+	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::CallPathKey, SelfConfig->CallPath);
+	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::SlnProjectPathKey, SelfConfig->SlnProjectPath);
+	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::BuildStateKey, SelfConfig->BuildState);
+	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::ProjectKey, SelfConfig->Project);
+
+	if (Result)
 	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-CallPath= was not found the value, need Devenv.exe path."));
-		return false;
+		FPaths::NormalizeFilename(SelfConfig->CallPath);
+		FPaths::RemoveDuplicateSlashes(SelfConfig->CallPath);
+		FPaths::NormalizeFilename(SelfConfig->SlnProjectPath);
+		FPaths::RemoveDuplicateSlashes(SelfConfig->SlnProjectPath);
 	}
 
-	if (!FParse::Value(FCommandLine::Get(), TEXT("-SlnProjectPath="), SelfConfig->SlnProjectPath))
-	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-SlnProjectPath= was not found the value."));
-		return false;
-	}
-
-	if (!FParse::Value(FCommandLine::Get(), TEXT("-Build="), SelfConfig->BuildState))
-	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-Build= was not found the value."));
-		return false;
-	}
-
-	if (!FParse::Value(FCommandLine::Get(), TEXT("-Project="), SelfConfig->Project))
-	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-Project= was not found the value."));
-		return false;
-	}
-	FPaths::NormalizeFilename(SelfConfig->CallPath);
-	FPaths::RemoveDuplicateSlashes(SelfConfig->CallPath);
-	FPaths::NormalizeFilename(SelfConfig->SlnProjectPath);
-	FPaths::RemoveDuplicateSlashes(SelfConfig->SlnProjectPath);
-
-	return true;
+	return Result;
 }
 
 bool FAutomatedCode_VS_Compile::Execute()

@@ -19,21 +19,19 @@ bool FAutomatedCode_UEProjectRefresh::BuildParameter(const FString& InJsonStr)
 bool FAutomatedCode_UEProjectRefresh::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	if (!FParse::Value(FCommandLine::Get(), TEXT("-UnrealBuildToolPath="), SelfConfig->UnrealBuildToolPath))
+	bool Result = true;
+	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::UnrealBuildToolPathKey, SelfConfig->UnrealBuildToolPath);
+	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::ProjectUProjectPathKey, SelfConfig->ProjectUProjectPath);
+
+	if (Result)
 	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-UnrealBuildToolPath= was not found the path of UBT."));
-		return false;
+		FPaths::NormalizeFilename(SelfConfig->UnrealBuildToolPath);
+		FPaths::RemoveDuplicateSlashes(SelfConfig->UnrealBuildToolPath);
+		FPaths::NormalizeFilename(SelfConfig->ProjectUProjectPath);
+		FPaths::RemoveDuplicateSlashes(SelfConfig->ProjectUProjectPath);
 	}
-	if (!FParse::Value(FCommandLine::Get(), TEXT("-ProjectUProjectPath="), SelfConfig->ProjectUProjectPath))
-	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-ProjectUProjectPath= was not found the path of the project."));
-		return false;
-	}
-	FPaths::NormalizeDirectoryName(SelfConfig->UnrealBuildToolPath);
-	FPaths::RemoveDuplicateSlashes(SelfConfig->UnrealBuildToolPath);
-	FPaths::NormalizeDirectoryName(SelfConfig->ProjectUProjectPath);
-	FPaths::RemoveDuplicateSlashes(SelfConfig->ProjectUProjectPath);
-	return true;
+	return Result;
+
 }
 
 bool FAutomatedCode_UEProjectRefresh::Execute()
@@ -51,7 +49,8 @@ bool FAutomatedCode_UEProjectRefresh::Execute()
 
 	SelfConfig->CallPath = SelfConfig->UnrealBuildToolPath;
 
-	SelfConfig->Parameters = FString::Printf(TEXT(" -projectfiles -project=\"%s\" -game -engine -progress "), *SelfConfig->ProjectUProjectPath);
+	GetBatPathString(SelfConfig->ProjectUProjectPath);
+	SelfConfig->Parameters = FString::Printf(TEXT(" -projectfiles -project=%s -game -engine -progress "), *SelfConfig->ProjectUProjectPath);
 
 	ReturnValue = Super::Execute();
 

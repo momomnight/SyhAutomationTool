@@ -31,6 +31,8 @@ protected:
 		return StaticCastSharedPtr<AutomatedConfigType>(Z_C_o_n_f_i_g);
 	}
 
+
+
 public:
 	//将Config存放在最底层，具体类型通过构造的模板参数传入
 	//需要自己类型的Config时，临时转换
@@ -63,7 +65,33 @@ protected:
 	//String(xxxx xxxx)-> "xxxx xxxx"
 	//对于.bat文件，使用"xxx/xxx xxx/xx"就可以读取
 	//对于.sh文件
-	void CommandArgsStringWithSpaceAdaptation(FString& InKey);
+	void AdaptCommandArgsStringWithSpace(FString& InKey);
+	void GetBatPathString(FString& InPath);
+	FString GetMatchKey(const FString& InKey){return FString(TEXT("-") + InKey + TEXT("=")); }
+
+	template<class Type>
+	bool GetValueFromCommandLine(const FString& InKey, Type& OutValue)
+	{
+		if (FString Key = GetMatchKey(InKey);
+			!FParse::Value(FCommandLine::Get(), *Key, OutValue))
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
+			return false;
+		}
+		return true;
+	}
+
+	template<>
+	bool GetValueFromCommandLine<bool>(const FString& InKey, bool& OutValue)
+	{
+		if (FString Key = GetMatchKey(InKey);
+			!FParse::Bool(FCommandLine::Get(), *Key, OutValue))
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
+			return false;
+		}
+		return true;
+	}
 
 	//Config，如此命名为的是在代码提示中隐藏
 	TSharedPtr<FAutomatedConfigBase> Z_C_o_n_f_i_g;

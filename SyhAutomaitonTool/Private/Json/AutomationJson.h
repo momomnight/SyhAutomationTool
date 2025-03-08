@@ -131,6 +131,18 @@ namespace AutomationJson
 		OutJsonObject->SetArrayField(RelatedString<FAutomatedGitConfig>::GitCommandsKey, Array);
 	}
 
+
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedUEPackagingConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedUEPackagingConfig& InConfig)
+	{
+		OutJsonObject->SetStringField(RelatedString<FAutomatedUEPackagingConfig>::EngineDirKey, InConfig.EngineDir);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedUEPackagingConfig>::UProjectPathKey, InConfig.UProjectPath);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedUEPackagingConfig>::PlatformKey, InConfig.Platform);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedUEPackagingConfig>::BuildStateKey, InConfig.BuildState);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedUEPackagingConfig>::BuildTargetKey, InConfig.BuildTarget);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedUEPackagingConfig>::ArchiveDirectoryKey, InConfig.ArchiveDirectory);
+	}
+
 	//用于配置命令字段
 	void ConfigureCommandProtocol(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InProtocol);
 
@@ -285,7 +297,23 @@ namespace AutomationJson
 		{
 			OutConfig.GitCommands.Add(Temp->AsString());
 		}
+	}
 
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedUEPackagingConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedUEPackagingConfig& OutConfig)
+	{
+		OutConfig.EngineDir = InJsonObject->GetStringField(RelatedString<FAutomatedUEPackagingConfig>::EngineDirKey);
+		OutConfig.UProjectPath = InJsonObject->GetStringField(RelatedString<FAutomatedUEPackagingConfig>::UProjectPathKey);
+		OutConfig.Platform = InJsonObject->GetStringField(RelatedString<FAutomatedUEPackagingConfig>::PlatformKey);
+		OutConfig.BuildState = InJsonObject->GetStringField(RelatedString<FAutomatedUEPackagingConfig>::BuildStateKey);
+		OutConfig.BuildTarget = InJsonObject->GetStringField(RelatedString<FAutomatedUEPackagingConfig>::BuildTargetKey);
+		OutConfig.ArchiveDirectory = InJsonObject->GetStringField(RelatedString<FAutomatedUEPackagingConfig>::ArchiveDirectoryKey);
+		FPaths::NormalizeDirectoryName(OutConfig.EngineDir);
+		FPaths::NormalizeFilename(OutConfig.UProjectPath);
+		FPaths::NormalizeDirectoryName(OutConfig.ArchiveDirectory);
+		FPaths::RemoveDuplicateSlashes(OutConfig.EngineDir);
+		FPaths::RemoveDuplicateSlashes(OutConfig.UProjectPath);
+		FPaths::RemoveDuplicateSlashes(OutConfig.ArchiveDirectory);
 	}
 
 	template <class AutomatedConfigType>

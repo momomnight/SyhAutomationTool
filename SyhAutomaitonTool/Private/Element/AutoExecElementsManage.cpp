@@ -1,5 +1,6 @@
 #include "Element/AutoExecElementsManage.h"
 #include "Core/SimpleAutomationTool.h"
+#include "SyhAutomationToolCommon.h"
 
 TSharedPtr<FAutoExecElementsManage> FAutoExecElementsManage::Instance = nullptr;
 
@@ -40,5 +41,6 @@ void FAutoExecElementsManage::HandleTask()
 
 void FAutoExecElementsManage::Init()
 {
+	PackagingSaveFileName = FDateTime::Now().ToString(TEXT("%Y-%m-%d-%H-%M"));
 	bExecute = SimpleAutomationTool::Init(TaskCommand);
 }

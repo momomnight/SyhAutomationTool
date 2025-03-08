@@ -33,14 +33,17 @@ bool FAutomatedCode_Git::BuildParameter(const FString& InJsonStr)
 bool FAutomatedCode_Git::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	if (!FParse::Value(FCommandLine::Get(), TEXT("-ProjectPath="), SelfConfig->ProjectPath))
+
+	if (GetValueFromCommandLine(OwnConfig::RelatedString::ProjectPathKey, SelfConfig->ProjectPath))
 	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-ProjectPath= was not found the value."));
+		FPaths::NormalizeFilename(SelfConfig->ProjectPath);
+		FPaths::RemoveDuplicateSlashes(SelfConfig->ProjectPath);
+	}
+	else
+	{
 		return false;
 	}
 
-	FPaths::NormalizeFilename(SelfConfig->ProjectPath);
-	FPaths::RemoveDuplicateSlashes(SelfConfig->ProjectPath);
 
 
 	if(!ParseArrayStrings(TEXT("-GitCommands="), SelfConfig->GitCommands))
@@ -59,12 +62,12 @@ bool FAutomatedCode_Git::Execute()
 	if (SelfConfig->GitCommands.Num() > 0 && !SelfConfig->ProjectPath.IsEmpty())
 	{
 		//对于路径可以在双引号内加空格
-		SelfConfig->ProjectPath = TEXT("\"") + SelfConfig->ProjectPath + TEXT("\"");
+		GetBatPathString(SelfConfig->ProjectPath);
 
 		//对于git命令中的字符串空格，如git commit -m "first commit"，无能为力，转义字符都试过没用，故使用"String(xxx)"方式替代
 		for (auto& Temp : SelfConfig->GitCommands)
 		{
-			CommandArgsStringWithSpaceAdaptation(Temp);
+			AdaptCommandArgsStringWithSpace(Temp);
 		}
 
 		BuildExecutableFile(SelfConfig->ProjectPath, SelfConfig->GitCommands);

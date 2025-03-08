@@ -79,6 +79,18 @@ struct FAutomatedGitRelated : public FAutomatedCallRelated
 };
 
 
+struct FAutomatedUEPackagingRelated : public FAutomatedCallRelated
+{
+	static const FString EngineDirKey;
+	static const FString UProjectPathKey;
+	static const FString PlatformKey;
+	static const FString BuildStateKey;
+	static const FString BuildTargetKey;
+	static const FString ArchiveDirectoryKey;
+};
+
+
+
 //命令枚举
 UENUM(BlueprintType)
 enum class ECommandProtocol : uint8
@@ -92,7 +104,7 @@ enum class ECommandProtocol : uint8
 	CMD_Deployment_Delete		UMETA(DisplayName = "Deployment Delete"),
 	CMD_VS_Compile				UMETA(DisplayName = "VS Compile"),
 	CMD_Git						UMETA(DisplayName = "Git"),
-
+	CMD_UE_Packaging			UMETA(DisplayName = "UE Packaging"),
 
 
 	CMD_Max						UMETA(DisplayName = "Max"),
@@ -284,7 +296,7 @@ struct FAutomatedGitConfig : public FAutomatedCallConfig
 		ProjectPath = TEXT("");
 		GitCommands.Add(TEXT("command 1"));
 		GitCommands.Add(TEXT("command 2"));
-		GitCommands.Add(TEXT("please use String(xxx) to replace \"xxx xxx\""));
+		GitCommands.Add(TEXT("please use String(xxx) to replace \"xxx xxx\", when use the method of command argument"));
 	}
 
 	UPROPERTY()
@@ -295,6 +307,47 @@ struct FAutomatedGitConfig : public FAutomatedCallConfig
 
 
 };
+
+USTRUCT(BlueprintType)
+struct FAutomatedUEPackagingConfig : public FAutomatedCallConfig
+{
+	GENERATED_USTRUCT_BODY()
+
+	typedef FAutomatedCallConfig Super;
+	typedef FAutomatedUEPackagingRelated RelatedString;
+
+	FAutomatedUEPackagingConfig()
+	{
+		CallType = TEXT("bat");
+		CallPath = TEXT("autofill");
+		Parameters = TEXT("autofill");
+		EngineDir = TEXT("the path of engine");
+		UProjectPath = TEXT("the path of .uproject file");
+		Platform = TEXT("Win64 or Linux ...");
+		BuildState = TEXT("Debug or Shipping ...");
+		BuildTarget = TEXT("Server or Client");
+		ArchiveDirectory = TEXT("the path that save pak file to ");
+
+	}
+	UPROPERTY()
+	FString EngineDir;
+
+	UPROPERTY()
+	FString UProjectPath;
+
+	UPROPERTY()
+	FString Platform;
+
+	UPROPERTY()
+	FString BuildState;
+
+	UPROPERTY()
+	FString ArchiveDirectory;
+
+	UPROPERTY()
+	FString BuildTarget;
+};
+
 
 /// <summary>
 ///	Traits
@@ -409,6 +462,19 @@ struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Git>
 {
 	using ConfigType = FAutomatedGitConfig;
 };
+
+template <>
+struct FCommandProtocol_ConfigType<FAutomatedUEPackagingConfig>
+{
+	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_UE_Packaging;
+};
+
+template <>
+struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Packaging>
+{
+	using ConfigType = FAutomatedUEPackagingConfig;
+};
+
 
 
 

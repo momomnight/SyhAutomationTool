@@ -38,9 +38,11 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
-	if (!FParse::Bool(FCommandLine::Get(), TEXT("-DeleteMovedFiles="), SelfConfig->bDeleteMovedFiles))
+	bool Result = true;
+	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::DeleteMovedFiles_BooleanKey, SelfConfig->bDeleteMovedFiles);
+
+	if (!Result)
 	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-DeleteMovedFiles= was not found the value."));
 		return false;
 	}
 

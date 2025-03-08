@@ -49,6 +49,7 @@ const TArray<FString> FCommandProtocolRelated::CommandName =
 	TEXT("Deployment_Delete"),
 	TEXT("VS_Compile"),
 	TEXT("Git"),
+	TEXT("UE_Packaging"),
 };
 
 
@@ -76,3 +77,11 @@ const FString FAutomatedVSCompileRelated::ProjectKey = TEXT("Project");
 
 const FString  FAutomatedGitRelated::ProjectPathKey = TEXT("ProjectPath");
 const FString  FAutomatedGitRelated::GitCommandsKey = TEXT("GitCommands");
+
+
+const FString FAutomatedUEPackagingRelated::EngineDirKey = TEXT("EngineDir");
+const FString FAutomatedUEPackagingRelated::UProjectPathKey = TEXT("UProjectPath");
+const FString FAutomatedUEPackagingRelated::PlatformKey = TEXT("Platform");
+const FString FAutomatedUEPackagingRelated::BuildStateKey = TEXT("BuildState");
+const FString FAutomatedUEPackagingRelated::BuildTargetKey = TEXT("BuildTarget");
+const FString FAutomatedUEPackagingRelated::ArchiveDirectoryKey = TEXT("ArchiveDirectory");

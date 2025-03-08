@@ -24,27 +24,19 @@ bool FAutomatedCode_Call::BuildParameter(const FString& InJsonStr)
 bool FAutomatedCode_Call::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	if (!FParse::Value(FCommandLine::Get(), TEXT("-CallType="), SelfConfig->CallType))
+	
+	bool Result = true;
+	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::CallTypeKey, SelfConfig->CallType);
+	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::CallPathKey, SelfConfig->CallPath);
+	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::ParametersKey, SelfConfig->Parameters);
+
+	if (Result)
 	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-CallType= was not found the type."));
-		return false;
-	}
-	if (!FParse::Value(FCommandLine::Get(), TEXT("-CallPath="), SelfConfig->CallPath))
-	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("-CallPath= was not found the path."));
-		return false;
-	}
-	else
-	{
-		FPaths::NormalizeDirectoryName(SelfConfig->CallPath);
+		FPaths::NormalizeFilename(SelfConfig->CallPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->CallPath);
 	}
-	if (!FParse::Value(FCommandLine::Get(), TEXT("-Parameters="), SelfConfig->Parameters))
-	{
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("-Parameters= was not found parameters."));
-	}
 
-	return true;
+	return Result;
 }
 
 bool FAutomatedCode_Call::Execute()
