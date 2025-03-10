@@ -21,7 +21,7 @@ public:
 	{
 		static_assert(std::is_base_of<FAutoExecElements, T>::value, "This type is not derived of FAutoExecElements.");
 		TSharedPtr<FAutoExecElements> Temp = MakeShareable<T>(new T);
-		Temp->Init();
+		FAutoExecElements::Init<T>(Temp);
 		bool Result = true;
 		if (InJson.IsEmpty())
 		{

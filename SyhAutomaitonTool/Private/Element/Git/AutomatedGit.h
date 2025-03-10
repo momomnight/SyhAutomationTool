@@ -8,6 +8,7 @@
 class FAutomatedCode_Git : public FAutomatedCode_Call
 {
 public:
+	using Base = FAutoExecElements;
 	using Super = FAutomatedCode_Call;
 	using Self = FAutomatedCode_Git;
 	using OwnConfig = FAutomatedGitConfig;

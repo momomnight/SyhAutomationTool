@@ -13,6 +13,4 @@ namespace AutomatedExecutionPath
 
 	//.bat Windows批处理文件路径
 	FString GetBatPath();
-
-	FString GetUnrealBuildToolPath(const FString& InEnginePath);
 }

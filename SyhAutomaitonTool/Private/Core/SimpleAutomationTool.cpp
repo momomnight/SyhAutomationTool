@@ -4,6 +4,7 @@
 #include "Json/AutomationJson.h"
 #include "Element/Core/Interface/AutoExecElements.h"
 #include "Element/AutoExecElementsFactory.h"
+#include "SyhAutomationToolCommon.h"
 
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
@@ -14,7 +15,7 @@
 
 namespace SimpleAutomationTool
 {
-	void Execute(uint32 InProtocolIndex, const FString& InJsonString)
+	bool Execute(uint32 InProtocolIndex, const FString& InJsonString)
 	{
 		if(InProtocolIndex != 0)
 		{
@@ -23,18 +24,27 @@ namespace SimpleAutomationTool
 			{
 				if (AutoExecElement->Execute())
 				{
-					UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Successful to execute [%i] protocol."), InProtocolIndex);
+					UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Successful to execute [%i] protocol."), 
+						*AutomationJson::CommandProtocolIndexToString(InProtocolIndex));
+					return true;
 				}
 				else
 				{
-					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Fail to execute [%i] protocol."), InProtocolIndex);
+					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Fail to execute [%i] protocol."), 
+						*AutomationJson::CommandProtocolIndexToString(InProtocolIndex));
+					return false;
 				}
 			}
+			else
+			{
+				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Fail to create AutoExecElement. Protocol is [%i]"), 
+					*AutomationJson::CommandProtocolIndexToString(InProtocolIndex));
+				return false;
+			}
 		}
-		else
-		{
-			UE_LOG(SyhAutomaitonToolLog, Warning, TEXT("Execute a empty command."));
-		}
+
+		UE_LOG(SyhAutomaitonToolLog, Warning, TEXT("Execute a empty command."));
+		return true;
 	}
 
 	bool Init(TMultiMap<uint32, FString>& OutTaskCommand)
@@ -95,12 +105,29 @@ namespace SimpleAutomationTool
 		}
 	}
 
-	void HandleTask(const TMultiMap<uint32, FString>& InTaskCommand)
+	void HandleTask(const TMultiMap<uint32, FString>& InTaskCommand, TMultiMap<int32, bool>& OutTaskResult, bool bBreak)
 	{
-		for (auto& Temp : InTaskCommand)
+		if (bBreak)
 		{
-			Execute(Temp.Key, Temp.Value);
+
+			for (auto& Temp : InTaskCommand)
+			{
+				if (!Execute(Temp.Key, Temp.Value))
+				{
+					OutTaskResult.Add(Temp.Key, false);
+					break;
+				}
+				OutTaskResult.Add(Temp.Key, true);
+			}
 		}
+		else
+		{
+			for (auto& Temp : InTaskCommand)
+			{
+				OutTaskResult.Add(Temp.Key, Execute(Temp.Key, Temp.Value));
+			}
+		}
+
 	}
 
 	void HandleTask(const FString& InTaskCommand)
@@ -108,6 +135,29 @@ namespace SimpleAutomationTool
 		uint32 Protocol =  (uint32)AutomationJson::StringToCommandProtocol(InTaskCommand);
 
 		Execute(Protocol, TEXT(""));
+	}
+
+	void BuildConfig()
+	{
+		PackagingSaveFileName = FDateTime::Now().ToString(TEXT("%Y-%m-%d-%H-%M"));
+	}
+
+	bool EvaluateTaskResult(const TMultiMap<int32, bool>& InTaskResult)
+	{
+		if (InTaskResult.Num() < 1)
+		{
+			return false;
+		}
+
+		for (auto& Temp : InTaskResult)
+		{
+			if (!Temp.Value)
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
 

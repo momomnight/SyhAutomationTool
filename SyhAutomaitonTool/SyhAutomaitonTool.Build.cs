@@ -9,12 +9,14 @@ public class SyhAutomaitonTool : ModuleRules
 		PublicIncludePathModuleNames.Add("Launch");
 		PrivateDependencyModuleNames.Add("Core");
 		PrivateDependencyModuleNames.Add("Projects");
-
+		PrivateDependencyModuleNames.Add("ApplicationCore");
+		PrivateDependencyModuleNames.Add("Json");
 		// to link with CoreUObject module:
 		PrivateDependencyModuleNames.Add("CoreUObject");
 		//PrivateDependencyModuleNames.Add("Engine");
 		PrivateDependencyModuleNames.Add("SimpleNetChannel");
 		PrivateDependencyModuleNames.Add("SimpleHTTPLIB");
+		//PrivateDependencyModuleNames.Add("SimpleOSS");
 		// to enable tracing:
 		// AppendStringToPublicDefinition("UE_TRACE_ENABLED", "1");
 

@@ -13,7 +13,6 @@
 
 void FAutomatedCode_UE_Packaging::Init()
 {
-	CreateConfig<OwnConfig>();
 }
 
 bool FAutomatedCode_UE_Packaging::BuildParameter(const FString& InJsonStr)

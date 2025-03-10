@@ -8,13 +8,16 @@
 #endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
+FAutomatedCode_CallCustomContent::FAutomatedCode_CallCustomContent()
+{
+}
+
 FAutomatedCode_CallCustomContent::~FAutomatedCode_CallCustomContent()
 {
 }
 
 void FAutomatedCode_CallCustomContent::Init()
 {
-	CreateConfig<OwnConfig>();
 }
 
 bool FAutomatedCode_CallCustomContent::BuildParameter(const FString& InJsonStr)

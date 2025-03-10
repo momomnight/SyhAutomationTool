@@ -8,6 +8,7 @@
 #include "Element/VisualStudio/AutomatedCompile_VsCompile.h"
 #include "Element/Git/AutomatedGit.h"
 #include "Element/UEPakProject/AutomatedPak_UEPak.h"
+#include "Element/AutomationCode/AutomatedCode_ConditionCommand.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -47,6 +48,8 @@ TSharedPtr<FAutoExecElements> FAutoExecElementsFactory::CreateAutomatedTask(uint
 		return CreateAutomatedTask<FAutomatedCode_Git>(InJson);
 	case ECommandProtocol::CMD_UE_Packaging:
 		return CreateAutomatedTask<FAutomatedCode_UE_Packaging>(InJson);
+	case ECommandProtocol::CMD_Condition_Command:
+		return CreateAutomatedTask<FAutomatedCode_ConditionCommand>(InJson);
 	case ECommandProtocol::CMD_None:
 	default:
 		return nullptr;

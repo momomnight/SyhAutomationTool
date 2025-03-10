@@ -1,6 +1,5 @@
 #include "Element/AutoExecElementsManage.h"
 #include "Core/SimpleAutomationTool.h"
-#include "SyhAutomationToolCommon.h"
 
 TSharedPtr<FAutoExecElementsManage> FAutoExecElementsManage::Instance = nullptr;
 
@@ -34,13 +33,14 @@ void FAutoExecElementsManage::HandleTask()
 {
 	if(bExecute)
 	{
-		SimpleAutomationTool::HandleTask(TaskCommand);
+		TMultiMap<int32, bool> Result;
+		SimpleAutomationTool::HandleTask(TaskCommand, Result);
 	}
 	bExecute = false;
 }
 
 void FAutoExecElementsManage::Init()
 {
-	PackagingSaveFileName = FDateTime::Now().ToString(TEXT("%Y-%m-%d-%H-%M"));
+	SimpleAutomationTool::BuildConfig();
 	bExecute = SimpleAutomationTool::Init(TaskCommand);
 }

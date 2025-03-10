@@ -13,7 +13,6 @@
 
 FAutomatedCode_CommandNesting::FAutomatedCode_CommandNesting()
 {
-	bExecute = false;
 }
 
 FAutomatedCode_CommandNesting::~FAutomatedCode_CommandNesting()
@@ -22,27 +21,17 @@ FAutomatedCode_CommandNesting::~FAutomatedCode_CommandNesting()
 
 void FAutomatedCode_CommandNesting::Init()
 {
-	CreateConfig<OwnConfig>();
 	TaskCommand.Empty();
-
+	TaskResult.Empty();
+	bExecute = false;
 }
 
 bool FAutomatedCode_CommandNesting::BuildParameter(const FString& InJsonStr)
 {
 	AutomationJson::JsonStringToAutomatedConfig<OwnConfig>(InJsonStr, *GetSelfConfig<OwnConfig>());
-	
-	for (auto& Temp : GetSelfConfig<OwnConfig>()->CommandList)
-	{
-		if (!SimpleAutomationTool::Init(TaskCommand, Temp))
-		{
-			bExecute = false;
-			return bExecute;
-		}
-	}
-
-	bExecute = true;
-
-	return bExecute;
+	bool Result = InitTaskCommand();
+	SetExecuteToken(Result);
+	return Result;
 }
 
 bool FAutomatedCode_CommandNesting::BuildParameter()
@@ -52,18 +41,59 @@ bool FAutomatedCode_CommandNesting::BuildParameter()
 
 bool FAutomatedCode_CommandNesting::Execute()
 {
-	if (bExecute)
+	if (GetExecuteToken())
 	{
-		SimpleAutomationTool::HandleTask(TaskCommand);
-		bExecute = false;
-		return !bExecute;
+		switch (GetSelfConfig<OwnConfig>()->ComparisionType)
+		{
+		case EComparisionType::COMPARISION_Sequence:
+		{
+			SimpleAutomationTool::HandleTask(TaskCommand, GetTaskResult());
+			break;
+		}
+		case EComparisionType::COMPARISION_Break:
+		{
+			SimpleAutomationTool::HandleTask(TaskCommand, GetTaskResult(), true);
+			break;
+		}
+		default:
+		{
+			break;
+		}
+		}
+
+		SetExecuteToken(false);
 	}
-	return bExecute;
+	return true;
 }
 
-bool FAutomatedCode_CommandNesting::Exit()
+bool FAutomatedCode_CommandNesting::InitTaskCommand(const TArray<FString>& InCommandList, TMultiMap<uint32, FString>& OutTaskCommand)
 {
+	if(InCommandList.Num() > 0)
+	{
+		for (auto& Temp : InCommandList)
+		{
+			if (!SimpleAutomationTool::Init(OutTaskCommand, Temp))
+			{
+				return false;
+			}
+		}
+	}
 	return true;
+}
+
+bool FAutomatedCode_CommandNesting::InitTaskCommand()
+{
+	return InitTaskCommand(GetSelfConfig<OwnConfig>()->CommandList, TaskCommand);
+}
+
+void FAutomatedCode_CommandNesting::SetExecuteToken(bool b)
+{
+	bExecute = b;
+}
+
+bool FAutomatedCode_CommandNesting::GetExecuteToken()
+{
+	return bExecute;
 }
 
 

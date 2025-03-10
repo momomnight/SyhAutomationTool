@@ -24,7 +24,7 @@ public class SyhAutomaitonToolTarget : TargetRules
 		// Currently this app is not linking against the engine, so we'll compile out references from Core to the rest of the engine
 		bCompileAgainstEngine = false;
 		bCompileAgainstCoreUObject = true;
-		bCompileAgainstApplicationCore = false;
+		bCompileAgainstApplicationCore = true;
 		bCompileICU = false;
 
 		// to build with automation tests:

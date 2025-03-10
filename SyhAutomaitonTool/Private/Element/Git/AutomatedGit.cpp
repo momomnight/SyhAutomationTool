@@ -22,7 +22,6 @@ FAutomatedCode_Git::~FAutomatedCode_Git()
 
 void FAutomatedCode_Git::Init()
 {
-	CreateConfig<OwnConfig>();
 }
 
 bool FAutomatedCode_Git::BuildParameter(const FString& InJsonStr)

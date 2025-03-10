@@ -11,7 +11,6 @@
 
 void FAutomatedCode_Deployment_Delete::Init()
 {
-	CreateConfig<OwnConfig>();
 }
 
 bool FAutomatedCode_Deployment_Delete::BuildParameter(const FString& InJsonStr)
@@ -55,10 +54,6 @@ bool FAutomatedCode_Deployment_Delete::Execute()
 
 }
 
-bool FAutomatedCode_Deployment_Delete::Exit()
-{
-	return true;
-}
 
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT

@@ -26,7 +26,6 @@ struct FMoveToFileCopyProgress : public FCopyProgress
 
 void FAutomatedCode_Deployment_Copy::Init()
 {
-	CreateConfig<OwnConfig>();
 }
 
 bool FAutomatedCode_Deployment_Copy::BuildParameter(const FString& InJsonStr)
@@ -181,12 +180,6 @@ bool FAutomatedCode_Deployment_Copy::Execute()
 	}
 
 	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------End Deployment----------"));
-	return true;
-}
-
-
-bool FAutomatedCode_Deployment_Copy::Exit()
-{
 	return true;
 }
 

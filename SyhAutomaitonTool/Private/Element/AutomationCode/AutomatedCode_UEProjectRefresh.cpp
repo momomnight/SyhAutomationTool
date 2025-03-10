@@ -8,7 +8,6 @@
 
 void FAutomatedCode_UEProjectRefresh::Init()
 {
-	CreateConfig<OwnConfig>();
 }
 
 bool FAutomatedCode_UEProjectRefresh::BuildParameter(const FString& InJsonStr)

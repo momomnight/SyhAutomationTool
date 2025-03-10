@@ -128,6 +128,9 @@ namespace AutomationMainFramework
 				//从外部传入单条命令
 				UE_LOG(SyhAutomaitonToolLog, Display, TEXT("-Command=%s"), *CommandString);
 
+				//
+				SimpleAutomationTool::BuildConfig();
+
 				//执行
 				SimpleAutomationTool::HandleTask(CommandString);
 				return 0;

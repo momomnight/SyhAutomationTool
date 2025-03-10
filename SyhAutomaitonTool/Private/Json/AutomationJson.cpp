@@ -1,6 +1,4 @@
 #include "Json/AutomationJson.h"
-#include "Misc/AutomatedExecutionPath.h"
-#include "SyhAutomationToolType.h"
 
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
@@ -11,6 +9,30 @@
 
 namespace AutomationJson
 {
+	//将Config转换为JsonObject填充JsonValueObject
+	template <class AutomatedConfigType>
+	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
+	{
+		static_assert(std::is_base_of<FAutomatedConfigBase, AutomatedConfigType>::value, "AutomatedConfigType is not base of FAutomatedConfigBase.");
+		AutomatedConfigType Config;//可以转换为模板，但不确定是否需要其他操作
+		if (TSharedPtr<FJsonObject> JsonObject = AutomatedConfigToJsonObject<AutomatedConfigType>(Config))
+		{
+			InCommandArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(JsonObject)));
+		}
+	}
+
+	template <uint8 N>
+	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
+	{
+		FillJsonValue<N - 1>(InCommandArray);
+		FillJsonValue<typename FCommandProtocol_EnumType<static_cast<ECommandProtocol>(N - 1)>::ConfigType>(InCommandArray);
+	}
+
+	template <>
+	void FillJsonValue<0>(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
+	{
+	}
+
 	ECommandProtocol GetCommandProtocol(TSharedPtr<FJsonObject> InJsonObject)
 	{
 		if (InJsonObject.IsValid())
@@ -38,9 +60,23 @@ namespace AutomationJson
 	FString CommandProtocolToString(ECommandProtocol InProtocol)
 	{
 		//"ECommandProtocol::CMD_Call" -> "Call"
-		FString ProtocolName = UEnum::GetValueAsName(InProtocol).ToString();
+		FName Temp = UEnum::GetValueAsName(InProtocol);
+		FString ProtocolName;
+		if (Temp == NAME_None)
+		{
+			ProtocolName = CommandProtocolToString((ECommandProtocol)0);
+		}
+		else
+		{
+			ProtocolName = Temp.ToString();
+		}
 		ProtocolName.RightChopInline(FCommandProtocolRelated::ProtocolStringPrefixLength);
 		return ProtocolName;
+	}
+
+	FString CommandProtocolIndexToString(uint32 InProtocol)
+	{
+		return CommandProtocolToString((ECommandProtocol)(uint8)InProtocol);
 	}
 
 	ECommandProtocol StringToCommandProtocol(const FString& InShortCommandName)
@@ -57,6 +93,65 @@ namespace AutomationJson
 		}
 	}
 
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	EComparisionType GetComparisionType(TSharedPtr<FJsonObject> InJsonObject)
+	{
+		if (InJsonObject.IsValid())
+		{
+			return StringToComparisionType(InJsonObject->GetStringField(FAutomatedCommandNestingRelated::ComparisionTypeKey));
+		}
+
+		return EComparisionType::COMPARISION_None;
+	}
+
+	EComparisionType GetComparisionType(const FString& InJsonString)
+	{
+		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(*InJsonString);
+		TSharedPtr<FJsonObject> RootObject;
+
+		if (FJsonSerializer::Deserialize(Reader, RootObject))
+		{
+			//从Json字符串到C++ Json对象，再从Json对象中提取协议命令
+			return GetComparisionType(RootObject);
+		}
+
+		return EComparisionType::COMPARISION_None;
+	}
+	
+	EComparisionType StringToComparisionType(const FString& InShortCommandName)
+	{
+		FString ProtocolName = FAutomatedCommandNestingRelated::GetComparisionTypeFullName(InShortCommandName);
+		int64 Result = UEnum::LookupEnumName(FName(), *ProtocolName);
+		if (Result == INDEX_NONE)
+		{
+			return EComparisionType::COMPARISION_None;
+		}
+		else
+		{
+			return (EComparisionType)Result;
+		}
+	}
+
+	FString ComparisionTypeToString(EComparisionType InProtocol)
+	{
+		//"ECommandProtocol::CMD_Call" -> "Call"
+		FName Temp = UEnum::GetValueAsName(InProtocol);
+		FString ComparisionTypeName;
+		if (Temp == NAME_None)
+		{
+			ComparisionTypeName = ComparisionTypeToString((EComparisionType)0);
+		}
+		else
+		{
+			ComparisionTypeName = Temp.ToString();
+		}
+		ComparisionTypeName.RightChopInline(FAutomatedCommandNestingRelated::ComparisionTypeStringPrefixLength);
+		return ComparisionTypeName;
+	}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void HandleJsonStringByProtocol(ECommandProtocol InProtocol, TSharedPtr<FJsonObject> InObject, FString& OutString)
 	{	
 		//????
@@ -68,25 +163,8 @@ namespace AutomationJson
 	void SerializeAllCommand(FString& OutString)
 	{
 		TArray<TSharedPtr<FJsonValue>> CommandArray;
-
-		//将所有操作转换为Json对象，并合并在JsonValue的数组中
 		
 		FillJsonValue<static_cast<uint8>(ECommandProtocol::CMD_Max)>(CommandArray);
-
-		////Call
-		//FillJsonValue<FAutomatedCallConfig>(CommandArray);
-
-		////Call Custom Content
-		//FillJsonValue<FAutomatedCallCustomContentConfig>(CommandArray);
-
-		////UE Project Refresh
-		//FillJsonValue<FAutomatedUEProjectRefreshConfig>(CommandArray);
-
-		////Command Nesting
-		//FillJsonValue<FAutomatedCommandNestingConfig>(CommandArray);
-
-		////Deployment Copy
-		//FillJsonValue<FAutomatedDeploymentCopyConfig>(CommandArray);
 
 		//将Writer绑定字符串流，再将JsonValue的数组写入流中
 		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutString);

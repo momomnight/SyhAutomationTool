@@ -1,8 +1,5 @@
 #pragma once
-
-#include "CoreMinimal.h"
 #include "Json/AutomationJsonTemplate.h"
-#include "Misc/AutomatedExecutionPath.h"
 
 //	Example:
 //	[
@@ -22,6 +19,34 @@
 
 namespace AutomationJson
 {
+
+	//从Json对象中提取命令
+	ECommandProtocol GetCommandProtocol(TSharedPtr<FJsonObject> InJsonObject);
+
+	//从Json字符串中提取命令
+	ECommandProtocol GetCommandProtocol(const FString& InJsonString);
+
+	//从协议到去掉协议前缀的字符串
+	FString CommandProtocolToString(ECommandProtocol InProtocol);
+
+	FString CommandProtocolIndexToString(uint32 InProtocol);
+
+	//从去掉协议前缀的字符串到协议
+	ECommandProtocol StringToCommandProtocol(const FString& InShortCommandName);
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	EComparisionType GetComparisionType(TSharedPtr<FJsonObject> InJsonObject);
+
+	EComparisionType GetComparisionType(const FString& InJsonString);
+
+	EComparisionType StringToComparisionType(const FString& InShortCommandName);
+
+	FString ComparisionTypeToString(EComparisionType InProtocol);
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	template <class AutomatedConfigType>
 	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray);
 
@@ -55,7 +80,9 @@ namespace AutomationJson
 	template<>
 	void AutomatedConfigToJsonObject<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedCommandNestingConfig& InConfig)
 	{
-		//上面的命令对于配置的无需更多处理
+		OutJsonObject->SetStringField(RelatedString<FAutomatedCommandNestingConfig>::ComparisionTypeKey, ComparisionTypeToString(InConfig.ComparisionType));
+
+		//上面的命令对于配置无需更多处理
 		TArray<TSharedPtr<FJsonValue>> Array;
 		for (auto& Temp : InConfig.CommandList)
 		{
@@ -131,7 +158,6 @@ namespace AutomationJson
 		OutJsonObject->SetArrayField(RelatedString<FAutomatedGitConfig>::GitCommandsKey, Array);
 	}
 
-
 	template<>
 	void AutomatedConfigToJsonObject<FAutomatedUEPackagingConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedUEPackagingConfig& InConfig)
 	{
@@ -141,6 +167,24 @@ namespace AutomationJson
 		OutJsonObject->SetStringField(RelatedString<FAutomatedUEPackagingConfig>::BuildStateKey, InConfig.BuildState);
 		OutJsonObject->SetStringField(RelatedString<FAutomatedUEPackagingConfig>::BuildTargetKey, InConfig.BuildTarget);
 		OutJsonObject->SetStringField(RelatedString<FAutomatedUEPackagingConfig>::ArchiveDirectoryKey, InConfig.ArchiveDirectory);
+	}
+
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedConditionCommandConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedConditionCommandConfig& InConfig)
+	{
+		TArray<TSharedPtr<FJsonValue>> TrueArray;
+		for (auto& Temp : InConfig.TrueCommandList)
+		{
+			TrueArray.Add(MakeShareable<FJsonValueString>(new FJsonValueString(Temp)));
+		}
+		OutJsonObject->SetArrayField(RelatedString<FAutomatedConditionCommandConfig>::TrueCommandListKey, TrueArray);
+
+		TArray<TSharedPtr<FJsonValue>> FalseArray;
+		for (auto& Temp : InConfig.FalseCommandList)
+		{
+			FalseArray.Add(MakeShareable<FJsonValueString>(new FJsonValueString(Temp)));
+		}
+		OutJsonObject->SetArrayField(RelatedString<FAutomatedConditionCommandConfig>::FalseCommandListKey, FalseArray);
 	}
 
 	//用于配置命令字段
@@ -162,29 +206,7 @@ namespace AutomationJson
 		}
 	}
 
-	//将Config转换为JsonObject填充JsonValueObject
-	template <class AutomatedConfigType>
-	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
-	{
-		static_assert(std::is_base_of<FAutomatedConfigBase, AutomatedConfigType>::value, "AutomatedConfigType is not base of FAutomatedConfigBase.");
-		AutomatedConfigType Config;//可以转换为模板，但不确定是否需要其他操作
-		if (TSharedPtr<FJsonObject> JsonObject = AutomatedConfigToJsonObject<AutomatedConfigType>(Config))
-		{
-			InCommandArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(JsonObject)));
-		}
-	}
-
-	template <uint8 N>
-	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
-	{
-		FillJsonValue<N - 1>(InCommandArray);
-		FillJsonValue<typename FCommandProtocol_EnumType<static_cast<ECommandProtocol>(N - 1)>::ConfigType>(InCommandArray);
-	}
-
-	template <>
-	void FillJsonValue<0>(TArray<TSharedPtr<FJsonValue>>& InCommandArray)
-	{
-	}
+	
 
 
 
@@ -231,6 +253,9 @@ namespace AutomationJson
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCommandNestingConfig& OutConfig)
 	{
+		
+		FString TypeStr = InJsonObject->GetStringField(RelatedString<FAutomatedCommandNestingConfig>::ComparisionTypeKey);
+		OutConfig.ComparisionType = StringToComparisionType(TypeStr);
 		const TArray<TSharedPtr<FJsonValue>>& InArrayObject = InJsonObject->GetArrayField(RelatedString<FAutomatedCommandNestingConfig>::CommandListKey);
 		OutConfig.CommandList.Empty();
 		for (auto& Temp : InArrayObject)
@@ -316,6 +341,12 @@ namespace AutomationJson
 		FPaths::RemoveDuplicateSlashes(OutConfig.ArchiveDirectory);
 	}
 
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedConditionCommandConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedConditionCommandConfig& OutConfig)
+	{
+
+	}
+
 	template <class AutomatedConfigType>
 	bool JsonStringToAutomatedConfig(const FString& InString, AutomatedConfigType& OutConfig)
 	{
@@ -331,19 +362,6 @@ namespace AutomationJson
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//从Json对象中提取命令
-	ECommandProtocol GetCommandProtocol(TSharedPtr<FJsonObject> InJsonObject);
-
-	//从Json字符串中提取命令
-	ECommandProtocol GetCommandProtocol(const FString& InJsonString);
-
-	//从协议到去掉协议前缀的字符串
-	FString CommandProtocolToString(ECommandProtocol InProtocol);
-
-	//从去掉协议前缀的字符串到协议
-	ECommandProtocol StringToCommandProtocol(const FString& InShortCommandName);
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//用于序列化
 	void SerializeAllCommand(FString& OutString);
 

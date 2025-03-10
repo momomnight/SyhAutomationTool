@@ -18,12 +18,6 @@ public:
 	using OwnConfig = FAutomatedConfigBase;
 
 protected:
-	template <class AutomatedConfigType>
-	void CreateConfig()
-	{
-		static_assert(std::is_base_of<FAutomatedConfigBase, AutomatedConfigType>::value, "This type is not derived of FAutomatedConfigBase.");
-		Z_C_o_n_f_i_g = MakeShareable<AutomatedConfigType>(new AutomatedConfigType);
-	}
 
 	template <class AutomatedConfigType>
 	TSharedPtr<AutomatedConfigType> GetSelfConfig()
@@ -31,9 +25,19 @@ protected:
 		return StaticCastSharedPtr<AutomatedConfigType>(Z_C_o_n_f_i_g);
 	}
 
-
-
 public:
+
+	template <class AutomatedType>
+	static void Init(TSharedPtr<FAutoExecElements> SelfPtr)
+	{
+		static_assert(std::is_base_of<FAutoExecElements, AutomatedType>::value, "This type is not derived of FAutoExecElements.");
+		if (!SelfPtr->Z_C_o_n_f_i_g.IsValid())
+		{
+			SelfPtr->Z_C_o_n_f_i_g = MakeShareable<typename AutomatedType::OwnConfig>(new typename AutomatedType::OwnConfig);
+			SelfPtr->Init();
+		}
+	}
+
 	//将Config存放在最底层，具体类型通过构造的模板参数传入
 	//需要自己类型的Config时，临时转换
 	//具体想法，减少需要写的代码

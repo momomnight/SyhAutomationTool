@@ -8,6 +8,7 @@
 class FAutomatedCode_CommandNesting : public FAutoExecElements
 {
 public:
+	using Base = FAutoExecElements;
 	using Super = FAutoExecElements;
 	using Self = FAutomatedCode_CommandNesting;
 	using OwnConfig = FAutomatedCommandNestingConfig;
@@ -28,11 +29,21 @@ public:
 
 	virtual bool Execute();
 
-	virtual bool Exit();
-
 	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_Command_Nesting; }
+
+protected:
+	bool InitTaskCommand(const TArray<FString>& InCommandList, TMultiMap<uint32, FString>& OutTaskCommand);
+	virtual bool InitTaskCommand();
+
+	void SetExecuteToken(bool b);
+	bool GetExecuteToken();
+
+	TMultiMap<int32, bool>& GetTaskResult() { return TaskResult; }
+	void ClearTaskResult() { TaskResult.Empty(); }
 
 private:
 	TMultiMap<uint32, FString> TaskCommand;
 	bool bExecute;
+	TMultiMap<int32, bool> TaskResult;
+
 };

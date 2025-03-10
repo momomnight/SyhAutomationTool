@@ -14,7 +14,6 @@ FAutomatedCode_VS_Compile::~FAutomatedCode_VS_Compile()
 
 void FAutomatedCode_VS_Compile::Init()
 {
-	CreateConfig<OwnConfig>();
 }
 
 bool FAutomatedCode_VS_Compile::BuildParameter(const FString& InJsonStr)

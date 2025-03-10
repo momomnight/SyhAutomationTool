@@ -8,15 +8,14 @@
 class FAutomatedCode_CallCustomContent : public FAutomatedCode_Call
 {
 public:
+	using Base = FAutoExecElements;
 	using Super = FAutomatedCode_Call;
 	using Self = FAutomatedCode_CallCustomContent;
 	using OwnConfig = FAutomatedCallCustomContentConfig;
 
 public:
 
-	FAutomatedCode_CallCustomContent() : Super()
-	{
-	}
+	FAutomatedCode_CallCustomContent();
 
 	virtual ~FAutomatedCode_CallCustomContent() override;
 

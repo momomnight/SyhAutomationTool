@@ -47,6 +47,11 @@ struct FAutomatedUEProjectRefreshRelated : public FAutomatedCallRelated
 struct FAutomatedCommandNestingRelated
 {
 	static const FString CommandListKey;
+	static const FString ComparisionTypeKey;
+	static const FString ComparisionTypeStringPrefix;
+	static const int32  ComparisionTypeStringPrefixLength;
+	static const TArray<FString> ComparisionTypeName;
+	static FString GetComparisionTypeFullName(const FString& InShortName);
 };
 
 struct FAutomatedDeploymentRelated
@@ -78,7 +83,6 @@ struct FAutomatedGitRelated : public FAutomatedCallRelated
 	static const FString  GitCommandsKey;
 };
 
-
 struct FAutomatedUEPackagingRelated : public FAutomatedCallRelated
 {
 	static const FString EngineDirKey;
@@ -89,9 +93,13 @@ struct FAutomatedUEPackagingRelated : public FAutomatedCallRelated
 	static const FString ArchiveDirectoryKey;
 };
 
+struct FAutomatedConditionCommandRelated : public FAutomatedCommandNestingRelated
+{
+	static const FString TrueCommandListKey;
+	static const FString FalseCommandListKey;
+};
 
-
-//命令枚举
+//命令协议枚举
 UENUM(BlueprintType)
 enum class ECommandProtocol : uint8
 {
@@ -105,9 +113,17 @@ enum class ECommandProtocol : uint8
 	CMD_VS_Compile				UMETA(DisplayName = "VS Compile"),
 	CMD_Git						UMETA(DisplayName = "Git"),
 	CMD_UE_Packaging			UMETA(DisplayName = "UE Packaging"),
-
+	CMD_Condition_Command		UMETA(DisplayName = "Condition Command"),
 
 	CMD_Max						UMETA(DisplayName = "Max"),
+};
+
+UENUM(BlueprintType)
+enum class EComparisionType : uint8
+{
+	COMPARISION_None = 0					UMETA(DisplayName = "Sequence"),//最后评估，全部成功视为成功
+	COMPARISION_Sequence					UMETA(DisplayName = "Sequence"),//最后评估，全部成功视为成功
+	COMPARISION_Break						UMETA(DisplayName = "Select"),	//出现错误即中断返回
 };
 
 // FAutomatedConfigBase总的基类
@@ -204,9 +220,13 @@ struct FAutomatedCommandNestingConfig : public FAutomatedConfigBase
 
 	FAutomatedCommandNestingConfig() 
 	{
+		ComparisionType = EComparisionType::COMPARISION_Sequence;
 		CommandList.Add(TEXT("CommandFile1.json"));
 		CommandList.Add(TEXT("CommandFile2"));
 	}
+
+	UPROPERTY()
+	EComparisionType ComparisionType;
 
 	UPROPERTY()
 	TArray<FString> CommandList;
@@ -348,6 +368,26 @@ struct FAutomatedUEPackagingConfig : public FAutomatedCallConfig
 	FString BuildTarget;
 };
 
+USTRUCT(BlueprintType)
+struct FAutomatedConditionCommandConfig : public FAutomatedCommandNestingConfig
+{
+	GENERATED_USTRUCT_BODY()
+
+	typedef FAutomatedCommandNestingConfig Super;
+	typedef FAutomatedConditionCommandRelated RelatedString;
+
+	FAutomatedConditionCommandConfig()
+	{
+		TrueCommandList.Add(TEXT("command list when the result is True"));
+		FalseCommandList.Add(TEXT("command list when the result is False"));
+	}
+
+	UPROPERTY()
+	TArray<FString> TrueCommandList;
+
+	UPROPERTY()
+	TArray<FString> FalseCommandList;
+};
 
 /// <summary>
 ///	Traits
@@ -474,6 +514,19 @@ struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Packaging>
 {
 	using ConfigType = FAutomatedUEPackagingConfig;
 };
+
+template <>
+struct FCommandProtocol_ConfigType<FAutomatedConditionCommandConfig>
+{
+	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Condition_Command;
+};
+
+template <>
+struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Condition_Command>
+{
+	using ConfigType = FAutomatedConditionCommandConfig;
+};
+
 
 
 
