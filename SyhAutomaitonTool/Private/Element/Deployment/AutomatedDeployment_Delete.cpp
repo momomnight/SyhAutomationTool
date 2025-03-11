@@ -42,6 +42,7 @@ bool FAutomatedCode_Deployment_Delete::BuildParameter()
 
 bool FAutomatedCode_Deployment_Delete::Execute()
 {
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of DeploymentDelete"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
 	for (auto& Temp : SelfConfig->Files)

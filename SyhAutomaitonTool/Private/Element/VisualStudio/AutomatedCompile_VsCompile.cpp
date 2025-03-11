@@ -23,6 +23,7 @@ bool FAutomatedCode_VS_Compile::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_VS_Compile::BuildParameter()
 {
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of VSCompile"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
 	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::CallPathKey, SelfConfig->CallPath);

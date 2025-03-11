@@ -35,6 +35,7 @@ bool FAutomatedCode_UEProjectRefresh::BuildParameter()
 
 bool FAutomatedCode_UEProjectRefresh::Execute()
 {
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of UEProjectRefresh"));
 	TSharedPtr<OwnConfig> SelfConfig= GetSelfConfig<OwnConfig>();
 
 	bool ReturnValue = false;

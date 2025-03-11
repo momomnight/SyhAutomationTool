@@ -16,12 +16,12 @@ public:
 	static TSharedPtr<FAutoExecElements> CreateAutomatedTask(uint32 InType, const FString& InJson = {});
 
 
-	template<class T>
+	template<class AutomatedElementType>
 	static TSharedPtr<FAutoExecElements> CreateAutomatedTask(const FString& InJson = {})
 	{
-		static_assert(std::is_base_of<FAutoExecElements, T>::value, "This type is not derived of FAutoExecElements.");
-		TSharedPtr<FAutoExecElements> Temp = MakeShareable<T>(new T);
-		FAutoExecElements::Init<T>(Temp);
+		static_assert(std::is_base_of<FAutoExecElements, AutomatedElementType>::value, "This type is not derived of FAutoExecElements.");
+		TSharedPtr<FAutoExecElements> Temp = MakeShareable<AutomatedElementType>(new AutomatedElementType);
+		FAutoExecElements::Init<AutomatedElementType>(Temp);
 		bool Result = true;
 		if (InJson.IsEmpty())
 		{

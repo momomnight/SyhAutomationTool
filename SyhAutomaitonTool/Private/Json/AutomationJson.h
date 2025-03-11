@@ -344,7 +344,18 @@ namespace AutomationJson
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedConditionCommandConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedConditionCommandConfig& OutConfig)
 	{
-
+		const TArray<TSharedPtr<FJsonValue>>& TrueArrayObject = InJsonObject->GetArrayField(RelatedString<FAutomatedConditionCommandConfig>::TrueCommandListKey);
+		OutConfig.TrueCommandList.Empty();
+		for (auto& Temp : TrueArrayObject)
+		{
+			OutConfig.TrueCommandList.Add(Temp->AsString());
+		}
+		const TArray<TSharedPtr<FJsonValue>>& FalseArrayObject = InJsonObject->GetArrayField(RelatedString<FAutomatedConditionCommandConfig>::FalseCommandListKey);
+		OutConfig.FalseCommandList.Empty();
+		for (auto& Temp : FalseArrayObject)
+		{
+			OutConfig.FalseCommandList.Add(Temp->AsString());
+		}
 	}
 
 	template <class AutomatedConfigType>

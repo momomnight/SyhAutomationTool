@@ -45,6 +45,7 @@ bool FAutomatedCode_UE_Packaging::BuildParameter()
 
 bool FAutomatedCode_UE_Packaging::Execute()
 {
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of UEPackaging"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	check(!SelfConfig->EngineDir.IsEmpty());
 	check(!SelfConfig->UProjectPath.IsEmpty());

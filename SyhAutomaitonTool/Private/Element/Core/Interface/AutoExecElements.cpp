@@ -13,9 +13,11 @@ bool FAutoExecElements::ParseArrayStrings(const FString& InKey, TArray<FString>&
 {
 	FString NewString;
 
-	if (!FParse::Value(FCommandLine::Get(), *InKey, NewString))
+	FString MatchKey = IsMatchKey(InKey) ? InKey : GetMatchKey(InKey);
+
+	if (!FParse::Value(FCommandLine::Get(), *MatchKey, NewString))
 	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *InKey);
+		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *MatchKey);
 		return false;
 	}
 
@@ -33,7 +35,7 @@ bool FAutoExecElements::ParseArrayStrings(const FString& InKey, TArray<FString>&
 	}
 	else
 	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to parse %s string."), *InKey);
+		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to parse %s string."), *MatchKey);
 		return false;
 	}
 
@@ -114,4 +116,13 @@ void FAutoExecElements::GetBatPathString(FString& InPath)
 	}
 
 
+}
+
+bool FAutoExecElements::IsMatchKey(const FString& InKey)
+{
+	if (InKey.StartsWith(TEXT("-")) && InKey.EndsWith(TEXT("=")))
+	{
+		return true;
+	}
+	return false;
 }

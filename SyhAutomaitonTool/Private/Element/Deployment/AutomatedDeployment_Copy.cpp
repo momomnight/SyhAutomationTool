@@ -76,6 +76,7 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 
 bool FAutomatedCode_Deployment_Copy::Execute()
 {
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of DeploymentCopy"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
 	if (SelfConfig->Files.IsEmpty())

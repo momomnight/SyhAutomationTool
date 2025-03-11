@@ -32,6 +32,7 @@ bool FAutomatedCode_CallCustomContent::BuildParameter()
 
 bool FAutomatedCode_CallCustomContent::Execute()
 {
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of CallCustomContent"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
 	check(!SelfConfig->CallType.IsEmpty());

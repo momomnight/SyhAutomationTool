@@ -31,6 +31,7 @@ bool FAutomatedCode_Git::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_Git::BuildParameter()
 {
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of Git"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
 	if (GetValueFromCommandLine(OwnConfig::RelatedString::ProjectPathKey, SelfConfig->ProjectPath))
@@ -43,9 +44,7 @@ bool FAutomatedCode_Git::BuildParameter()
 		return false;
 	}
 
-
-
-	if(!ParseArrayStrings(TEXT("-GitCommands="), SelfConfig->GitCommands))
+	if(!ParseArrayStrings(OwnConfig::RelatedString::GitCommandsKey, SelfConfig->GitCommands))
 	{
 		return false;
 	}

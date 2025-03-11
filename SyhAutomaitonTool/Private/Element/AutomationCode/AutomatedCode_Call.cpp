@@ -44,6 +44,7 @@ bool FAutomatedCode_Call::BuildParameter()
 
 bool FAutomatedCode_Call::Execute()
 {
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of Call"));
 	int32 ReturnValue = 0;
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
@@ -59,6 +60,7 @@ bool FAutomatedCode_Call::Execute()
 
 	if (SelfConfig->CallType.Equals(TEXT("exe")))
 	{
+		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute .exe file."));
 		FProcHandle ProcessHandle = FPlatformProcess::CreateProc(*SelfConfig->CallPath,
 			*SelfConfig->Parameters, false, false, false, nullptr, 0, nullptr, nullptr);
 		FPlatformProcess::WaitForProc(ProcessHandle);
@@ -68,6 +70,7 @@ bool FAutomatedCode_Call::Execute()
 	{
 		//	cd /d %~dp0 :从当前的批处理开始，如果执行出现问题
 		// 重开窗口
+		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute .bat file."));
 		if (!FPlatformProcess::ExecElevatedProcess(*SelfConfig->CallPath, *SelfConfig->Parameters, &ReturnValue))
 		{
 			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("[cd /d %~dp0] Failure to start from the current batch, please check your file whether exist error."));
@@ -76,7 +79,7 @@ bool FAutomatedCode_Call::Execute()
 	}
 	else if (SelfConfig->CallType.Equals(TEXT("sh")))
 	{
-
+		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute .sh file."));
 	}
 
 	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------End Call----------"));

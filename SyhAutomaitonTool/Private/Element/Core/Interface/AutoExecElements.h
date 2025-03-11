@@ -72,6 +72,7 @@ protected:
 	void AdaptCommandArgsStringWithSpace(FString& InKey);
 	void GetBatPathString(FString& InPath);
 	FString GetMatchKey(const FString& InKey){return FString(TEXT("-") + InKey + TEXT("=")); }
+	bool IsMatchKey(const FString& InKey);
 
 	template<class Type>
 	bool GetValueFromCommandLine(const FString& InKey, Type& OutValue)
@@ -94,6 +95,22 @@ protected:
 			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
 			return false;
 		}
+		return true;
+	}
+
+	template<>
+	bool GetValueFromCommandLine<EComparisionType>(const FString& InKey, EComparisionType& OutValue)
+	{
+		FString Result;
+		if (FString Key = GetMatchKey(InKey);
+			!FParse::Value(FCommandLine::Get(), *Key, Result))
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
+			return false;
+		}
+
+		OutValue = AutomationJson::StringToComparisionType(Result);
+
 		return true;
 	}
 

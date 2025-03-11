@@ -24,20 +24,20 @@ namespace SimpleAutomationTool
 			{
 				if (AutoExecElement->Execute())
 				{
-					UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Successful to execute [%i] protocol."), 
+					UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Successful to execute [%s] protocol."), 
 						*AutomationJson::CommandProtocolIndexToString(InProtocolIndex));
 					return true;
 				}
 				else
 				{
-					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Fail to execute [%i] protocol."), 
+					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Fail to execute [%s] protocol."), 
 						*AutomationJson::CommandProtocolIndexToString(InProtocolIndex));
 					return false;
 				}
 			}
 			else
 			{
-				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Fail to create AutoExecElement. Protocol is [%i]"), 
+				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Fail to create AutoExecElement. Protocol is [%s]"), 
 					*AutomationJson::CommandProtocolIndexToString(InProtocolIndex));
 				return false;
 			}
