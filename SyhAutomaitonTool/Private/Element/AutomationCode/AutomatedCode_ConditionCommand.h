@@ -8,7 +8,6 @@
 class FAutomatedCode_ConditionCommand : public FAutomatedCode_CommandNesting
 {
 public:
-	using Base = FAutoExecElements;
 	using Super = FAutomatedCode_CommandNesting;
 	using Self = FAutomatedCode_ConditionCommand;
 	using OwnConfig = FAutomatedConditionCommandConfig;
@@ -35,8 +34,7 @@ protected:
 	TMultiMap<uint32, FString> TrueTaskCommand;
 	TMultiMap<uint32, FString> FalseTaskCommand;
 
-
 protected:
-	virtual bool InitTaskCommand();
+	bool InitTaskCommand();
 
 };

@@ -7,7 +7,6 @@
 // 需要修改SyhAutomationToolType.h和SyhAutomationToolType.cpp文件
 // 需要修改AutomationJson.h和AutomationJson.cpp文件
 
-
 /// <summary>
 /// Related Some things;
 /// </summary>
@@ -83,14 +82,23 @@ struct FAutomatedGitRelated : public FAutomatedCallRelated
 	static const FString  GitCommandsKey;
 };
 
-struct FAutomatedUEPackagingRelated : public FAutomatedCallRelated
+struct FAutomatedUEPackagingBaseRelated : public FAutomatedCallRelated
 {
 	static const FString EngineDirKey;
+};
+
+struct FAutomatedUEPackagingRelated : public FAutomatedUEPackagingBaseRelated
+{
 	static const FString UProjectPathKey;
 	static const FString PlatformKey;
 	static const FString BuildStateKey;
 	static const FString BuildTargetKey;
 	static const FString ArchiveDirectoryKey;
+};
+
+struct FAutomatedUEPluginPackagingRelated : public FAutomatedUEPackagingBaseRelated
+{
+	static const FString PathOfUPluginToTargetKey;
 };
 
 struct FAutomatedConditionCommandRelated : public FAutomatedCommandNestingRelated
@@ -113,6 +121,7 @@ enum class ECommandProtocol : uint8
 	CMD_VS_Compile				UMETA(DisplayName = "VS Compile"),
 	CMD_Git						UMETA(DisplayName = "Git"),
 	CMD_UE_Packaging			UMETA(DisplayName = "UE Packaging"),
+	CMD_UE_Plugin_Packaging		UMETA(DisplayName = "UE Plugin Packaging"),
 	CMD_Condition_Command		UMETA(DisplayName = "Condition Command"),
 
 	CMD_Max						UMETA(DisplayName = "Max"),
@@ -369,6 +378,31 @@ struct FAutomatedUEPackagingConfig : public FAutomatedCallConfig
 };
 
 USTRUCT(BlueprintType)
+struct FAutomatedUEPluginPackagingConfig : public FAutomatedCallConfig
+{
+	GENERATED_USTRUCT_BODY()
+
+	typedef FAutomatedCallConfig Super;
+	typedef FAutomatedUEPluginPackagingRelated RelatedString;
+
+	FAutomatedUEPluginPackagingConfig()
+	{
+		CallType = TEXT("bat");
+		CallPath = TEXT("autofill");
+		Parameters = TEXT("autofill");
+		EngineDir = TEXT("the path of engine");
+		PathOfUPluginToTarget.Add(TEXT(".uplugin file path"), TEXT("target file path"));
+	}
+	UPROPERTY()
+	FString EngineDir;
+
+	//批量打包
+	UPROPERTY()
+	TMap<FString, FString> PathOfUPluginToTarget;
+
+};
+//" cmd.exe /c ""C:/Program Files/Epic Games/UE_5.3/Engine/Build/BatchFiles/RunUAT.bat" BuildPlugin - Plugin = "C:/MyProgram/UE Project/test1/Plugins/TestAutomatedPakPlugin/TestAutomatedPakPlugin.uplugin" - Package = "C:/MyProgram/UE Project/PluginPakTest/TestAutomatedPakPlugin" - CreateSubFolder" -nocompile -nocompileuat ";
+USTRUCT(BlueprintType)
 struct FAutomatedConditionCommandConfig : public FAutomatedCommandNestingConfig
 {
 	GENERATED_USTRUCT_BODY()
@@ -394,140 +428,39 @@ struct FAutomatedConditionCommandConfig : public FAutomatedCommandNestingConfig
 /// </summary>
 
 //如果有配置类型，我们能拿到什么
-template <class ConfigType>
-struct FCommandProtocol_ConfigType
-{
-	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_None;
-};
+template <class ConfigType> struct FCommandProtocol_ConfigType	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_None; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedCallConfig>				{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Call; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedCallCustomContentConfig>	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Call_Custom_Content;};
+template <> struct FCommandProtocol_ConfigType<FAutomatedUEProjectRefreshConfig>	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_UE_Project_Refresh; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedCommandNestingConfig>		{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Command_Nesting; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedDeploymentCopyConfig>		{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Deployment_Copy; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedDeploymentDeleteConfig>	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Deployment_Delete; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedVSCompileConfig>			{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_VS_Compile; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedGitConfig>					{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Git; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedUEPackagingConfig>			{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_UE_Packaging; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedUEPluginPackagingConfig>	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_UE_Plugin_Packaging; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedConditionCommandConfig>	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Condition_Command; };
 
 //如果有枚举号，我们能拿到什么
-template <ECommandProtocol Protocol>
-struct FCommandProtocol_EnumType
+template <ECommandProtocol Protocol> struct FCommandProtocol_EnumType{ using ConfigType = FAutomatedConfigBase; };
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Call>				{ using ConfigType = FAutomatedCallConfig;};
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Call_Custom_Content>	{ using ConfigType = FAutomatedCallCustomContentConfig;};
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Project_Refresh>	{ using ConfigType = FAutomatedUEProjectRefreshConfig;};
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Command_Nesting>		{ using ConfigType = FAutomatedCommandNestingConfig;};
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Deployment_Copy>		{ using ConfigType = FAutomatedDeploymentCopyConfig;};
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Deployment_Delete>	{ using ConfigType = FAutomatedDeploymentDeleteConfig;};
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_VS_Compile>			{ using ConfigType = FAutomatedVSCompileConfig;};
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Git>					{ using ConfigType = FAutomatedGitConfig;};
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Packaging>		{ using ConfigType = FAutomatedUEPackagingConfig;};
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Plugin_Packaging>	{ using ConfigType = FAutomatedUEPluginPackagingConfig;};
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Condition_Command>	{ using ConfigType = FAutomatedConditionCommandConfig;};
+
+
+
+template <uint32 Index>
+const FString& GetCommandName()
 {
-	using ConfigType = FAutomatedConfigBase;
-};
-
-template <>
-struct FCommandProtocol_ConfigType<FAutomatedCallConfig>
-{
-	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Call;
-};
-
-template <>
-struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Call>
-{
-	using ConfigType = FAutomatedCallConfig;
-};
-
-template <>
-struct FCommandProtocol_ConfigType<FAutomatedCallCustomContentConfig>
-{
-	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Call_Custom_Content;
-};
-
-template <>
-struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Call_Custom_Content>
-{
-	using ConfigType = FAutomatedCallCustomContentConfig;
-};
-
-template <>
-struct FCommandProtocol_ConfigType<FAutomatedUEProjectRefreshConfig>
-{
-	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_UE_Project_Refresh;
-};
-
-template <>
-struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Project_Refresh>
-{
-	using ConfigType = FAutomatedUEProjectRefreshConfig;
-};
-
-template <>
-struct FCommandProtocol_ConfigType<FAutomatedCommandNestingConfig>
-{
-	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Command_Nesting;
-};
-
-template <>
-struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Command_Nesting>
-{
-	using ConfigType = FAutomatedCommandNestingConfig;
-};
-
-template <>
-struct FCommandProtocol_ConfigType<FAutomatedDeploymentCopyConfig>
-{
-	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Deployment_Copy;
-};
-
-template <>
-struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Deployment_Copy>
-{
-	using ConfigType = FAutomatedDeploymentCopyConfig;
-};
-
-template <>
-struct FCommandProtocol_ConfigType<FAutomatedDeploymentDeleteConfig>
-{
-	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Deployment_Delete;
-};
-
-template <>
-struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Deployment_Delete>
-{
-	using ConfigType = FAutomatedDeploymentDeleteConfig;
-};
-
-template <>
-struct FCommandProtocol_ConfigType<FAutomatedVSCompileConfig>
-{
-	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_VS_Compile;
-};
-
-template <>
-struct FCommandProtocol_EnumType<ECommandProtocol::CMD_VS_Compile>
-{
-	using ConfigType = FAutomatedVSCompileConfig;
-};
-
-template <>
-struct FCommandProtocol_ConfigType<FAutomatedGitConfig>
-{
-	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Git;
-};
-
-template <>
-struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Git>
-{
-	using ConfigType = FAutomatedGitConfig;
-};
-
-template <>
-struct FCommandProtocol_ConfigType<FAutomatedUEPackagingConfig>
-{
-	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_UE_Packaging;
-};
-
-template <>
-struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Packaging>
-{
-	using ConfigType = FAutomatedUEPackagingConfig;
-};
-
-template <>
-struct FCommandProtocol_ConfigType<FAutomatedConditionCommandConfig>
-{
-	constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Condition_Command;
-};
-
-template <>
-struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Condition_Command>
-{
-	using ConfigType = FAutomatedConditionCommandConfig;
-};
-
-
-
+	return FCommandProtocolRelated::CommandName[Index];
+}
 
 

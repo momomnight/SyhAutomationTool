@@ -6,6 +6,14 @@
 #endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
+FAutomatedCode_UEProjectRefresh::FAutomatedCode_UEProjectRefresh()
+{
+}
+
+FAutomatedCode_UEProjectRefresh::~FAutomatedCode_UEProjectRefresh()
+{
+}
+
 void FAutomatedCode_UEProjectRefresh::Init()
 {
 }
@@ -28,9 +36,13 @@ bool FAutomatedCode_UEProjectRefresh::BuildParameter()
 		FPaths::RemoveDuplicateSlashes(SelfConfig->UnrealBuildToolPath);
 		FPaths::NormalizeFilename(SelfConfig->ProjectUProjectPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->ProjectUProjectPath);
+		return true;
 	}
-	return Result;
-
+	else
+	{
+		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		return false;
+	}
 }
 
 bool FAutomatedCode_UEProjectRefresh::Execute()

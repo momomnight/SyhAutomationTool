@@ -7,7 +7,6 @@
 class FAutomatedCode_Deployment_Delete : public FAutoExecElements
 {
 public:
-	using Base = FAutoExecElements;
 	using Super = FAutoExecElements;
 	using Self = FAutomatedCode_Deployment_Delete;
 	using OwnConfig = FAutomatedDeploymentDeleteConfig;
@@ -26,6 +25,4 @@ public:
 	virtual bool Execute();
 
 	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_Deployment_Delete; }
-
-
 };

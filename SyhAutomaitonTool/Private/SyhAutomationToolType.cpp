@@ -55,17 +55,20 @@ const int32 FCommandProtocolRelated::ProtocolStringPrefixLength = FCommandProtoc
 const FString FCommandProtocolRelated::CommandKey = TEXT("Command");
 const TArray<FString> FCommandProtocolRelated::CommandName =
 {
-	TEXT("None"),
-	TEXT("Call"),
-	TEXT("Call_Custom_Content"),
-	TEXT("UE_Project_Refresh"),
-	TEXT("Command_Nesting"),
-	TEXT("Deployment_Copy"),
-	TEXT("Deployment_Delete"),
-	TEXT("VS_Compile"),
-	TEXT("Git"),
-	TEXT("UE_Packaging"),
-	TEXT("Condition_Command"),
+	TEXT("None"),					//0
+	TEXT("Call"),					//1
+	TEXT("Call_Custom_Content"),	//2
+	TEXT("UE_Project_Refresh"),		//3
+	TEXT("Command_Nesting"),		//4
+	TEXT("Deployment_Copy"),		//5
+	TEXT("Deployment_Delete"),		//6
+	TEXT("VS_Compile"),				//7
+	TEXT("Git"),					//8
+	TEXT("UE_Packaging"),			//9
+	TEXT("UE_Plugin_Packaging"),	//10
+	TEXT("Condition_Command"),		//11
+
+	TEXT("Max")
 };
 
 const TArray<FString> FAutomatedCommandNestingRelated::ComparisionTypeName =
@@ -105,12 +108,15 @@ const FString FAutomatedVSCompileRelated::ProjectKey = TEXT("Project");
 const FString  FAutomatedGitRelated::ProjectPathKey = TEXT("ProjectPath");
 const FString  FAutomatedGitRelated::GitCommandsKey = TEXT("GitCommands");
 
-const FString FAutomatedUEPackagingRelated::EngineDirKey = TEXT("EngineDir");
+const FString FAutomatedUEPackagingBaseRelated::EngineDirKey = TEXT("EngineDir");
+
 const FString FAutomatedUEPackagingRelated::UProjectPathKey = TEXT("UProjectPath");
 const FString FAutomatedUEPackagingRelated::PlatformKey = TEXT("Platform");
 const FString FAutomatedUEPackagingRelated::BuildStateKey = TEXT("BuildState");
 const FString FAutomatedUEPackagingRelated::BuildTargetKey = TEXT("BuildTarget");
 const FString FAutomatedUEPackagingRelated::ArchiveDirectoryKey = TEXT("ArchiveDirectory");
+
+const FString FAutomatedUEPluginPackagingRelated::PathOfUPluginToTargetKey = TEXT("PathOfUPluginToTarget");
 
 const FString FAutomatedConditionCommandRelated::TrueCommandListKey = TEXT("TrueCommandList");
 const FString FAutomatedConditionCommandRelated::FalseCommandListKey = TEXT("FalseCommandList");

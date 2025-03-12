@@ -170,6 +170,12 @@ namespace AutomationJson
 	}
 
 	template<>
+	void AutomatedConfigToJsonObject<FAutomatedUEPluginPackagingConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedUEPluginPackagingConfig& InConfig)
+	{
+		OutJsonObject->SetStringField(RelatedString<FAutomatedUEPluginPackagingConfig>::EngineDirKey, InConfig.EngineDir);
+	}
+
+	template<>
 	void AutomatedConfigToJsonObject<FAutomatedConditionCommandConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedConditionCommandConfig& InConfig)
 	{
 		TArray<TSharedPtr<FJsonValue>> TrueArray;
@@ -253,7 +259,6 @@ namespace AutomationJson
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCommandNestingConfig& OutConfig)
 	{
-		
 		FString TypeStr = InJsonObject->GetStringField(RelatedString<FAutomatedCommandNestingConfig>::ComparisionTypeKey);
 		OutConfig.ComparisionType = StringToComparisionType(TypeStr);
 		const TArray<TSharedPtr<FJsonValue>>& InArrayObject = InJsonObject->GetArrayField(RelatedString<FAutomatedCommandNestingConfig>::CommandListKey);
@@ -340,6 +345,16 @@ namespace AutomationJson
 		FPaths::RemoveDuplicateSlashes(OutConfig.UProjectPath);
 		FPaths::RemoveDuplicateSlashes(OutConfig.ArchiveDirectory);
 	}
+	
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedUEPluginPackagingConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedUEPluginPackagingConfig& OutConfig)
+	{
+		OutConfig.EngineDir = InJsonObject->GetStringField(RelatedString<FAutomatedUEPluginPackagingConfig>::EngineDirKey);
+		FPaths::NormalizeDirectoryName(OutConfig.EngineDir);
+		FPaths::RemoveDuplicateSlashes(OutConfig.EngineDir);
+
+	}
+
 
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedConditionCommandConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedConditionCommandConfig& OutConfig)

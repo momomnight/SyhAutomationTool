@@ -5,18 +5,18 @@
 #include "SyhAutomationToolType.h"
 
 //不支持A程序调用B程序
-class FAutomatedCode_UEProjectRefresh : public FAutomatedCode_Call
+class FAutomatedCode_UE_Plugin_Packaging : public FAutomatedCode_Call
 {
 public:
 	using Super = FAutomatedCode_Call;
-	using Self = FAutomatedCode_UEProjectRefresh;
-	using OwnConfig = FAutomatedUEProjectRefreshConfig;
+	using Self = FAutomatedCode_UE_Plugin_Packaging;
+	using OwnConfig = FAutomatedUEPluginPackagingConfig;
 
 public:
 
-	FAutomatedCode_UEProjectRefresh();
+	FAutomatedCode_UE_Plugin_Packaging();
 
-	virtual ~FAutomatedCode_UEProjectRefresh() override;
+	virtual ~FAutomatedCode_UE_Plugin_Packaging() override;
 
 	virtual void Init() override;
 
@@ -29,6 +29,6 @@ public:
 	virtual bool Execute() override;
 
 public:
-	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_UE_Project_Refresh; }
+	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_UE_Plugin_Packaging; }
 
 };

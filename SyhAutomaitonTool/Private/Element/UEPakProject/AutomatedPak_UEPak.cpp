@@ -39,8 +39,13 @@ bool FAutomatedCode_UE_Packaging::BuildParameter()
 		FPaths::RemoveDuplicateSlashes(SelfConfig->EngineDir);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->UProjectPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->ArchiveDirectory);
+		return true;
 	}
-	return Result;
+	else
+	{
+		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		return false;
+	}
 }
 
 bool FAutomatedCode_UE_Packaging::Execute()

@@ -13,10 +13,9 @@
 class FAutoExecElements : public TSharedFromThis<FAutoExecElements>
 {
 public:
-	//using Super = FAutoExecElements;
+	using Base = FAutoExecElements;
 	using Self = FAutoExecElements;
 	using OwnConfig = FAutomatedConfigBase;
-
 protected:
 
 	template <class AutomatedConfigType>
@@ -25,15 +24,22 @@ protected:
 		return StaticCastSharedPtr<AutomatedConfigType>(Z_C_o_n_f_i_g);
 	}
 
+	template <class AutomatedCommandType>
+	const FString& GetCommandName()
+	{
+		static_assert(std::is_base_of<FAutoExecElements, AutomatedCommandType>::value, "This type is not derived of FAutoExecElements.");
+		return ::GetCommandName<static_cast<uint32>(FCommandProtocol_ConfigType<typename AutomatedCommandType::OwnConfig>::Value)>();
+	}
+
 public:
 
-	template <class AutomatedType>
+	template <class AutomatedCommandType>
 	static void Init(TSharedPtr<FAutoExecElements> SelfPtr)
 	{
-		static_assert(std::is_base_of<FAutoExecElements, AutomatedType>::value, "This type is not derived of FAutoExecElements.");
+		static_assert(std::is_base_of<FAutoExecElements, AutomatedCommandType>::value, "This type is not derived of FAutoExecElements.");
 		if (!SelfPtr->Z_C_o_n_f_i_g.IsValid())
 		{
-			SelfPtr->Z_C_o_n_f_i_g = MakeShareable<typename AutomatedType::OwnConfig>(new typename AutomatedType::OwnConfig);
+			SelfPtr->Z_C_o_n_f_i_g = MakeShareable<typename AutomatedCommandType::OwnConfig>(new typename AutomatedCommandType::OwnConfig);
 			SelfPtr->Init();
 		}
 	}
@@ -62,7 +68,12 @@ public:
 
 public:
 	void HandleTimePath(FString& InPath);
-	bool ParseArrayStrings(const FString& InKey, TArray<FString>& InArray);
+
+	//xxx1&&xxx2
+	bool ParseStrings(const FString& InKey, TArray<FString>& InArray, bool bPath);
+
+	//xxx1||yyy1&&xxx2||yyy2
+	bool ParseStrings(const FString& InKey, TMap<FString, FString>& InArray, bool bPath);
 
 	bool DeletePath(const struct FFileStatData& InFileStatData, const FString& InPath);
 protected:
@@ -116,4 +127,5 @@ protected:
 
 	//Config，如此命名为的是在代码提示中隐藏
 	TSharedPtr<FAutomatedConfigBase> Z_C_o_n_f_i_g;
+
 };

@@ -8,7 +8,6 @@
 class FAutomatedCode_Call : public FAutoExecElements
 {
 public:
-	using Base = FAutoExecElements;
 	using Super = FAutoExecElements;
 	using Self = FAutomatedCode_Call;
 	using OwnConfig = FAutomatedCallConfig;

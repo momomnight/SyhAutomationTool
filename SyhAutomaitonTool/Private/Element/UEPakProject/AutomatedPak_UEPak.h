@@ -8,7 +8,6 @@
 class FAutomatedCode_UE_Packaging : public FAutomatedCode_Call
 {
 public:
-	using Base = FAutoExecElements;
 	using Super = FAutomatedCode_Call;
 	using Self = FAutomatedCode_UE_Packaging;
 	using OwnConfig = FAutomatedUEPackagingConfig;

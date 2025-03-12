@@ -22,21 +22,14 @@ bool FAutomatedCode_Deployment_Delete::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
-	TArray<FString> Target;
-
-	if (!ParseArrayStrings(TEXT("-Files="), Target))
+	if (ParseStrings(OwnConfig::RelatedString::FilesKey, SelfConfig->Files, true))
 	{
-		return false;
+		return true;
 	}
 	else
 	{
-		for (auto& Temp : Target)
-		{
-			FPaths::NormalizeFilename(Temp);
-			FPaths::RemoveDuplicateSlashes(Temp);
-			SelfConfig->Files.Add(Temp);
-		}
-		return true;
+		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		return false;
 	}
 }
 

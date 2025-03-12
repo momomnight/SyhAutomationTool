@@ -8,6 +8,7 @@
 #include "Element/VisualStudio/AutomatedCompile_VsCompile.h"
 #include "Element/Git/AutomatedGit.h"
 #include "Element/UEPakProject/AutomatedPak_UEPak.h"
+#include "Element/UEPakProject/AutomatedPak_UEPluginPak.h"
 #include "Element/AutomationCode/AutomatedCode_ConditionCommand.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
@@ -57,6 +58,9 @@ TSharedPtr<FAutoExecElements> FAutoExecElementsFactory::CreateAutomatedTask(uint
 	case ECommandProtocol::CMD_UE_Packaging:
 		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- UE_Packaging"));
 		return CreateAutomatedTask<FAutomatedCode_UE_Packaging>(InJson);
+	case ECommandProtocol::CMD_UE_Plugin_Packaging:
+		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- UE_Plugin_Packaging"));
+		return CreateAutomatedTask<FAutomatedCode_UE_Plugin_Packaging>(InJson);
 	case ECommandProtocol::CMD_Condition_Command:
 		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- Condition_Command"));
 		return CreateAutomatedTask<FAutomatedCode_ConditionCommand>(InJson);

@@ -19,16 +19,14 @@ FAutomatedCode_ConditionCommand::~FAutomatedCode_ConditionCommand()
 
 void FAutomatedCode_ConditionCommand::Init()
 {
-	Super::Init();
-	TrueTaskCommand.Empty();
-	FalseTaskCommand.Empty();
 }
 
 bool FAutomatedCode_ConditionCommand::BuildParameter(const FString& InJsonStr)
 {
 	AutomationJson::JsonStringToAutomatedConfig<OwnConfig>(InJsonStr, *GetSelfConfig<OwnConfig>());
 	bool Result = true;
-	Result &= InitTaskCommand();
+	Result &= Super::InitTaskCommand();
+	Self::InitTaskCommand();
 	SetExecuteToken(Result);
 	return Result;
 }
@@ -38,17 +36,25 @@ bool FAutomatedCode_ConditionCommand::BuildParameter()
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
 	bool Result = true;
-	ParseArrayStrings(OwnConfig::RelatedString::TrueCommandListKey, SelfConfig->TrueCommandList);
-	ParseArrayStrings(OwnConfig::RelatedString::FalseCommandListKey, SelfConfig->FalseCommandList);
-	//父类有虚函数调用初始化容器
 	Result &= Super::BuildParameter();
-	SetExecuteToken(Result);
-	return Result;
+	ParseStrings(OwnConfig::RelatedString::TrueCommandListKey, SelfConfig->TrueCommandList, false);
+	ParseStrings(OwnConfig::RelatedString::FalseCommandListKey, SelfConfig->FalseCommandList, false);
+	Self::InitTaskCommand();
+
+	if (Result)
+	{
+		return true;
+	}
+	else
+	{
+		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		return false;
+	}
 }
 
 bool FAutomatedCode_ConditionCommand::Execute()
 {
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of ConditionCommand"));
+	FLogPrint::PrintDisplay(TEXT("execute"), GetCommandName<Self>());
 	if (Super::Execute())
 	{
 		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Evaluating the result of commands execution..."));
@@ -71,15 +77,16 @@ bool FAutomatedCode_ConditionCommand::Execute()
 		Result = SimpleAutomationTool::EvaluateTaskResult(GetTaskResult());
 		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Result is %s."), Result ? TEXT("True") : TEXT("False"));
 		ClearTaskResult();
-		return Result;
+		return true;
 	}
+
+	FLogPrint::PrintError(TEXT("execute"), GetCommandName<Self>());
 	return false;
 }
 
 bool FAutomatedCode_ConditionCommand::InitTaskCommand()
 {
 	bool Result = true;
-	Result &= Super::InitTaskCommand();
 	Result &= Super::InitTaskCommand(GetSelfConfig<OwnConfig>()->TrueCommandList, TrueTaskCommand);
 	Result &= Super::InitTaskCommand(GetSelfConfig<OwnConfig>()->FalseCommandList, FalseTaskCommand);
 	return Result;

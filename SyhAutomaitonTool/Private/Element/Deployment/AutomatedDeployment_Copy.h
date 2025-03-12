@@ -7,7 +7,6 @@
 class FAutomatedCode_Deployment_Copy : public FAutoExecElements
 {
 public:
-	using Base = FAutoExecElements;
 	using Super = FAutoExecElements;
 	using Self = FAutomatedCode_Deployment_Copy;
 	using OwnConfig = FAutomatedDeploymentCopyConfig;

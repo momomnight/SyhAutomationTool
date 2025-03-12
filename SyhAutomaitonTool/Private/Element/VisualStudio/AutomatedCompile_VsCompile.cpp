@@ -23,7 +23,6 @@ bool FAutomatedCode_VS_Compile::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_VS_Compile::BuildParameter()
 {
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of VSCompile"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
 	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::CallPathKey, SelfConfig->CallPath);
@@ -37,13 +36,18 @@ bool FAutomatedCode_VS_Compile::BuildParameter()
 		FPaths::RemoveDuplicateSlashes(SelfConfig->CallPath);
 		FPaths::NormalizeFilename(SelfConfig->SlnProjectPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->SlnProjectPath);
+		return true;
 	}
-
-	return Result;
+	else
+	{
+		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		return false;
+	}
 }
 
 bool FAutomatedCode_VS_Compile::Execute()
 {
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of VSCompile"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	check(!SelfConfig->CallPath.IsEmpty());
 	check(!SelfConfig->BuildState.IsEmpty());

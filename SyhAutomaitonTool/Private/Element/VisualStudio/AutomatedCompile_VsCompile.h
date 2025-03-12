@@ -8,7 +8,6 @@
 class FAutomatedCode_VS_Compile : public FAutomatedCode_Call
 {
 public:
-	using Base = FAutoExecElements;
 	using Super = FAutomatedCode_Call;
 	using Self = FAutomatedCode_VS_Compile;
 	using OwnConfig = FAutomatedVSCompileConfig;

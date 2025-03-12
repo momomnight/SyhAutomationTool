@@ -37,14 +37,18 @@ bool FAutomatedCode_Call::BuildParameter()
 	{
 		FPaths::NormalizeFilename(SelfConfig->CallPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->CallPath);
+		return true;
 	}
-
-	return Result;
+	else
+	{
+		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		return false;
+	}
 }
 
 bool FAutomatedCode_Call::Execute()
 {
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of Call"));
+	FLogPrint::PrintDisplayCustom(TEXT("Execute the command of Call"));
 	int32 ReturnValue = 0;
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
@@ -56,11 +60,11 @@ bool FAutomatedCode_Call::Execute()
 		SelfConfig->Parameters.Empty();
 	}
 
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------Start Call----------"));
+	FLogPrint::PrintDisplayCustom(TEXT("----------Start Call----------"));
 
 	if (SelfConfig->CallType.Equals(TEXT("exe")))
 	{
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute .exe file."));
+		FLogPrint::PrintDisplayCustom(TEXT("Execute .exe file."));
 		FProcHandle ProcessHandle = FPlatformProcess::CreateProc(*SelfConfig->CallPath,
 			*SelfConfig->Parameters, false, false, false, nullptr, 0, nullptr, nullptr);
 		FPlatformProcess::WaitForProc(ProcessHandle);
@@ -70,19 +74,19 @@ bool FAutomatedCode_Call::Execute()
 	{
 		//	cd /d %~dp0 :从当前的批处理开始，如果执行出现问题
 		// 重开窗口
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute .bat file."));
+		FLogPrint::PrintDisplayCustom(TEXT("Execute .bat file."));
 		if (!FPlatformProcess::ExecElevatedProcess(*SelfConfig->CallPath, *SelfConfig->Parameters, &ReturnValue))
 		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("[cd /d %~dp0] Failure to start from the current batch, please check your file whether exist error."));
+			FLogPrint::PrintErrorCustom(TEXT("[cd /d %~dp0] Failure to start from the current batch, please check your file whether exist error."));
 		}
 		(ReturnValue == 1) ? ReturnValue = 0 : 1;
 	}
 	else if (SelfConfig->CallType.Equals(TEXT("sh")))
 	{
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute .sh file."));
+		FLogPrint::PrintDisplayCustom(TEXT("Execute .sh file."));
 	}
 
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------End Call----------"));
+	FLogPrint::PrintDisplayCustom(TEXT("----------End Call----------"));
 
 	return ReturnValue == 0;
 }

@@ -31,7 +31,6 @@ bool FAutomatedCode_Git::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_Git::BuildParameter()
 {
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of Git"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
 	if (GetValueFromCommandLine(OwnConfig::RelatedString::ProjectPathKey, SelfConfig->ProjectPath))
@@ -41,11 +40,13 @@ bool FAutomatedCode_Git::BuildParameter()
 	}
 	else
 	{
+		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
 		return false;
 	}
 
-	if(!ParseArrayStrings(OwnConfig::RelatedString::GitCommandsKey, SelfConfig->GitCommands))
+	if(!ParseStrings(OwnConfig::RelatedString::GitCommandsKey, SelfConfig->GitCommands, false))
 	{
+		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
 		return false;
 	}
 
@@ -56,6 +57,7 @@ bool FAutomatedCode_Git::BuildParameter()
 
 bool FAutomatedCode_Git::Execute()
 {
+	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of Git"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	if (SelfConfig->GitCommands.Num() > 0 && !SelfConfig->ProjectPath.IsEmpty())
 	{

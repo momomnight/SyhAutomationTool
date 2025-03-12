@@ -9,7 +9,8 @@ void FAutoExecElements::HandleTimePath(FString& InPath)
 	}
 }
 
-bool FAutoExecElements::ParseArrayStrings(const FString& InKey, TArray<FString>& InArray)
+//xxx1&&xxx2
+bool FAutoExecElements::ParseStrings(const FString& InKey, TArray<FString>& InArray, bool bPath)
 {
 	FString NewString;
 
@@ -27,10 +28,16 @@ bool FAutoExecElements::ParseArrayStrings(const FString& InKey, TArray<FString>&
 		return false;
 	}
 
-	int32 Result = NewString.ParseIntoArray(InArray, TEXT("&&"));
-
-	if (Result != 0)
+	if (NewString.ParseIntoArray(InArray, TEXT("&&")))
 	{
+		if(bPath)
+		{
+			for (auto& Temp : InArray)
+			{
+				FPaths::NormalizeDirectoryName(Temp);
+				FPaths::RemoveDuplicateSlashes(Temp);
+			}
+		}
 		return true;
 	}
 	else
@@ -39,6 +46,43 @@ bool FAutoExecElements::ParseArrayStrings(const FString& InKey, TArray<FString>&
 		return false;
 	}
 
+}
+
+//xxx1||yyy1&&xxx2||yyy2
+bool FAutoExecElements::ParseStrings(const FString& InKey, TMap<FString, FString>& InArray, bool bPath)
+{
+	bool Result = true;
+	TArray<FString> TempArray;
+	//xxx||yyy数组
+	if (!ParseStrings(InKey, TempArray, false))
+	{
+		return false;
+	}
+
+	for (auto& Temp : TempArray)
+	{
+		FString Source;
+		FString Target;
+
+		if (Temp.Split(TEXT("||"), &Source, &Target))
+		{
+			if (bPath)
+			{
+				FPaths::NormalizeDirectoryName(Source);
+				FPaths::RemoveDuplicateSlashes(Source);
+				FPaths::NormalizeDirectoryName(Target);
+				FPaths::RemoveDuplicateSlashes(Target);
+			}
+			InArray.Add(Source, Target);
+		}
+		else
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to parse the string [%s]. Source=[%s] Target=[%s]"), *Temp, *Source, *Target);
+			return false;
+		}
+	}
+
+	return InArray.Num() > 0;
 }
 
 bool FAutoExecElements::DeletePath(const FFileStatData& InFileStatData, const FString& InPath)

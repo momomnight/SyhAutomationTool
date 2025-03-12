@@ -42,14 +42,16 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 
 	if (!Result)
 	{
+		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
 		return false;
 	}
 
 	TArray<FString> Source;
 	TArray<FString> Destination;
 
-	if (!ParseArrayStrings(TEXT("-Source="), Source) || !ParseArrayStrings(TEXT("-Destination="), Destination))
+	if (!ParseStrings(TEXT("-Source="), Source, true) || !ParseStrings(TEXT("-Destination="), Destination, true))
 	{
+		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
 		return false;
 	}
 	else
@@ -68,7 +70,8 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 		}
 		else
 		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("The number of the source path is not equal to the number of the destination path."));
+			FLogPrint::PrintErrorCustom(TEXT("The number of the source path is not equal to the number of the destination path."));
+			FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
 			return false;
 		}
 	}
