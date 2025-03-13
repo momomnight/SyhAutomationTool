@@ -10,6 +10,21 @@
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
 
+struct FOperatePath_DeploymentCopy : public FOperatePath
+{
+	virtual void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath)
+	{
+		OutContent.Add(SourcePath, TargetPath);
+	}
+	virtual void operator()(TMap<FString, FString>& OutContent, const FString& InPath, const FString& SourcePath, const FString& TargetPath)
+	{
+		FString LocalFile = InPath;
+		LocalFile.RemoveFromStart(SourcePath);
+		OutContent.Add(SourcePath + LocalFile, TargetPath + LocalFile);
+	}
+};
+
+
 struct FMoveToFileCopyProgress : public FCopyProgress
 {
 	FString Src;
@@ -77,6 +92,9 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 	}
 }
 
+
+
+
 bool FAutomatedCode_Deployment_Copy::Execute()
 {
 	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of DeploymentCopy"));
@@ -89,57 +107,7 @@ bool FAutomatedCode_Deployment_Copy::Execute()
 	}
 
 	TMap<FString, FString> Content;
-
-	//检查路径，并添加所有文件的具体路径
-	for (auto& TempPath : SelfConfig->Files)
-	{
-		FString SourcePath = TempPath.Key;
-		FString DestinationPath = TempPath.Value;
-		
-		//是否存在命令替换
-		HandleTimePath(SourcePath);
-		HandleTimePath(DestinationPath);
-		FFileStatData SourceFileStatData = IFileManager::Get().GetStatData(*SourcePath);
-		FFileStatData DestinationFileStatData = IFileManager::Get().GetStatData(*DestinationPath);
-
-		//原文件需要存在
-		//目录路径如果存在，则删除
-		if (!SourceFileStatData.bIsValid)
-		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("No exist the source folder : %s."), *SourcePath);
-			return false;
-		}
-
-		if (SourceFileStatData.bIsDirectory)
-		{
-			//1.txt文件夹和1.txt文件属于重名
-			if (!DeletePath(DestinationFileStatData, DestinationPath))
-			{
-				//无法删除路径
-				return false;
-			}
-
-			TArray<FString> FoundFiles;
-			IFileManager::Get().FindFilesRecursive(FoundFiles, *SourcePath, TEXT("*"), true, false);
-
-			for (auto& SubTemp : FoundFiles)
-			{
-				FString LocalFile = SubTemp;
-				SubTemp.RemoveFromStart(SourcePath);
-				Content.Add(LocalFile, DestinationPath + SubTemp);
-			}
-		}
-		else
-		{
-			if (!DeletePath(DestinationFileStatData, DestinationPath))
-			{
-				//无法删除路径
-				return false;
-			}
-			Content.Add(SourcePath, DestinationPath);
-		}
-	}
-
+	PathFilter<FOperateFileOrDirectory_DeletePath, FOperatePath_DeploymentCopy>(Content, SelfConfig->Files);
 
 	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------Start Deployment----------"));
 

@@ -173,6 +173,16 @@ namespace AutomationJson
 	void AutomatedConfigToJsonObject<FAutomatedUEPluginPackagingConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedUEPluginPackagingConfig& InConfig)
 	{
 		OutJsonObject->SetStringField(RelatedString<FAutomatedUEPluginPackagingConfig>::EngineDirKey, InConfig.EngineDir);
+
+		TArray<TSharedPtr<FJsonValue>> Array;
+		for (auto& Temp : InConfig.PathOfUPluginToTarget)
+		{
+			TSharedPtr<FJsonObject> Object = MakeShareable<FJsonObject>(new FJsonObject);
+			Object->SetStringField(RelatedString<FAutomatedUEPluginPackagingConfig>::SourceKey, Temp.Key);
+			Object->SetStringField(RelatedString<FAutomatedUEPluginPackagingConfig>::TargetKey, Temp.Value);
+			Array.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(Object)));
+		}
+		OutJsonObject->SetArrayField(RelatedString<FAutomatedUEPluginPackagingConfig>::PathOfUPluginToTargetKey, Array);
 	}
 
 	template<>
@@ -353,6 +363,20 @@ namespace AutomationJson
 		FPaths::NormalizeDirectoryName(OutConfig.EngineDir);
 		FPaths::RemoveDuplicateSlashes(OutConfig.EngineDir);
 
+		OutConfig.PathOfUPluginToTarget.Empty();
+		const TArray<TSharedPtr<FJsonValue>>& Array = InJsonObject->GetArrayField(RelatedString<FAutomatedUEPluginPackagingConfig>::PathOfUPluginToTargetKey);
+	
+		for (auto& Temp : Array)
+		{
+			TSharedPtr<FJsonObject> Object = Temp->AsObject();
+			FString Source = Object->GetStringField(RelatedString<FAutomatedUEPluginPackagingConfig>::SourceKey);
+			FString Target = Object->GetStringField(RelatedString<FAutomatedUEPluginPackagingConfig>::TargetKey);
+			FPaths::NormalizeDirectoryName(Source);
+			FPaths::RemoveDuplicateSlashes(Source);
+			FPaths::NormalizeDirectoryName(Target);
+			FPaths::RemoveDuplicateSlashes(Target);
+			OutConfig.PathOfUPluginToTarget.Add(Source, Target);
+		}
 	}
 
 

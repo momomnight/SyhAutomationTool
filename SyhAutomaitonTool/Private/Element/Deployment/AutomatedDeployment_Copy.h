@@ -23,7 +23,7 @@ public:
 	virtual bool BuildParameter();
 
 	virtual bool Execute();
-
+	bool Execute(TMap<FString, FString>& OutContent, const TMap<FString, FString>& InContent, bool);
 	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_Deployment_Copy; }
 
 };

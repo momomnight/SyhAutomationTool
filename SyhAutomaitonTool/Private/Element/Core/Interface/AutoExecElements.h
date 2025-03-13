@@ -4,6 +4,7 @@
 #include "Templates/SharedPointer.h"
 #include "Json/AutomationJson.h"
 #include "Misc/AutomatedExecutionPath.h"
+#include "SyhAutomationToolCommon.h"
 
 
 // 所有自动化元素的基类
@@ -25,10 +26,10 @@ protected:
 	}
 
 	template <class AutomatedCommandType>
-	const FString& GetCommandName()
+	const TCHAR* GetCommandName()
 	{
 		static_assert(std::is_base_of<FAutoExecElements, AutomatedCommandType>::value, "This type is not derived of FAutoExecElements.");
-		return ::GetCommandName<static_cast<uint32>(FCommandProtocol_ConfigType<typename AutomatedCommandType::OwnConfig>::Value)>();
+		return *::GetCommandName<static_cast<uint32>(FCommandProtocol_ConfigType<typename AutomatedCommandType::OwnConfig>::Value)>();
 	}
 
 public:
@@ -66,24 +67,7 @@ public:
 
 	virtual uint32 GetType() const { return (uint32)ECommandProtocol::CMD_None; };
 
-public:
-	void HandleTimePath(FString& InPath);
-
-	//xxx1&&xxx2
-	bool ParseStrings(const FString& InKey, TArray<FString>& InArray, bool bPath);
-
-	//xxx1||yyy1&&xxx2||yyy2
-	bool ParseStrings(const FString& InKey, TMap<FString, FString>& InArray, bool bPath);
-
-	bool DeletePath(const struct FFileStatData& InFileStatData, const FString& InPath);
 protected:
-	//String(xxxx xxxx)-> "xxxx xxxx"
-	//对于.bat文件，使用"xxx/xxx xxx/xx"就可以读取
-	//对于.sh文件
-	void AdaptCommandArgsStringWithSpace(FString& InKey);
-	void GetBatPathString(FString& InPath);
-	FString GetMatchKey(const FString& InKey){return FString(TEXT("-") + InKey + TEXT("=")); }
-	bool IsMatchKey(const FString& InKey);
 
 	template<class Type>
 	bool GetValueFromCommandLine(const FString& InKey, Type& OutValue)

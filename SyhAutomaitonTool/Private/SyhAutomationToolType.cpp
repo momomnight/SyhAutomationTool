@@ -117,6 +117,8 @@ const FString FAutomatedUEPackagingRelated::BuildTargetKey = TEXT("BuildTarget")
 const FString FAutomatedUEPackagingRelated::ArchiveDirectoryKey = TEXT("ArchiveDirectory");
 
 const FString FAutomatedUEPluginPackagingRelated::PathOfUPluginToTargetKey = TEXT("PathOfUPluginToTarget");
+const FString FAutomatedUEPluginPackagingRelated::SourceKey = TEXT("Source");;
+const FString FAutomatedUEPluginPackagingRelated::TargetKey = TEXT("Target");;
 
 const FString FAutomatedConditionCommandRelated::TrueCommandListKey = TEXT("TrueCommandList");
 const FString FAutomatedConditionCommandRelated::FalseCommandListKey = TEXT("FalseCommandList");

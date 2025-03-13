@@ -99,6 +99,8 @@ struct FAutomatedUEPackagingRelated : public FAutomatedUEPackagingBaseRelated
 struct FAutomatedUEPluginPackagingRelated : public FAutomatedUEPackagingBaseRelated
 {
 	static const FString PathOfUPluginToTargetKey;
+	static const FString SourceKey;
+	static const FString TargetKey;
 };
 
 struct FAutomatedConditionCommandRelated : public FAutomatedCommandNestingRelated

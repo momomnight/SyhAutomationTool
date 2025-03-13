@@ -28,7 +28,13 @@ public:
 
 	virtual bool Execute() override;
 
+protected:
+	bool Execute(const FString& InPluginPath, const FString& InArchivePath);
+
+
 public:
 	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_UE_Plugin_Packaging; }
 
+private:
+	FString RunUATPath;
 };
