@@ -40,14 +40,14 @@ bool FAutomatedCode_VS_Compile::BuildParameter()
 	}
 	else
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
 }
 
 bool FAutomatedCode_VS_Compile::Execute()
 {
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of VSCompile"));
+	SyhLogDisplay(TEXT("Execute the command of VSCompile"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	check(!SelfConfig->CallPath.IsEmpty());
 	check(!SelfConfig->BuildState.IsEmpty());
@@ -58,7 +58,7 @@ bool FAutomatedCode_VS_Compile::Execute()
 	FString VSLogPath = AutomatedExecutionPath::GetVisualStudioLogPath();
 	FFileHelper::SaveStringToFile(TEXT(""), *VSLogPath);//创建一个Log
 
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------Start Compilation----------"));
+	SyhLogDisplay(TEXT("----------Start Compilation----------"));
 
 	FString VSParameter = FString::Printf(TEXT(" %s /Rebuild %s /Out %s"), *SelfConfig->SlnProjectPath, *SelfConfig->BuildState, *VSLogPath);
 
@@ -71,7 +71,7 @@ bool FAutomatedCode_VS_Compile::Execute()
 
 	bool Result = Super::Execute();
 
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------End Compilation----------"));
+	SyhLogDisplay(TEXT("----------End Compilation----------"));
 
 	return Result;
 }

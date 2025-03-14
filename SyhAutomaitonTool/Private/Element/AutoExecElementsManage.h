@@ -17,10 +17,10 @@ public :
 public:
 	
 	//处理任务，使用Core/SimpleAutomationTool.h的逻辑
-	void HandleTask();
+	bool HandleTask();
 
 	//初始化,以读取最新的任务，使用Core/SimpleAutomationTool.h的逻辑
-	void Init();
+	bool Init();
 protected:
 	FAutoExecElementsManage();
 	FAutoExecElementsManage(const FAutoExecElementsManage&) = delete;

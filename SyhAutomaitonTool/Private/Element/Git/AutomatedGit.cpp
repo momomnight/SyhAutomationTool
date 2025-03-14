@@ -14,14 +14,13 @@ FAutomatedCode_Git::FAutomatedCode_Git() : Super()
 
 FAutomatedCode_Git::~FAutomatedCode_Git()
 {
-	FFileStatData ShFileStatData = IFileManager::Get().GetStatData(*ShPath);
-	FFileStatData BatFileStatData = IFileManager::Get().GetStatData(*BatPath);
-	DeletePath(ShFileStatData, ShPath);
-	DeletePath(BatFileStatData, BatPath);
+	SimpleAutomationToolCommon::DeleteFile(ShPath);
+	SimpleAutomationToolCommon::DeleteFile(BatPath);
 }
 
 void FAutomatedCode_Git::Init()
 {
+	GetSelfConfig<OwnConfig>()->GitCommands.Empty();
 }
 
 bool FAutomatedCode_Git::BuildParameter(const FString& InJsonStr)
@@ -40,13 +39,13 @@ bool FAutomatedCode_Git::BuildParameter()
 	}
 	else
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
 
-	if(!ParseStrings(OwnConfig::RelatedString::GitCommandsKey, SelfConfig->GitCommands, false))
+	if(!SimpleAutomationToolCommon::ParseStrings(OwnConfig::RelatedString::GitCommandsKey, SelfConfig->GitCommands, false))
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
 
@@ -62,12 +61,12 @@ bool FAutomatedCode_Git::Execute()
 	if (SelfConfig->GitCommands.Num() > 0 && !SelfConfig->ProjectPath.IsEmpty())
 	{
 		//对于路径可以在双引号内加空格
-		GetBatPathString(SelfConfig->ProjectPath);
+		SimpleAutomationToolCommon::GetBatPathString(SelfConfig->ProjectPath);
 
 		//对于git命令中的字符串空格，如git commit -m "first commit"，无能为力，转义字符都试过没用，故使用"String(xxx)"方式替代
 		for (auto& Temp : SelfConfig->GitCommands)
 		{
-			AdaptCommandArgsStringWithSpace(Temp);
+			SimpleAutomationToolCommon::AdaptCommandArgsStringWithSpace(Temp);
 		}
 
 		BuildExecutableFile(SelfConfig->ProjectPath, SelfConfig->GitCommands);

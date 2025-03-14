@@ -29,18 +29,21 @@ void FAutoExecElementsManage::Destroy()
 	}
 }
 
-void FAutoExecElementsManage::HandleTask()
+bool FAutoExecElementsManage::HandleTask()
 {
 	if(bExecute)
 	{
+		bExecute = false;
 		TMultiMap<int32, bool> Result;
 		SimpleAutomationTool::HandleTask(TaskCommand, Result);
+		return SimpleAutomationTool::EvaluateTaskResult(Result);
 	}
-	bExecute = false;
+	return false;
 }
 
-void FAutoExecElementsManage::Init()
+bool FAutoExecElementsManage::Init()
 {
 	SimpleAutomationTool::BuildConfig();
 	bExecute = SimpleAutomationTool::Init(TaskCommand);
+	return bExecute;
 }

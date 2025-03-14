@@ -41,14 +41,14 @@ bool FAutomatedCode_Call::BuildParameter()
 	}
 	else
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
 }
 
 bool FAutomatedCode_Call::Execute()
 {
-	FLogPrint::PrintDisplayCustom(TEXT("Execute the command of Call"));
+	SyhLogDisplay(TEXT("Execute the command of Call"));
 	int32 ReturnValue = 0;
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
@@ -60,11 +60,11 @@ bool FAutomatedCode_Call::Execute()
 		SelfConfig->Parameters.Empty();
 	}
 
-	FLogPrint::PrintDisplayCustom(TEXT("----------Start Call----------"));
+	SyhLogDisplay(TEXT("----------Start Call----------"));
 
 	if (SelfConfig->CallType.Equals(TEXT("exe")))
 	{
-		FLogPrint::PrintDisplayCustom(TEXT("Execute .exe file."));
+		SyhLogDisplay(TEXT("Execute .exe file."));
 		FProcHandle ProcessHandle = FPlatformProcess::CreateProc(*SelfConfig->CallPath,
 			*SelfConfig->Parameters, false, false, false, nullptr, 0, nullptr, nullptr);
 		FPlatformProcess::WaitForProc(ProcessHandle);
@@ -74,20 +74,19 @@ bool FAutomatedCode_Call::Execute()
 	{
 		//	cd /d %~dp0 :从当前的批处理开始，如果执行出现问题
 		// 重开窗口
-		FLogPrint::PrintDisplayCustom(TEXT("Execute .bat file."));
+		SyhLogDisplay(TEXT("Execute .bat file."));
 		if (!FPlatformProcess::ExecElevatedProcess(*SelfConfig->CallPath, *SelfConfig->Parameters, &ReturnValue))
 		{
-			FLogPrint::PrintErrorCustom(TEXT("[cd /d %~dp0] Failure to start from the current batch, please check your file whether exist error."));
+			SyhLogError(TEXT("[cd /d %~dp0] Failure to start from the current batch, please check your file whether exist error."));
 		}
 		(ReturnValue == 1) ? ReturnValue = 0 : 1;
 	}
 	else if (SelfConfig->CallType.Equals(TEXT("sh")))
 	{
-		FLogPrint::PrintDisplayCustom(TEXT("Execute .sh file."));
+		SyhLogDisplay(TEXT("Execute .sh file."));
 	}
 
-	FLogPrint::PrintDisplayCustom(TEXT("----------End Call----------"));
-
+	SyhLogDisplay(TEXT("----------End Call----------"));
 	return ReturnValue == 0;
 }
 

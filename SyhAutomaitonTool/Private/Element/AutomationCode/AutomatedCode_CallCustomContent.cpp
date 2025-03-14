@@ -33,18 +33,19 @@ bool FAutomatedCode_CallCustomContent::BuildParameter()
 	}
 	else
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("build parameter"), GetCommandName<Self>());
 		return false;
 	}
 }
 
 bool FAutomatedCode_CallCustomContent::Execute()
 {
-	FLogPrint::PrintDisplayCustom(TEXT("Execute the command of CallCustomContent"));
+	SyhLogDisplay(TEXT("Execute the command of CallCustomContent"));
+
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
 	check(!SelfConfig->CallType.IsEmpty());
-	FLogPrint::PrintDisplayCustom(TEXT("----------Start Call Custom Content----------"));
+	SyhLogDisplay(TEXT("----------Start Call Custom Content----------"));
 
 	TArray<FString> Tokens;
 	SelfConfig->Content.ParseIntoArray(Tokens, TEXT("\r\n"));
@@ -71,7 +72,7 @@ bool FAutomatedCode_CallCustomContent::Execute()
 
 	bool ReturnValue = Super::Execute();
 
-	FLogPrint::PrintDisplayCustom(TEXT("----------End Call Custom Content----------"));
+	SyhLogDisplay(TEXT("----------End Call Custom Content----------"));
 
 	return ReturnValue;
 }

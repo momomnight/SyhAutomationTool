@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Core/SimpleAutomationToolTemplate.h"
 
 namespace SimpleAutomationTool
 {
@@ -16,5 +17,6 @@ namespace SimpleAutomationTool
 
 	void BuildConfig();
 
-	bool EvaluateTaskResult(const TMultiMap<int32, bool>& InTaskResult);
+	extern template bool EvaluateTaskResult<int32>(const TMultiMap<int32, bool>& InTaskResult);
+	extern template bool EvaluateTaskResult<FString>(const TMultiMap<FString, bool>& InTaskResult);
 }

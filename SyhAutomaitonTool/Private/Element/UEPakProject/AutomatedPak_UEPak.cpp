@@ -43,14 +43,14 @@ bool FAutomatedCode_UE_Packaging::BuildParameter()
 	}
 	else
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
 }
 
 bool FAutomatedCode_UE_Packaging::Execute()
 {
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of UEPackaging"));
+	SyhLogDisplay(TEXT("Execute the command of UEPackaging"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	check(!SelfConfig->EngineDir.IsEmpty());
 	check(!SelfConfig->UProjectPath.IsEmpty());
@@ -59,10 +59,10 @@ bool FAutomatedCode_UE_Packaging::Execute()
 	check(!SelfConfig->BuildState.IsEmpty());
 	check(!SelfConfig->ArchiveDirectory.IsEmpty());
 
-	HandleTimePath(SelfConfig->ArchiveDirectory);
+	SimpleAutomationToolCommon::HandleTimePath(SelfConfig->ArchiveDirectory);
 
 	FString RunUATPath = FString::Printf(TEXT("%s/Build/BatchFiles/RunUAT.bat"), *SelfConfig->EngineDir);
-	GetBatPathString(RunUATPath);
+	SimpleAutomationToolCommon::GetBatPathString(RunUATPath);
 
 	FString HeadName = FPaths::GetCleanFilename(SelfConfig->UProjectPath);
 	HeadName.RemoveFromEnd(FPaths::GetExtension(HeadName, true));
@@ -75,8 +75,8 @@ bool FAutomatedCode_UE_Packaging::Execute()
 	);
 	FPaths::RemoveDuplicateSlashes(BuildBatPath);
 
-	GetBatPathString(SelfConfig->UProjectPath);
-	GetBatPathString(SelfConfig->ArchiveDirectory);
+	SimpleAutomationToolCommon::GetBatPathString(SelfConfig->UProjectPath);
+	SimpleAutomationToolCommon::GetBatPathString(SelfConfig->ArchiveDirectory);
 
 	FString Content;
 	if (SelfConfig->BuildTarget.Equals("Server"))
@@ -106,7 +106,7 @@ bool FAutomatedCode_UE_Packaging::Execute()
 
 	if (Content.IsEmpty())
 	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Invalid parameters, please check parameters."));
+		SyhLogError(TEXT("Invalid parameters, please check parameters."));
 		return false;
 	}
 	else

@@ -11,6 +11,7 @@
 
 void FAutomatedCode_Deployment_Delete::Init()
 {
+	GetSelfConfig<OwnConfig>()->Files.Empty();
 }
 
 bool FAutomatedCode_Deployment_Delete::BuildParameter(const FString& InJsonStr)
@@ -22,27 +23,26 @@ bool FAutomatedCode_Deployment_Delete::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
-	if (ParseStrings(OwnConfig::RelatedString::FilesKey, SelfConfig->Files, true))
+	if (SimpleAutomationToolCommon::ParseStrings(OwnConfig::RelatedString::FilesKey, SelfConfig->Files, true))
 	{
 		return true;
 	}
 	else
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
 }
 
 bool FAutomatedCode_Deployment_Delete::Execute()
 {
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of DeploymentDelete"));
+	SyhLogDisplay(TEXT("Execute the command of DeploymentDelete"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
 	for (auto& Temp : SelfConfig->Files)
 	{
-		HandleTimePath(Temp);
-		FFileStatData FileStatData = IFileManager::Get().GetStatData(*Temp);
-		DeletePath(FileStatData, Temp);
+		SimpleAutomationToolCommon::HandleTimePath(Temp);
+		SimpleAutomationToolCommon::DeletePath(Temp);
 	}
 	return true;
 

@@ -7,6 +7,7 @@
 #include "SyhAutomationToolCommon.h"
 
 
+
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
 #pragma optimize("", off)
@@ -15,6 +16,10 @@
 
 namespace SimpleAutomationTool
 {
+	template bool EvaluateTaskResult<int32>(const TMultiMap<int32, bool>& InTaskResult);
+	template bool EvaluateTaskResult<FString>(const TMultiMap<FString, bool>& InTaskResult);
+
+
 	bool Execute(uint32 InProtocolIndex, const FString& InJsonString)
 	{
 		if(InProtocolIndex != 0)
@@ -139,25 +144,7 @@ namespace SimpleAutomationTool
 
 	void BuildConfig()
 	{
-		PackagingSaveFileName = FDateTime::Now().ToString(TEXT("%Y-%m-%d-%H-%M"));
-	}
-
-	bool EvaluateTaskResult(const TMultiMap<int32, bool>& InTaskResult)
-	{
-		if (InTaskResult.Num() < 1)
-		{
-			return false;
-		}
-
-		for (auto& Temp : InTaskResult)
-		{
-			if (!Temp.Value)
-			{
-				return false;
-			}
-		}
-
-		return true;
+		SimpleAutomationToolCommon::PackagingSaveFileName = FDateTime::Now().ToString(TEXT("%Y-%m-%d-%H-%M"));
 	}
 }
 

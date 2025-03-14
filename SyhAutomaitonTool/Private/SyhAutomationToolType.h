@@ -15,8 +15,25 @@ struct FCommandProtocolRelated
 	static const FString ProtocolStringPrefix;
 	static const int32 ProtocolStringPrefixLength;
 	static const FString CommandKey;
-	static const TArray<FString> CommandName;
+	
+	static constexpr const TCHAR* CommandName[sizeof(uint8) * 256] =
+	{
+	TEXT("None"),					//0
+	TEXT("Call"),					//1
+	TEXT("Call_Custom_Content"),	//2
+	TEXT("UE_Project_Refresh"),		//3
+	TEXT("Command_Nesting"),		//4
+	TEXT("Deployment_Copy"),		//5
+	TEXT("Deployment_Delete"),		//6
+	TEXT("VS_Compile"),				//7
+	TEXT("Git"),					//8
+	TEXT("UE_Packaging"),			//9
+	TEXT("UE_Plugin_Packaging"),	//10
+	TEXT("Condition_Command"),		//11
 
+	TEXT("Max")
+	};
+	
 	static FString GetProtocolFullName(const FString& InShortName);
 };
 
@@ -460,7 +477,7 @@ template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Condition_Com
 
 
 template <uint32 Index>
-const FString& GetCommandName()
+constexpr const TCHAR* GetCommandName()
 {
 	return FCommandProtocolRelated::CommandName[Index];
 }

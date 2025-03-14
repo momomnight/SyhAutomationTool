@@ -40,14 +40,14 @@ bool FAutomatedCode_UEProjectRefresh::BuildParameter()
 	}
 	else
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
 }
 
 bool FAutomatedCode_UEProjectRefresh::Execute()
 {
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of UEProjectRefresh"));
+	SyhLogDisplay(TEXT("Execute the command of UEProjectRefresh"));
 	TSharedPtr<OwnConfig> SelfConfig= GetSelfConfig<OwnConfig>();
 
 	bool ReturnValue = false;
@@ -55,18 +55,18 @@ bool FAutomatedCode_UEProjectRefresh::Execute()
 	check(!SelfConfig->ProjectUProjectPath.IsEmpty());
 	check(!SelfConfig->UnrealBuildToolPath.IsEmpty());
 
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------Start UE Project Refresh----------"));
+	SyhLogDisplay(TEXT("----------Start UE Project Refresh----------"));
 
 	SelfConfig->CallType = TEXT("exe");
 
 	SelfConfig->CallPath = SelfConfig->UnrealBuildToolPath;
 
-	GetBatPathString(SelfConfig->ProjectUProjectPath);
+	SimpleAutomationToolCommon::GetBatPathString(SelfConfig->ProjectUProjectPath);
 	SelfConfig->Parameters = FString::Printf(TEXT(" -projectfiles -project=%s -game -engine -progress "), *SelfConfig->ProjectUProjectPath);
 
 	ReturnValue = Super::Execute();
 
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------End UE Project Refresh----------"));
+	SyhLogDisplay(TEXT("----------End UE Project Refresh----------"));
 
 	return ReturnValue;
 }

@@ -10,7 +10,7 @@
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
 
-struct FOperatePath_DeploymentCopy : public FOperatePath
+struct FOperatePath_DeploymentCopy : public SimpleAutomationToolCommon::FOperatePath
 {
 	virtual void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath)
 	{
@@ -41,6 +41,7 @@ struct FMoveToFileCopyProgress : public FCopyProgress
 
 void FAutomatedCode_Deployment_Copy::Init()
 {
+	GetSelfConfig<OwnConfig>()->Files.Empty();
 }
 
 bool FAutomatedCode_Deployment_Copy::BuildParameter(const FString& InJsonStr)
@@ -57,16 +58,17 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 
 	if (!Result)
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
 
 	TArray<FString> Source;
 	TArray<FString> Destination;
 
-	if (!ParseStrings(TEXT("-Source="), Source, true) || !ParseStrings(TEXT("-Destination="), Destination, true))
+	if (!SimpleAutomationToolCommon::ParseStrings(TEXT("-Source="), Source, true) || 
+		!SimpleAutomationToolCommon::ParseStrings(TEXT("-Destination="), Destination, true))
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
 	else
@@ -85,8 +87,8 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 		}
 		else
 		{
-			FLogPrint::PrintErrorCustom(TEXT("The number of the source path is not equal to the number of the destination path."));
-			FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+			SyhLogError(TEXT("The number of the source path is not equal to the number of the destination path."));
+			SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
 			return false;
 		}
 	}
@@ -97,7 +99,8 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 
 bool FAutomatedCode_Deployment_Copy::Execute()
 {
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the command of DeploymentCopy"));
+	SyhLogDisplay(TEXT("Execute the command of DeploymentCopy"));
+
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
 	if (SelfConfig->Files.IsEmpty())
@@ -107,9 +110,13 @@ bool FAutomatedCode_Deployment_Copy::Execute()
 	}
 
 	TMap<FString, FString> Content;
-	PathFilter<FOperateFileOrDirectory_DeletePath, FOperatePath_DeploymentCopy>(Content, SelfConfig->Files);
+	SimpleAutomationToolCommon::PathFilter<
+		SimpleAutomationToolCommon::FOperateFileOrDirectory_PathExists, 
+		SimpleAutomationToolCommon::FOperateFileOrDirectory_DeletePath,
+		FOperatePath_DeploymentCopy
+		>(Content, SelfConfig->Files);
 
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------Start Deployment----------"));
+	SyhLogDisplay(TEXT("----------Start Deployment----------"));
 
 
 	for (auto& SubTemp : Content)
@@ -122,36 +129,36 @@ bool FAutomatedCode_Deployment_Copy::Execute()
 		
 		if (Return == COPY_OK)
 		{
-			UE_LOG(SyhAutomaitonToolLog, Log, TEXT("[%s]->[%s]"), *SubTemp.Key, *SubTemp.Value);
+			SyhLogDisplay(TEXT("[%s]->[%s]"), *SubTemp.Key, *SubTemp.Value);
 			if (SelfConfig->bDeleteMovedFiles)
 			{
 				if (IFileManager::Get().Delete(*SubTemp.Key))
 				{
-					UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Delete [%s]"),  *SubTemp.Key);
+					SyhLogDisplay(TEXT("Delete [%s]"),  *SubTemp.Key);
 				}
 				else
 				{
-					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to delete [%s]"), *SubTemp.Key);
+					SyhLogError(TEXT("Failure to delete [%s]"), *SubTemp.Key);
 				}
 			}
 		}
 		else if (Return == COPY_Fail)
 		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to copy [%s] "), *SubTemp.Key);
+			SyhLogError(TEXT("Failure to copy [%s] "), *SubTemp.Key);
 		}
 		else if (Return == COPY_Canceled)
 		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Copying [%s] to [%s] is canceled."), *SubTemp.Key, *SubTemp.Value);
+			SyhLogError(TEXT("Copying [%s] to [%s] is canceled."), *SubTemp.Key, *SubTemp.Value);
 		}
 		else
 		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Unknown error"));
+			SyhLogError(TEXT("Unknown error"));
 		}
 		
 		
 	}
 
-	UE_LOG(SyhAutomaitonToolLog, Display, TEXT("----------End Deployment----------"));
+	SyhLogDisplay(TEXT("----------End Deployment----------"));
 	return true;
 }
 

@@ -1,5 +1,5 @@
 #include "Element/UEPakProject/AutomatedPak_UEPluginPak.h"
-
+#include "Core/SimpleAutomationTool.h"
 
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
@@ -9,7 +9,7 @@
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
 
-struct FOperatePath_UEPluginPackaging : public FOperatePath
+struct FOperatePath_UEPluginPackaging : public SimpleAutomationToolCommon::FOperatePath
 {
 	virtual void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath)
 	{
@@ -37,6 +37,7 @@ FAutomatedCode_UE_Plugin_Packaging::~FAutomatedCode_UE_Plugin_Packaging()
 
 void FAutomatedCode_UE_Plugin_Packaging::Init()
 {
+	GetSelfConfig<OwnConfig>()->PathOfUPluginToTarget.Empty();
 }
 
 bool FAutomatedCode_UE_Plugin_Packaging::BuildParameter(const FString& InJsonStr)
@@ -49,41 +50,78 @@ bool FAutomatedCode_UE_Plugin_Packaging::BuildParameter()
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
 	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::EngineDirKey, SelfConfig->EngineDir);
-	Result &= ParseStrings(OwnConfig::RelatedString::PathOfUPluginToTargetKey, SelfConfig->PathOfUPluginToTarget, true);
+	Result &= SimpleAutomationToolCommon::ParseStrings(OwnConfig::RelatedString::PathOfUPluginToTargetKey, SelfConfig->PathOfUPluginToTarget, true);
 	if (Result)
 	{
+		FPaths::NormalizeFilename(SelfConfig->EngineDir);
+		FPaths::RemoveDuplicateSlashes(SelfConfig->EngineDir);
 		return true;
 	}
 	else
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
 }
 
 bool FAutomatedCode_UE_Plugin_Packaging::Execute()
 {
-	FLogPrint::PrintDisplay(TEXT("Execute"), TEXT("UE_Plugin_Packaging"));
+	SyhLogDisplay(TEXT("the command of UE_Plugin_Packaging is executing"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	check(!SelfConfig->EngineDir.IsEmpty());
 	check(!SelfConfig->PathOfUPluginToTarget.IsEmpty());
 
-	RunUATPath = FString::Printf(TEXT("%s/Build/BatchFile/RunUAT.bat"), *SelfConfig->EngineDir);
+	RunUATPath = FString::Printf(TEXT("%s/Engine/Build/BatchFiles/RunUAT.bat"), *SelfConfig->EngineDir);
+
+	if (!SimpleAutomationToolCommon::PathExists(RunUATPath, false))
+	{
+		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("RunUAT.bat no exist."));
+	}
+
 
 	TMap<FString, FString> ExecuteContent;
-	if (!PathFilter<FOperateFileOrDirectory_DeletePath, FOperatePath_UEPluginPackaging>(ExecuteContent, SelfConfig->PathOfUPluginToTarget))
+	if (!SimpleAutomationToolCommon::PathFilter<SimpleAutomationToolCommon::FOperateFileOrDirectory_PathExists,
+		SimpleAutomationToolCommon::FOperateFileOrDirectory_PathExists,
+		FOperatePath_UEPluginPackaging>
+		(ExecuteContent, SelfConfig->PathOfUPluginToTarget))
 	{
-		FLogPrint::PrintErrorCustom(TEXT("Fail to filter path."));
+		SyhLogError(TEXT("Fail to filter path."));
 	}
 
 	TMultiMap<FString, bool> TaskResult;
 	for (auto& Temp : ExecuteContent)
 	{
-		HandleTimePath(Temp.Value);
+		SimpleAutomationToolCommon::HandleTimePath(Temp.Value);
 		TaskResult.Add(Temp.Key, Execute(Temp.Key, Temp.Value));
 	}
 
-	return false;
+	SyhLogDisplay(TEXT("Start to evaluate results."));
+
+	bool Result = SimpleAutomationTool::EvaluateTaskResult<FString>(TaskResult);
+
+	for (auto& Temp : TaskResult)
+	{
+		if (Temp.Value)
+		{
+			SyhLogDisplay(TEXT("[%s] is successful to package."), *Temp.Key);
+		}
+		else
+		{
+			SyhLogError(TEXT("[%s] is failure to package."), *Temp.Key);
+		}
+	}
+
+	SyhLogDisplay(TEXT("End to evaluate results."));
+
+	if (Result)
+	{
+		return true;
+	}
+	else
+	{
+		SyhLogError(TEXT("the command of UE_Plugin_Packaging is failure to execute"));
+		return false;
+	}
 }
 
 bool FAutomatedCode_UE_Plugin_Packaging::Execute(const FString& InPluginPath, const FString& InArchivePath)
@@ -91,8 +129,8 @@ bool FAutomatedCode_UE_Plugin_Packaging::Execute(const FString& InPluginPath, co
 	FString Content = FString::Printf(
 		TEXT("\
 cmd.exe /c \
-\" \
-\"%s\"\
+\"\
+\"%s\" \
 BuildPlugin \
 -Plugin=\"%s\" \
 -Package=\"%s\" \

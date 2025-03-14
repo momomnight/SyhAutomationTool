@@ -10,7 +10,7 @@ FString FCommandProtocolRelated::GetProtocolFullName(const FString& InShortName)
 {
 	for (auto& Temp : FCommandProtocolRelated::CommandName)
 	{
-		if (Temp.Equals(InShortName, ESearchCase::IgnoreCase))
+		if (FString(Temp).Equals(InShortName, ESearchCase::IgnoreCase))
 		{
 			return FCommandProtocolRelated::ProtocolStringPrefix + Temp;
 		}
@@ -53,23 +53,6 @@ FString FAutomatedCommandNestingRelated::GetComparisionTypeFullName(const FStrin
 const FString FCommandProtocolRelated::ProtocolStringPrefix = TEXT("ECommandProtocol::CMD_");
 const int32 FCommandProtocolRelated::ProtocolStringPrefixLength = FCommandProtocolRelated::ProtocolStringPrefix.Len();
 const FString FCommandProtocolRelated::CommandKey = TEXT("Command");
-const TArray<FString> FCommandProtocolRelated::CommandName =
-{
-	TEXT("None"),					//0
-	TEXT("Call"),					//1
-	TEXT("Call_Custom_Content"),	//2
-	TEXT("UE_Project_Refresh"),		//3
-	TEXT("Command_Nesting"),		//4
-	TEXT("Deployment_Copy"),		//5
-	TEXT("Deployment_Delete"),		//6
-	TEXT("VS_Compile"),				//7
-	TEXT("Git"),					//8
-	TEXT("UE_Packaging"),			//9
-	TEXT("UE_Plugin_Packaging"),	//10
-	TEXT("Condition_Command"),		//11
-
-	TEXT("Max")
-};
 
 const TArray<FString> FAutomatedCommandNestingRelated::ComparisionTypeName =
 {

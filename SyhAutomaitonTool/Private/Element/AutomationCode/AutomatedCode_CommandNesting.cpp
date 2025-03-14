@@ -21,6 +21,7 @@ FAutomatedCode_CommandNesting::~FAutomatedCode_CommandNesting()
 
 void FAutomatedCode_CommandNesting::Init()
 {
+	GetSelfConfig<OwnConfig>()->CommandList.Empty();
 }
 
 bool FAutomatedCode_CommandNesting::BuildParameter(const FString& InJsonStr)
@@ -36,33 +37,33 @@ bool FAutomatedCode_CommandNesting::BuildParameter()
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
 	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::ComparisionTypeKey, SelfConfig->ComparisionType);
-	Result &= ParseStrings(OwnConfig::RelatedString::CommandListKey, SelfConfig->CommandList, false);
+	Result &= SimpleAutomationToolCommon::ParseStrings(OwnConfig::RelatedString::CommandListKey, SelfConfig->CommandList, false);
 	Result = InitTaskCommand();
 	SetExecuteToken(Result);
 
 	if (!Result)
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
 	}
 	return Result;
 }
 
 bool FAutomatedCode_CommandNesting::Execute()
 {
-	FLogPrint::PrintDisplay(TEXT("execute"), GetCommandName<Self>());
+	SyhLogDisplay(TEXT("the command of %s starts to execute"), GetCommandName<Self>());
 	if (GetExecuteToken())
 	{
 		switch (GetSelfConfig<OwnConfig>()->ComparisionType)
 		{
 		case EComparisionType::COMPARISION_Sequence:
 		{
-			FLogPrint::PrintDisplayCustom(TEXT("Handle commands. The method of execution is Sequence"));
+			SyhLogDisplay(TEXT("Handle commands. The method of execution is Sequence"));
 			SimpleAutomationTool::HandleTask(TaskCommand, GetTaskResult());
 			break;
 		}
 		case EComparisionType::COMPARISION_Break:
 		{
-			FLogPrint::PrintDisplayCustom(TEXT("Handle commands. The method of execution is Break"));
+			SyhLogDisplay(TEXT("Handle commands. The method of execution is Break"));
 			SimpleAutomationTool::HandleTask(TaskCommand, GetTaskResult(), true);
 			break;
 		}
@@ -76,7 +77,7 @@ bool FAutomatedCode_CommandNesting::Execute()
 		return GetTaskResult().Num() > 0;
 	}
 
-	FLogPrint::PrintError(TEXT("execute"), GetCommandName<Self>());
+	SyhLogError(TEXT("%s is failure to execute"), GetCommandName<Self>());
 	return false;
 }
 

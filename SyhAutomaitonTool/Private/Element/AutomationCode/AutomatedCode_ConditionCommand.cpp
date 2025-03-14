@@ -19,6 +19,8 @@ FAutomatedCode_ConditionCommand::~FAutomatedCode_ConditionCommand()
 
 void FAutomatedCode_ConditionCommand::Init()
 {
+	GetSelfConfig<OwnConfig>()->FalseCommandList.Empty();
+	GetSelfConfig<OwnConfig>()->TrueCommandList.Empty();
 }
 
 bool FAutomatedCode_ConditionCommand::BuildParameter(const FString& InJsonStr)
@@ -37,8 +39,8 @@ bool FAutomatedCode_ConditionCommand::BuildParameter()
 
 	bool Result = true;
 	Result &= Super::BuildParameter();
-	ParseStrings(OwnConfig::RelatedString::TrueCommandListKey, SelfConfig->TrueCommandList, false);
-	ParseStrings(OwnConfig::RelatedString::FalseCommandListKey, SelfConfig->FalseCommandList, false);
+	SimpleAutomationToolCommon::ParseStrings(OwnConfig::RelatedString::TrueCommandListKey, SelfConfig->TrueCommandList, false);
+	SimpleAutomationToolCommon::ParseStrings(OwnConfig::RelatedString::FalseCommandListKey, SelfConfig->FalseCommandList, false);
 	Self::InitTaskCommand();
 
 	if (Result)
@@ -47,40 +49,40 @@ bool FAutomatedCode_ConditionCommand::BuildParameter()
 	}
 	else
 	{
-		FLogPrint::PrintError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
 }
 
 bool FAutomatedCode_ConditionCommand::Execute()
 {
-	FLogPrint::PrintDisplay(TEXT("execute"), GetCommandName<Self>());
+	SyhLogDisplay(TEXT("the command of %s starts to execute"), GetCommandName<Self>());
 	if (Super::Execute())
 	{
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Evaluating the result of commands execution..."));
+		SyhLogDisplay(TEXT("Evaluating the result of commands execution..."));
 		bool Result = SimpleAutomationTool::EvaluateTaskResult(GetTaskResult());
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Result is %s."), Result ? TEXT("True") : TEXT("False"));
+		SyhLogDisplay(TEXT("Result is %s."), Result ? TEXT("True") : TEXT("False"));
 		ClearTaskResult();
 		if (Result)
 		{
-			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the true branch of condition command."));
+			SyhLogDisplay(TEXT("Execute the true branch of condition command."));
 			SimpleAutomationTool::HandleTask(TrueTaskCommand, GetTaskResult());
-			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Finish the true branch."));
+			SyhLogDisplay(TEXT("Finish the true branch."));
 		}
 		else
 		{
-			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute the true branch of condition command."));
+			SyhLogDisplay(TEXT("Execute the true branch of condition command."));
 			SimpleAutomationTool::HandleTask(FalseTaskCommand, GetTaskResult());
-			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Finish the false branch."));
+			SyhLogDisplay(TEXT("Finish the false branch."));
 		}
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Evaluating the final result of commands execution..."));
+		SyhLogDisplay(TEXT("Evaluating the final result of commands execution..."));
 		Result = SimpleAutomationTool::EvaluateTaskResult(GetTaskResult());
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Result is %s."), Result ? TEXT("True") : TEXT("False"));
+		SyhLogDisplay(TEXT("Result is %s."), Result ? TEXT("True") : TEXT("False"));
 		ClearTaskResult();
 		return true;
 	}
 
-	FLogPrint::PrintError(TEXT("execute"), GetCommandName<Self>());
+	SyhLogError(TEXT("%s is failure to execute"), GetCommandName<Self>());
 	return false;
 }
 

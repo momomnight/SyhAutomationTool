@@ -26,10 +26,10 @@ protected:
 	}
 
 	template <class AutomatedCommandType>
-	const TCHAR* GetCommandName()
+	constexpr const TCHAR* GetCommandName()
 	{
 		static_assert(std::is_base_of<FAutoExecElements, AutomatedCommandType>::value, "This type is not derived of FAutoExecElements.");
-		return *::GetCommandName<static_cast<uint32>(FCommandProtocol_ConfigType<typename AutomatedCommandType::OwnConfig>::Value)>();
+		return ::GetCommandName<static_cast<uint32>(FCommandProtocol_ConfigType<typename AutomatedCommandType::OwnConfig>::Value)>();
 	}
 
 public:
@@ -72,7 +72,7 @@ protected:
 	template<class Type>
 	bool GetValueFromCommandLine(const FString& InKey, Type& OutValue)
 	{
-		if (FString Key = GetMatchKey(InKey);
+		if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
 			!FParse::Value(FCommandLine::Get(), *Key, OutValue))
 		{
 			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
@@ -84,7 +84,7 @@ protected:
 	template<>
 	bool GetValueFromCommandLine<bool>(const FString& InKey, bool& OutValue)
 	{
-		if (FString Key = GetMatchKey(InKey);
+		if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
 			!FParse::Bool(FCommandLine::Get(), *Key, OutValue))
 		{
 			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
@@ -97,7 +97,7 @@ protected:
 	bool GetValueFromCommandLine<EComparisionType>(const FString& InKey, EComparisionType& OutValue)
 	{
 		FString Result;
-		if (FString Key = GetMatchKey(InKey);
+		if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
 			!FParse::Value(FCommandLine::Get(), *Key, Result))
 		{
 			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);

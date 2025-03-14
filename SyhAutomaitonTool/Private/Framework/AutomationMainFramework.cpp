@@ -185,10 +185,21 @@ namespace AutomationMainFramework
 							//向前递进一天
 							TimeSlotDateTime += ETimespan::TicksPerDay;
 
+							bool Result = false;
+							
 							//初始化,以读取最新的任务
-							FAutoExecElementsManage::Get()->Init();
+							Result = FAutoExecElementsManage::Get()->Init();
+							if (!Result)
+							{
+								UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failed to Init"));
+							}
+							
 							//执行自动化任务
-							FAutoExecElementsManage::Get()->HandleTask();
+							Result = FAutoExecElementsManage::Get()->HandleTask();
+							if (!Result)
+							{
+								UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Handle tasks successfully"));
+							}
 
 							UE_LOG(SyhAutomaitonToolLog, Display, TEXT("The next time handling task is [%s]"), *FDateTime(TimeSlotDateTime).ToString());
 						}
@@ -214,11 +225,20 @@ namespace AutomationMainFramework
 				}
 				else
 				{
+					bool Result = false;
 					//初始化,以读取最新的任务
-					FAutoExecElementsManage::Get()->Init();
+					Result = FAutoExecElementsManage::Get()->Init();
+					if (!Result)
+					{
+						UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failed to Init"));
+					}
+
 					//非定时,直接执行
-					FAutoExecElementsManage::Get()->HandleTask();
-					UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Execute successfully"));
+					Result = FAutoExecElementsManage::Get()->HandleTask();
+					if (!Result)
+					{
+						UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Handle tasks successfully"));
+					}
 				}
 			}
 		}
