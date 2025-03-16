@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "SyhAutomationToolLog.h"
+#include "SimpleOSSCommand.h"
 #include "SyhAutomationToolType.generated.h"
 
 // 添加自己命令时:
@@ -30,6 +31,7 @@ struct FCommandProtocolRelated
 	TEXT("UE_Packaging"),			//9
 	TEXT("UE_Plugin_Packaging"),	//10
 	TEXT("Condition_Command"),		//11
+	TEXT("OSS"),		//12
 
 	TEXT("Max")
 	};
@@ -126,6 +128,10 @@ struct FAutomatedConditionCommandRelated : public FAutomatedCommandNestingRelate
 	static const FString FalseCommandListKey;
 };
 
+struct FAutomatedOSSRelated
+{
+	static const FString OSSComandsKey;
+};
 //命令协议枚举
 UENUM(BlueprintType)
 enum class ECommandProtocol : uint8
@@ -142,6 +148,7 @@ enum class ECommandProtocol : uint8
 	CMD_UE_Packaging			UMETA(DisplayName = "UE Packaging"),
 	CMD_UE_Plugin_Packaging		UMETA(DisplayName = "UE Plugin Packaging"),
 	CMD_Condition_Command		UMETA(DisplayName = "Condition Command"),
+	CMD_OSS						UMETA(DisplayName = "OSS"),
 
 	CMD_Max						UMETA(DisplayName = "Max"),
 };
@@ -159,6 +166,8 @@ USTRUCT(BlueprintType)
 struct FAutomatedConfigBase
 {
 	GENERATED_USTRUCT_BODY()
+
+	FAutomatedConfigBase(){}
 };
 
 //呼叫指定脚本
@@ -420,7 +429,7 @@ struct FAutomatedUEPluginPackagingConfig : public FAutomatedCallConfig
 	TMap<FString, FString> PathOfUPluginToTarget;
 
 };
-//" cmd.exe /c ""C:/Program Files/Epic Games/UE_5.3/Engine/Build/BatchFiles/RunUAT.bat" BuildPlugin - Plugin = "C:/MyProgram/UE Project/test1/Plugins/TestAutomatedPakPlugin/TestAutomatedPakPlugin.uplugin" - Package = "C:/MyProgram/UE Project/PluginPakTest/TestAutomatedPakPlugin" - CreateSubFolder" -nocompile -nocompileuat ";
+
 USTRUCT(BlueprintType)
 struct FAutomatedConditionCommandConfig : public FAutomatedCommandNestingConfig
 {
@@ -442,6 +451,26 @@ struct FAutomatedConditionCommandConfig : public FAutomatedCommandNestingConfig
 	TArray<FString> FalseCommandList;
 };
 
+USTRUCT(BlueprintType)
+struct FAutomatedOSSConfig : public FAutomatedConfigBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	typedef FAutomatedConfigBase Super;
+	typedef FAutomatedOSSRelated RelatedString;
+
+	FAutomatedOSSConfig()
+	{
+		SimpleOSSCommand::FOSSCommand& InFunction = OSSCommands.AddDefaulted_GetRef();
+		InFunction.CommandType = ESimpleOSSCommand::OSS_BUCKET_EXIST;
+		InFunction.Param.Add(TEXT("-A="), TEXT("N"));
+		InFunction.Param.Add(TEXT("-B="), TEXT("M"));
+	}
+
+	TArray<SimpleOSSCommand::FOSSCommand> OSSCommands;
+		
+};
+
 /// <summary>
 ///	Traits
 /// </summary>
@@ -459,6 +488,8 @@ template <> struct FCommandProtocol_ConfigType<FAutomatedGitConfig>					{ conste
 template <> struct FCommandProtocol_ConfigType<FAutomatedUEPackagingConfig>			{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_UE_Packaging; };
 template <> struct FCommandProtocol_ConfigType<FAutomatedUEPluginPackagingConfig>	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_UE_Plugin_Packaging; };
 template <> struct FCommandProtocol_ConfigType<FAutomatedConditionCommandConfig>	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Condition_Command; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedOSSConfig>					{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_OSS; };
+
 
 //如果有枚举号，我们能拿到什么
 template <ECommandProtocol Protocol> struct FCommandProtocol_EnumType{ using ConfigType = FAutomatedConfigBase; };
@@ -473,7 +504,7 @@ template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Git>					{ us
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Packaging>		{ using ConfigType = FAutomatedUEPackagingConfig;};
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Plugin_Packaging>	{ using ConfigType = FAutomatedUEPluginPackagingConfig;};
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Condition_Command>	{ using ConfigType = FAutomatedConditionCommandConfig;};
-
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_OSS>					{ using ConfigType = FAutomatedOSSConfig; };
 
 
 template <uint32 Index>

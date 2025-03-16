@@ -45,7 +45,7 @@ namespace SimpleAutomationToolCommon
 	}
 
 	//xxx1||yyy1&&xxx2||yyy2
-	bool ParseStrings(const FString& InKey, TMap<FString, FString>& InArray, bool bPath)
+	bool ParseStrings(const FString& InKey, TMap<FString, FString>& InMap, bool bPath)
 	{
 		bool Result = true;
 		TArray<FString> TempArray;
@@ -69,7 +69,7 @@ namespace SimpleAutomationToolCommon
 					FPaths::NormalizeDirectoryName(Target);
 					FPaths::RemoveDuplicateSlashes(Target);
 				}
-				InArray.Add(Source, Target);
+				InMap.Add(Source, Target);
 			}
 			else
 			{
@@ -78,7 +78,7 @@ namespace SimpleAutomationToolCommon
 			}
 		}
 
-		return InArray.Num() > 0;
+		return InMap.Num() > 0;
 	}
 
 	bool DeleteFile(const FString& InPath)

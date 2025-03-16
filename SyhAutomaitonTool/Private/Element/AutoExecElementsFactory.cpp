@@ -10,6 +10,7 @@
 #include "Element/UEPakProject/AutomatedPak_UEPak.h"
 #include "Element/UEPakProject/AutomatedPak_UEPluginPak.h"
 #include "Element/AutomationCode/AutomatedCode_ConditionCommand.h"
+#include "Element/OSS/AutomatedOss.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -64,6 +65,9 @@ TSharedPtr<FAutoExecElements> FAutoExecElementsFactory::CreateAutomatedTask(uint
 	case ECommandProtocol::CMD_Condition_Command:
 		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- Condition_Command"));
 		return CreateAutomatedTask<FAutomatedCode_ConditionCommand>(InJson);
+	case ECommandProtocol::CMD_OSS:
+		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- OSS"));
+		return CreateAutomatedTask<FAutomatedCode_OSS>(InJson);
 	case ECommandProtocol::CMD_None:
 	default:
 		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("No automated elements were created."));

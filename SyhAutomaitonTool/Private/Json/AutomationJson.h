@@ -203,6 +203,15 @@ namespace AutomationJson
 		OutJsonObject->SetArrayField(RelatedString<FAutomatedConditionCommandConfig>::FalseCommandListKey, FalseArray);
 	}
 
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedOSSConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedOSSConfig& InConfig)
+	{
+		TArray<TSharedPtr<FJsonValue>> Array;
+		SimpleOSSCommand::OSSCommandConfigToJsonObject(InConfig.OSSCommands, Array);
+		OutJsonObject->SetArrayField(RelatedString<FAutomatedOSSConfig>::OSSComandsKey, Array);
+	}
+
+
 	//用于配置命令字段
 	void ConfigureCommandProtocol(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InProtocol);
 
@@ -379,7 +388,6 @@ namespace AutomationJson
 		}
 	}
 
-
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedConditionCommandConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedConditionCommandConfig& OutConfig)
 	{
@@ -396,6 +404,21 @@ namespace AutomationJson
 			OutConfig.FalseCommandList.Add(Temp->AsString());
 		}
 	}
+
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedOSSConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedOSSConfig& OutConfig)
+	{
+		const TArray<TSharedPtr<FJsonValue>>& Array = InJsonObject->GetArrayField(RelatedString<FAutomatedOSSConfig>::OSSComandsKey);
+		OutConfig.OSSCommands.Empty();
+		for (auto& Temp : Array)
+		{
+			if (const TSharedPtr<FJsonObject> Object = Temp->AsObject())
+			{
+				SimpleOSSCommand::JsonObjectToOSSCommand(Object, OutConfig.OSSCommands.AddDefaulted_GetRef());
+			}
+		}
+	}
+
 
 	template <class AutomatedConfigType>
 	bool JsonStringToAutomatedConfig(const FString& InString, AutomatedConfigType& OutConfig)

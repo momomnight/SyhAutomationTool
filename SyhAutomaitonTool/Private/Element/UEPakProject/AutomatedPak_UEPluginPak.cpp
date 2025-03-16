@@ -137,7 +137,7 @@ BuildPlugin \
 -CreateSubFolder \
 \" \
 -nocompile \
--nocompileuat"),
+-nocompileuat\n\rpause"),
 *RunUATPath, *InPluginPath, *InArchivePath
 	);
 

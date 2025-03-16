@@ -105,3 +105,5 @@ const FString FAutomatedUEPluginPackagingRelated::TargetKey = TEXT("Target");;
 
 const FString FAutomatedConditionCommandRelated::TrueCommandListKey = TEXT("TrueCommandList");
 const FString FAutomatedConditionCommandRelated::FalseCommandListKey = TEXT("FalseCommandList");
+
+const FString FAutomatedOSSRelated::OSSComandsKey = TEXT("OSSComands");
