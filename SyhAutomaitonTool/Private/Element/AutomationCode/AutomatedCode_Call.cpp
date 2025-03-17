@@ -44,6 +44,7 @@ bool FAutomatedCode_Call::BuildParameter()
 		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
 		return false;
 	}
+
 }
 
 bool FAutomatedCode_Call::Execute()

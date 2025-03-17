@@ -28,21 +28,21 @@ public:
 
 	virtual bool Execute();
 
-	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_Command_Nesting; }
+	virtual ECommandProtocol GetType() const override { return ECommandProtocol::CMD_Command_Nesting; }
 
 protected:
-	bool InitTaskCommand(const TArray<FString>& InCommandList, TMultiMap<uint32, FString>& OutTaskCommand);
+	bool InitTaskCommand(const TArray<FString>& InCommandList, TMultiMap<ECommandProtocol, FString>& OutTaskCommand);
 	bool InitTaskCommand();
 
 	void SetExecuteToken(bool b);
 	bool GetExecuteToken();
 
-	TMultiMap<int32, bool>& GetTaskResult() { return TaskResult; }
+	TMultiMap<ECommandProtocol, bool>& GetTaskResult() { return TaskResult; }
 	void ClearTaskResult() { TaskResult.Empty(); }
 
 private:
-	TMultiMap<uint32, FString> TaskCommand;
+	TMultiMap<ECommandProtocol, FString> TaskCommand;
 	bool bExecute;
-	TMultiMap<int32, bool> TaskResult;
+	TMultiMap<ECommandProtocol, bool> TaskResult;
 
 };

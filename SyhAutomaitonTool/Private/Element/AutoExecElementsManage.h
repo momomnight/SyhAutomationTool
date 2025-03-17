@@ -28,7 +28,7 @@ protected:
 private:
 	static TSharedPtr<FAutoExecElementsManage> Instance;
 	//命令, 由协议号加Json字符串组成
-	TMultiMap<uint32, FString> TaskCommand;
+	TMultiMap<ECommandProtocol, FString> TaskCommand;
 	bool bExecute;
 
 };

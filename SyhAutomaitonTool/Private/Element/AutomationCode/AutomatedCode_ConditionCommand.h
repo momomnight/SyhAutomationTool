@@ -28,11 +28,11 @@ public:
 
 	virtual bool Execute();
 
-	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_Condition_Command; }
+	virtual ECommandProtocol GetType() const override { return ECommandProtocol::CMD_Condition_Command; }
 
 protected:
-	TMultiMap<uint32, FString> TrueTaskCommand;
-	TMultiMap<uint32, FString> FalseTaskCommand;
+	TMultiMap<ECommandProtocol, FString> TrueTaskCommand;
+	TMultiMap<ECommandProtocol, FString> FalseTaskCommand;
 
 protected:
 	bool InitTaskCommand();

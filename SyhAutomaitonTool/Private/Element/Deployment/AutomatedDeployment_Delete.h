@@ -24,5 +24,5 @@ public:
 
 	virtual bool Execute();
 
-	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_Deployment_Delete; }
+	virtual ECommandProtocol GetType() const override { return ECommandProtocol::CMD_Deployment_Delete; }
 };

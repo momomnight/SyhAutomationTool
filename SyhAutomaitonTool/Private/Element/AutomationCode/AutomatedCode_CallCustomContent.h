@@ -29,6 +29,6 @@ public:
 	virtual bool Execute() override;
 
 public:
-	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_Call_Custom_Content; }
+	virtual ECommandProtocol GetType() const override { return ECommandProtocol::CMD_Call_Custom_Content; }
 
 };

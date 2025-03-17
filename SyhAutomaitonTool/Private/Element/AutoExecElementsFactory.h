@@ -13,7 +13,7 @@ public:
 	FAutoExecElementsFactory();
 	virtual ~FAutoExecElementsFactory();
 	
-	static TSharedPtr<FAutoExecElements> CreateAutomatedTask(uint32 InType, const FString& InJson = {});
+	static TSharedPtr<FAutoExecElements> CreateAutomatedTask(ECommandProtocol InType, const FString& InJson = {});
 
 
 	template<class AutomatedElementType>

@@ -26,14 +26,6 @@ namespace AutomationJson
 	//从Json字符串中提取命令
 	ECommandProtocol GetCommandProtocol(const FString& InJsonString);
 
-	//从协议到去掉协议前缀的字符串
-	FString CommandProtocolToString(ECommandProtocol InProtocol);
-
-	FString CommandProtocolIndexToString(uint32 InProtocol);
-
-	//从去掉协议前缀的字符串到协议
-	ECommandProtocol StringToCommandProtocol(const FString& InShortCommandName);
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	EComparisionType GetComparisionType(TSharedPtr<FJsonObject> InJsonObject);
@@ -439,6 +431,6 @@ namespace AutomationJson
 	void SerializeAllCommand(FString& OutString);
 
 	//用于反序列化
-	void DeserializeAllCommand(const FString& InString, TMultiMap<uint32, FString>& OutCommand);
+	void DeserializeAllCommand(const FString& InString, TMultiMap<ECommandProtocol, FString>& OutCommand);
 
 }

@@ -29,7 +29,7 @@ protected:
 	constexpr const TCHAR* GetCommandName()
 	{
 		static_assert(std::is_base_of<FAutoExecElements, AutomatedCommandType>::value, "This type is not derived of FAutoExecElements.");
-		return ::GetCommandName<static_cast<uint32>(FCommandProtocol_ConfigType<typename AutomatedCommandType::OwnConfig>::Value)>();
+		return SimpleAutomationToolCommon::GetCommandName<static_cast<uint32>(FCommandProtocol_ConfigType<typename AutomatedCommandType::OwnConfig>::Value)>();
 	}
 
 public:
@@ -65,7 +65,7 @@ public:
 
 	virtual bool Exit(){return true;}
 
-	virtual uint32 GetType() const { return (uint32)ECommandProtocol::CMD_None; };
+	virtual ECommandProtocol GetType() const { return ECommandProtocol::CMD_None; };
 
 protected:
 

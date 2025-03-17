@@ -2,6 +2,8 @@
 
 
 #include "CoreMinimal.h"
+#include "SyhAutomationToolLog.h"
+#include "SyhAutomationToolCommon.h"
 
 namespace SimpleAutomationTool
 {
@@ -10,17 +12,23 @@ namespace SimpleAutomationTool
 	{
 		if (InTaskResult.IsEmpty())
 		{
+			SyhLogError(TEXT("Evaluate a empty task result"));
 			return false;
 		}
-
-		for (auto& Temp : InTaskResult)
+		bool Result = true;
+		for (const auto& Temp : InTaskResult)
 		{
-			if (!Temp.Value)
+			if (Temp.Value)
 			{
-				return false;
+				SyhLogDisplay(TEXT("%s is successful to execute."), *SimpleAutomationToolCommon::ToString<EvaluationType>(Temp.Key));
+			}
+			else
+			{
+				Result = false;
+				SyhLogError(TEXT("%s is failure to execute."), *SimpleAutomationToolCommon::ToString<EvaluationType>(Temp.Key));
 			}
 		}
 
-		return true;
+		return Result;
 	}
 }

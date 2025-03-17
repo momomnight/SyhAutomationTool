@@ -26,11 +26,10 @@ FAutoExecElementsFactory::~FAutoExecElementsFactory()
 {
 }
 
-TSharedPtr<FAutoExecElements> FAutoExecElementsFactory::CreateAutomatedTask(uint32 InType, const FString& InJson)
+TSharedPtr<FAutoExecElements> FAutoExecElementsFactory::CreateAutomatedTask(ECommandProtocol InType, const FString& InJson)
 {
-	ECommandProtocol Protocol = (ECommandProtocol)InType;
 
-	switch (Protocol)
+	switch (InType)
 	{
 	case ECommandProtocol::CMD_Call:
 		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- Call"));

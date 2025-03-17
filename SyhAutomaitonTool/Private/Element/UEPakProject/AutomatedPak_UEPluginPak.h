@@ -33,7 +33,7 @@ protected:
 
 
 public:
-	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_UE_Plugin_Packaging; }
+	virtual ECommandProtocol GetType() const override { return ECommandProtocol::CMD_UE_Plugin_Packaging; }
 
 private:
 	FString RunUATPath;

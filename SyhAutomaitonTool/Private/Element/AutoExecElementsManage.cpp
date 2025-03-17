@@ -1,5 +1,6 @@
 #include "Element/AutoExecElementsManage.h"
 #include "Core/SimpleAutomationTool.h"
+#include "SyhAutomationToolType.h"
 
 TSharedPtr<FAutoExecElementsManage> FAutoExecElementsManage::Instance = nullptr;
 
@@ -34,7 +35,7 @@ bool FAutoExecElementsManage::HandleTask()
 	if(bExecute)
 	{
 		bExecute = false;
-		TMultiMap<int32, bool> Result;
+		TMultiMap<ECommandProtocol, bool> Result;
 		SimpleAutomationTool::HandleTask(TaskCommand, Result);
 		return SimpleAutomationTool::EvaluateTaskResult(Result);
 	}

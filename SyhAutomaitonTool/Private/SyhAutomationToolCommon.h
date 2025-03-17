@@ -1,12 +1,17 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "SyhAutomationToolLog.h"
+#include "SyhAutomationToolType.h"
 
 namespace SimpleAutomationToolCommon
 {
 	//打包的文件路径，以时间为名
 	extern class FString PackagingSaveFileName;
 
+	//从协议到去掉协议前缀的字符串
+	FString CommandProtocolToString(ECommandProtocol InProtocol);
+	//从去掉协议前缀的字符串到协议
+	ECommandProtocol StringToCommandProtocol(const FString& InShortCommandName);
 
 	//xxx1&&xxx2
 	bool ParseStrings(const FString& InKey, TArray<FString>& InArray, bool bPath);
@@ -48,6 +53,38 @@ namespace SimpleAutomationToolCommon
 	{
 		FFileStatData FileStatData = IFileManager::Get().GetStatData(*InPath);
 		return FileStatData.bIsValid;
+	}
+
+	template <uint8 Index>
+	constexpr const TCHAR* GetCommandName()
+	{
+		return FCommandProtocolRelated::CommandName[Index];
+	}
+
+	template<class Type> struct ReturnTypeTrait	{ using ReturnType = void; using ParameterType = void;};
+	template <> struct ReturnTypeTrait<ECommandProtocol>	{ using ReturnType = FString;  using ParameterType = ECommandProtocol;};
+	template <> struct ReturnTypeTrait<ESimpleOSSCommand>	{ using ReturnType = FString;  using ParameterType = ESimpleOSSCommand;};
+	template <> struct ReturnTypeTrait<FString>				{ using ReturnType = const FString&;  using ParameterType = const FString&;};
+
+	template<class Type>
+	typename ReturnTypeTrait<Type>::ReturnType ToString(typename ReturnTypeTrait<Type>::ParameterType Param);
+
+	template<>
+	typename ReturnTypeTrait<ECommandProtocol>::ReturnType ToString<ECommandProtocol>(typename ReturnTypeTrait<ECommandProtocol>::ParameterType InCommandProtocol)
+	{
+		return CommandProtocolToString(InCommandProtocol);
+	}
+
+	template<>
+	typename ReturnTypeTrait<ESimpleOSSCommand>::ReturnType  ToString<ESimpleOSSCommand>(typename ReturnTypeTrait<ESimpleOSSCommand>::ParameterType InOSSCommand)
+	{
+		return SimpleOSSCommand::ToOSSCommandString(InOSSCommand);
+	}
+
+	template<>
+	typename ReturnTypeTrait<FString>::ReturnType ToString<FString>(typename ReturnTypeTrait<FString>::ParameterType Param)
+	{
+		return Param;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,8 +137,6 @@ namespace SimpleAutomationToolCommon
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 	template <class FOperateSourcePath, class FOperateTargetPath, class FOperateFilePath>
 	bool PathFilter(TMap<FString, FString>& OutContent, const TMap<FString, FString>& InContent)

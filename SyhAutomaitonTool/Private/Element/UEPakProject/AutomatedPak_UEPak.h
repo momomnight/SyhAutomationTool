@@ -31,6 +31,6 @@ public:
 	virtual bool Execute() override;
 
 public:
-	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_UE_Packaging; }
+	virtual ECommandProtocol GetType() const override { return ECommandProtocol::CMD_UE_Packaging; }
 
 };

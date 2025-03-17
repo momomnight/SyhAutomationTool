@@ -1,6 +1,5 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "SyhAutomationToolLog.h"
 #include "SimpleOSSCommand.h"
 #include "SyhAutomationToolType.generated.h"
 
@@ -461,10 +460,50 @@ struct FAutomatedOSSConfig : public FAutomatedConfigBase
 
 	FAutomatedOSSConfig()
 	{
-		SimpleOSSCommand::FOSSCommand& InFunction = OSSCommands.AddDefaulted_GetRef();
-		InFunction.CommandType = ESimpleOSSCommand::OSS_BUCKET_EXIST;
-		InFunction.Param.Add(TEXT("-A="), TEXT("N"));
-		InFunction.Param.Add(TEXT("-B="), TEXT("M"));
+		SimpleOSSCommand::FOSSCommand InitFunc;
+		InitFunc.CommandType = ESimpleOSSCommand::OSS_INIT;
+		InitFunc.Param.Add(TEXT("-AccessKeyId="), TEXT(""));
+		InitFunc.Param.Add(TEXT("-AccessKeySecret="), TEXT(""));
+		InitFunc.Param.Add(TEXT("-EndPoint="), TEXT(""));
+		OSSCommands.Add(InitFunc);
+
+		SimpleOSSCommand::FOSSCommand BucketExistFunc;
+		BucketExistFunc.CommandType = ESimpleOSSCommand::OSS_BUCKET_EXIST;
+		BucketExistFunc.Param.Add(TEXT("-BucketName="), TEXT(""));
+		OSSCommands.Add(BucketExistFunc);
+
+		SimpleOSSCommand::FOSSCommand ObjectExistFunc;
+		ObjectExistFunc.CommandType = ESimpleOSSCommand::OSS_OBJECT_EXIST;
+		OSSCommands.Add(ObjectExistFunc);
+
+		SimpleOSSCommand::FOSSCommand CopyObjecttFunc;
+		CopyObjecttFunc.CommandType = ESimpleOSSCommand::OSS_COPY_OBJECT;
+		OSSCommands.Add(CopyObjecttFunc);
+
+		SimpleOSSCommand::FOSSCommand DeleteObjectFunc;
+		DeleteObjectFunc.CommandType = ESimpleOSSCommand::OSS_DELETE_OBJECT;
+		OSSCommands.Add(DeleteObjectFunc);
+
+		SimpleOSSCommand::FOSSCommand GetObjectFunc;
+		GetObjectFunc.CommandType = ESimpleOSSCommand::OSS_GET_OBJECT;
+		OSSCommands.Add(GetObjectFunc);
+
+		SimpleOSSCommand::FOSSCommand ResumableDownloadObjectFunc;
+		ResumableDownloadObjectFunc.CommandType = ESimpleOSSCommand::OSS_RESUMABLE_DOWNLOAD_OBJECT;
+		OSSCommands.Add(ResumableDownloadObjectFunc);
+
+		SimpleOSSCommand::FOSSCommand ResumableUploadObjectFunc;
+		ResumableUploadObjectFunc.CommandType = ESimpleOSSCommand::OSS_RESUMABLE_UPLOAD_OBJECT;
+		OSSCommands.Add(ResumableUploadObjectFunc);
+
+		SimpleOSSCommand::FOSSCommand PutObjectFunc;
+		PutObjectFunc.CommandType = ESimpleOSSCommand::OSS_PUT_OBJECT;
+		OSSCommands.Add(PutObjectFunc);
+
+		SimpleOSSCommand::FOSSCommand UploadObjectFunc;
+		UploadObjectFunc.CommandType = ESimpleOSSCommand::OSS_UPLOAD_PART;
+		OSSCommands.Add(UploadObjectFunc);
+
 	}
 
 	TArray<SimpleOSSCommand::FOSSCommand> OSSCommands;
@@ -506,11 +545,5 @@ template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Plugin_Pac
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Condition_Command>	{ using ConfigType = FAutomatedConditionCommandConfig;};
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_OSS>					{ using ConfigType = FAutomatedOSSConfig; };
 
-
-template <uint32 Index>
-constexpr const TCHAR* GetCommandName()
-{
-	return FCommandProtocolRelated::CommandName[Index];
-}
 
 

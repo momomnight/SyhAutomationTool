@@ -81,7 +81,7 @@ bool FAutomatedCode_CommandNesting::Execute()
 	return false;
 }
 
-bool FAutomatedCode_CommandNesting::InitTaskCommand(const TArray<FString>& InCommandList, TMultiMap<uint32, FString>& OutTaskCommand)
+bool FAutomatedCode_CommandNesting::InitTaskCommand(const TArray<FString>& InCommandList, TMultiMap<ECommandProtocol, FString>& OutTaskCommand)
 {
 	if(InCommandList.Num() > 0)
 	{

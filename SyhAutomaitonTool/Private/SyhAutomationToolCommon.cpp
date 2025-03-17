@@ -5,7 +5,37 @@ namespace SimpleAutomationToolCommon
 {
 	FString PackagingSaveFileName;
 
-	//xxx1&&xxx2
+	FString CommandProtocolToString(ECommandProtocol InProtocol)
+	{
+		//"ECommandProtocol::CMD_Call" -> "Call"
+		FName Temp = UEnum::GetValueAsName(InProtocol);
+		FString ProtocolName;
+		if (Temp == NAME_None)
+		{
+			ProtocolName = CommandProtocolToString((ECommandProtocol)0);
+		}
+		else
+		{
+			ProtocolName = Temp.ToString();
+		}
+		ProtocolName.RightChopInline(FCommandProtocolRelated::ProtocolStringPrefixLength);
+		return ProtocolName;
+	}
+
+	ECommandProtocol StringToCommandProtocol(const FString& InShortCommandName)
+	{
+		FString ProtocolName = FCommandProtocolRelated::GetProtocolFullName(InShortCommandName);
+		int64 Result = UEnum::LookupEnumName(FName(), *ProtocolName);
+		if (Result == INDEX_NONE)
+		{
+			return ECommandProtocol::CMD_None;
+		}
+		else
+		{
+			return (ECommandProtocol)Result;//无法使用模板，模板需要常量表达式输入
+		}
+	}
+
 	bool ParseStrings(const FString& InKey, TArray<FString>& InArray, bool bPath)
 	{
 		FString NewString;
@@ -44,7 +74,6 @@ namespace SimpleAutomationToolCommon
 
 	}
 
-	//xxx1||yyy1&&xxx2||yyy2
 	bool ParseStrings(const FString& InKey, TMap<FString, FString>& InMap, bool bPath)
 	{
 		bool Result = true;

@@ -1,4 +1,13 @@
 #include "Element/OSS/AutomatedOss.h"
+#include "Core/SimpleAutomationTool.h"
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", off)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+
+template bool SimpleAutomationTool::EvaluateTaskResult<ESimpleOSSCommand>(const TMultiMap<ESimpleOSSCommand, bool>& InTaskResult);
 
 FAutomatedCode_OSS::FAutomatedCode_OSS()
 {
@@ -28,8 +37,23 @@ bool FAutomatedCode_OSS::Execute()
 
 	if (SelfConfig->OSSCommands.Num() > 0)
 	{
-		return SimpleOSSCommand::Exec(SelfConfig->OSSCommands);
+		TMultiMap<ESimpleOSSCommand, bool> ExecuteResult;
+		SimpleOSSCommand::Exec(SelfConfig->OSSCommands, ExecuteResult);
+
+		for (auto& Temp : ExecuteResult)
+		{
+
+		}
+
+		return SimpleAutomationTool::EvaluateTaskResult(ExecuteResult);
 	}
 
 	return false;
 }
+
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", on)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT

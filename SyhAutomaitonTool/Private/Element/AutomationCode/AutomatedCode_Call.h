@@ -33,5 +33,5 @@ public:
 public:
 	//虚函数在编译时并不知道具体函数的定义，知道其定义时已经是运行时了
 	//内联函数在编译时需要其定义，以便展开
-	virtual uint32 GetType() const override { return (uint32)ECommandProtocol::CMD_Call; }
+	virtual ECommandProtocol GetType() const override { return ECommandProtocol::CMD_Call; }
 };

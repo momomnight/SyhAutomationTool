@@ -7,7 +7,6 @@
 #include "SyhAutomationToolCommon.h"
 
 
-
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
 #pragma optimize("", off)
@@ -16,13 +15,13 @@
 
 namespace SimpleAutomationTool
 {
-	template bool EvaluateTaskResult<int32>(const TMultiMap<int32, bool>& InTaskResult);
+	template bool EvaluateTaskResult<ECommandProtocol>(const TMultiMap<ECommandProtocol, bool>& InTaskResult);
 	template bool EvaluateTaskResult<FString>(const TMultiMap<FString, bool>& InTaskResult);
 
 
-	bool Execute(uint32 InProtocolIndex, const FString& InJsonString)
+	bool Execute(ECommandProtocol InProtocolIndex, const FString& InJsonString)
 	{
-		if(InProtocolIndex != 0)
+		if(InProtocolIndex != ECommandProtocol::CMD_None)
 		{
 			if (TSharedPtr<FAutoExecElements> AutoExecElement =
 				FAutoExecElementsFactory::CreateAutomatedTask(InProtocolIndex, InJsonString))
@@ -30,20 +29,20 @@ namespace SimpleAutomationTool
 				if (AutoExecElement->Execute())
 				{
 					UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Successful to execute [%s] protocol."), 
-						*AutomationJson::CommandProtocolIndexToString(InProtocolIndex));
+						*SimpleAutomationToolCommon::ToString<ECommandProtocol>(InProtocolIndex));
 					return true;
 				}
 				else
 				{
 					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Fail to execute [%s] protocol."), 
-						*AutomationJson::CommandProtocolIndexToString(InProtocolIndex));
+						*SimpleAutomationToolCommon::ToString<ECommandProtocol>(InProtocolIndex));
 					return false;
 				}
 			}
 			else
 			{
 				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Fail to create AutoExecElement. Protocol is [%s]"), 
-					*AutomationJson::CommandProtocolIndexToString(InProtocolIndex));
+					*SimpleAutomationToolCommon::ToString<ECommandProtocol>(InProtocolIndex));
 				return false;
 			}
 		}
@@ -52,7 +51,7 @@ namespace SimpleAutomationTool
 		return true;
 	}
 
-	bool Init(TMultiMap<uint32, FString>& OutTaskCommand)
+	bool Init(TMultiMap<ECommandProtocol, FString>& OutTaskCommand)
 	{
 		OutTaskCommand.Empty();
 		FString CommandScriptRelativePath;
@@ -73,7 +72,7 @@ namespace SimpleAutomationTool
 
 	//给定一个文件相对于Command内部的相对路径
 	//文件存在则反序列化到命令列表中，不存在则序列化所有命令到文件中，展示命令格式
-	bool Init(TMultiMap<uint32, FString>& OutTaskCommand, const FString& InRelativePath)
+	bool Init(TMultiMap<ECommandProtocol, FString>& OutTaskCommand, const FString& InRelativePath)
 	{
 		if (InRelativePath.IsEmpty())
 		{
@@ -110,11 +109,10 @@ namespace SimpleAutomationTool
 		}
 	}
 
-	void HandleTask(const TMultiMap<uint32, FString>& InTaskCommand, TMultiMap<int32, bool>& OutTaskResult, bool bBreak)
+	void HandleTask(const TMultiMap<ECommandProtocol, FString>& InTaskCommand, TMultiMap<ECommandProtocol, bool>& OutTaskResult, bool bBreak)
 	{
 		if (bBreak)
 		{
-
 			for (auto& Temp : InTaskCommand)
 			{
 				if (!Execute(Temp.Key, Temp.Value))
@@ -137,9 +135,7 @@ namespace SimpleAutomationTool
 
 	void HandleTask(const FString& InTaskCommand)
 	{
-		uint32 Protocol =  (uint32)AutomationJson::StringToCommandProtocol(InTaskCommand);
-
-		Execute(Protocol, TEXT(""));
+		Execute(SimpleAutomationToolCommon::StringToCommandProtocol(InTaskCommand), TEXT(""));
 	}
 
 	void BuildConfig()
