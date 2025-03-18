@@ -19,6 +19,7 @@ FAutomatedCode_OSS::~FAutomatedCode_OSS()
 
 void FAutomatedCode_OSS::Init()
 {
+	GetSelfConfig<OwnConfig>()->OSSCommands.Empty();
 }
 
 bool FAutomatedCode_OSS::BuildParameter(const FString& InJsonStr)
@@ -28,7 +29,8 @@ bool FAutomatedCode_OSS::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_OSS::BuildParameter()
 {
-	return SimpleOSSCommand::BuildConfig(GetSelfConfig<OwnConfig>()->OSSCommands);
+	SyhLogDisplay(TEXT("the method of the command argument is too complex, please wait the new version."));
+	return false;
 }
 
 bool FAutomatedCode_OSS::Execute()
@@ -39,11 +41,6 @@ bool FAutomatedCode_OSS::Execute()
 	{
 		TMultiMap<ESimpleOSSCommand, bool> ExecuteResult;
 		SimpleOSSCommand::Exec(SelfConfig->OSSCommands, ExecuteResult);
-
-		for (auto& Temp : ExecuteResult)
-		{
-
-		}
 
 		return SimpleAutomationTool::EvaluateTaskResult(ExecuteResult);
 	}

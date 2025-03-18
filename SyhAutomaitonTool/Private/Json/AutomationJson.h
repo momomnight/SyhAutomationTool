@@ -203,6 +203,12 @@ namespace AutomationJson
 		OutJsonObject->SetArrayField(RelatedString<FAutomatedOSSConfig>::OSSComandsKey, Array);
 	}
 
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedHTTPConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedHTTPConfig& InConfig)
+	{
+
+	}
+
 
 	//用于配置命令字段
 	void ConfigureCommandProtocol(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InProtocol);
@@ -409,6 +415,12 @@ namespace AutomationJson
 				SimpleOSSCommand::JsonObjectToOSSCommand(Object, OutConfig.OSSCommands.AddDefaulted_GetRef());
 			}
 		}
+	}
+
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedHTTPConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedHTTPConfig& OutConfig)
+	{
+
 	}
 
 

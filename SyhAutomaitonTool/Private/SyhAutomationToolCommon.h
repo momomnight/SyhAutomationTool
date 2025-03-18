@@ -55,10 +55,10 @@ namespace SimpleAutomationToolCommon
 		return FileStatData.bIsValid;
 	}
 
-	template <uint8 Index>
+	template <ECommandProtocol Index>
 	constexpr const TCHAR* GetCommandName()
 	{
-		return FCommandProtocolRelated::CommandName[Index];
+		return FCommandProtocolRelated::CommandName[static_cast<uint8>(Index)];
 	}
 
 	template<class Type> struct ReturnTypeTrait	{ using ReturnType = void; using ParameterType = void;};

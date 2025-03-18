@@ -1,4 +1,5 @@
 #include "Element/AutoExecElementsFactory.h"
+
 #include "Element/AutomationCode/AutomatedCode_Call.h"
 #include "Element/AutomationCode/AutomatedCode_CallCustomContent.h"
 #include "Element/AutomationCode/AutomatedCode_UEProjectRefresh.h"
@@ -11,6 +12,7 @@
 #include "Element/UEPakProject/AutomatedPak_UEPluginPak.h"
 #include "Element/AutomationCode/AutomatedCode_ConditionCommand.h"
 #include "Element/OSS/AutomatedOss.h"
+#include "Element/HttpClient/AutomatedHttp.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -32,41 +34,31 @@ TSharedPtr<FAutoExecElements> FAutoExecElementsFactory::CreateAutomatedTask(ECom
 	switch (InType)
 	{
 	case ECommandProtocol::CMD_Call:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- Call"));
 		return CreateAutomatedTask<FAutomatedCode_Call>(InJson);
 	case ECommandProtocol::CMD_Call_Custom_Content:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- CallCustomContent"));
 		return CreateAutomatedTask<FAutomatedCode_CallCustomContent>(InJson);
 	case ECommandProtocol::CMD_UE_Project_Refresh:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- UEProjectRefresh"));
 		return CreateAutomatedTask<FAutomatedCode_UEProjectRefresh>(InJson);
 	case ECommandProtocol::CMD_Command_Nesting:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- CommandNesting"));
 		return CreateAutomatedTask<FAutomatedCode_CommandNesting>(InJson);
 	case ECommandProtocol::CMD_Deployment_Copy:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- Deployment_Copy"));
 		return CreateAutomatedTask<FAutomatedCode_Deployment_Copy>(InJson);
 	case ECommandProtocol::CMD_Deployment_Delete:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- Deployment_Delete"));
 		return CreateAutomatedTask<FAutomatedCode_Deployment_Delete>(InJson);
 	case ECommandProtocol::CMD_VS_Compile:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- VS_Compile"));
 		return CreateAutomatedTask<FAutomatedCode_VS_Compile>(InJson);
 	case ECommandProtocol::CMD_Git:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- Git"));
 		return CreateAutomatedTask<FAutomatedCode_Git>(InJson);
 	case ECommandProtocol::CMD_UE_Packaging:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- UE_Packaging"));
 		return CreateAutomatedTask<FAutomatedCode_UE_Packaging>(InJson);
 	case ECommandProtocol::CMD_UE_Plugin_Packaging:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- UE_Plugin_Packaging"));
 		return CreateAutomatedTask<FAutomatedCode_UE_Plugin_Packaging>(InJson);
 	case ECommandProtocol::CMD_Condition_Command:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- Condition_Command"));
 		return CreateAutomatedTask<FAutomatedCode_ConditionCommand>(InJson);
 	case ECommandProtocol::CMD_OSS:
-		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("Create automated element -- OSS"));
 		return CreateAutomatedTask<FAutomatedCode_OSS>(InJson);
+	case ECommandProtocol::CMD_HTTP:
+		return CreateAutomatedTask<FAutomatedCode_HTTP>(InJson);
 	case ECommandProtocol::CMD_None:
 	default:
 		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("No automated elements were created."));

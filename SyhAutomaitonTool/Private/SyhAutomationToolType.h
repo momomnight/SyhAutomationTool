@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "SimpleOSSCommand.h"
+#include "SimpleHTTPType.h"
 #include "SyhAutomationToolType.generated.h"
 
 // 添加自己命令时:
@@ -30,7 +31,11 @@ struct FCommandProtocolRelated
 	TEXT("UE_Packaging"),			//9
 	TEXT("UE_Plugin_Packaging"),	//10
 	TEXT("Condition_Command"),		//11
-	TEXT("OSS"),		//12
+	TEXT("OSS"),					//12
+	TEXT("HTTP"),					//13
+	TEXT("HTTP_Server"),			//14
+	TEXT("Web_Socket"),				//15
+
 
 	TEXT("Max")
 	};
@@ -131,6 +136,12 @@ struct FAutomatedOSSRelated
 {
 	static const FString OSSComandsKey;
 };
+
+struct FAutomatedHTTPRelated
+{
+	
+};
+
 //命令协议枚举
 UENUM(BlueprintType)
 enum class ECommandProtocol : uint8
@@ -148,6 +159,10 @@ enum class ECommandProtocol : uint8
 	CMD_UE_Plugin_Packaging		UMETA(DisplayName = "UE Plugin Packaging"),
 	CMD_Condition_Command		UMETA(DisplayName = "Condition Command"),
 	CMD_OSS						UMETA(DisplayName = "OSS"),
+	CMD_HTTP					UMETA(DisplayName = "HTTP"),
+	//CMD_HTTP_Server				UMETA(DisplayName = "HTTP Server"),
+	//CMD_Web_Socket				UMETA(DisplayName = "Web Socket"),
+
 
 	CMD_Max						UMETA(DisplayName = "Max"),
 };
@@ -474,34 +489,58 @@ struct FAutomatedOSSConfig : public FAutomatedConfigBase
 
 		SimpleOSSCommand::FOSSCommand ObjectExistFunc;
 		ObjectExistFunc.CommandType = ESimpleOSSCommand::OSS_OBJECT_EXIST;
+		ObjectExistFunc.Param.Add(TEXT("-BucketName="), TEXT(""));
+		ObjectExistFunc.Param.Add(TEXT("-ObjectName="), TEXT(""));
 		OSSCommands.Add(ObjectExistFunc);
 
 		SimpleOSSCommand::FOSSCommand CopyObjecttFunc;
 		CopyObjecttFunc.CommandType = ESimpleOSSCommand::OSS_COPY_OBJECT;
+		CopyObjecttFunc.Param.Add(TEXT("-SourceBucketName="), TEXT(""));
+		CopyObjecttFunc.Param.Add(TEXT("-SourceObjectName="), TEXT(""));
+		CopyObjecttFunc.Param.Add(TEXT("-CopyBucketName="), TEXT(""));
+		CopyObjecttFunc.Param.Add(TEXT("-CopyObjectName="), TEXT(""));
 		OSSCommands.Add(CopyObjecttFunc);
 
 		SimpleOSSCommand::FOSSCommand DeleteObjectFunc;
 		DeleteObjectFunc.CommandType = ESimpleOSSCommand::OSS_DELETE_OBJECT;
+		DeleteObjectFunc.Param.Add(TEXT("-BucketName="), TEXT(""));
+		DeleteObjectFunc.Param.Add(TEXT("-ObjectName="), TEXT(""));
 		OSSCommands.Add(DeleteObjectFunc);
 
 		SimpleOSSCommand::FOSSCommand GetObjectFunc;
 		GetObjectFunc.CommandType = ESimpleOSSCommand::OSS_GET_OBJECT;
+		GetObjectFunc.Param.Add(TEXT("-BucketName="), TEXT(""));
+		GetObjectFunc.Param.Add(TEXT("-ObjectName="), TEXT(""));
+		GetObjectFunc.Param.Add(TEXT("-LocalPaths="), TEXT(""));
 		OSSCommands.Add(GetObjectFunc);
 
 		SimpleOSSCommand::FOSSCommand ResumableDownloadObjectFunc;
 		ResumableDownloadObjectFunc.CommandType = ESimpleOSSCommand::OSS_RESUMABLE_DOWNLOAD_OBJECT;
+		ResumableDownloadObjectFunc.Param.Add(TEXT("-BucketName="), TEXT(""));
+		ResumableDownloadObjectFunc.Param.Add(TEXT("-ObjectName="), TEXT(""));
+		ResumableDownloadObjectFunc.Param.Add(TEXT("-LocalPaths="), TEXT(""));
 		OSSCommands.Add(ResumableDownloadObjectFunc);
 
 		SimpleOSSCommand::FOSSCommand ResumableUploadObjectFunc;
 		ResumableUploadObjectFunc.CommandType = ESimpleOSSCommand::OSS_RESUMABLE_UPLOAD_OBJECT;
+		ResumableUploadObjectFunc.Param.Add(TEXT("-BucketName="), TEXT(""));
+		ResumableUploadObjectFunc.Param.Add(TEXT("-ObjectName="), TEXT(""));
+		ResumableUploadObjectFunc.Param.Add(TEXT("-LocalPaths="), TEXT(""));
 		OSSCommands.Add(ResumableUploadObjectFunc);
 
 		SimpleOSSCommand::FOSSCommand PutObjectFunc;
 		PutObjectFunc.CommandType = ESimpleOSSCommand::OSS_PUT_OBJECT;
+		PutObjectFunc.Param.Add(TEXT("-BucketName="), TEXT(""));
+		PutObjectFunc.Param.Add(TEXT("-ObjectName="), TEXT(""));
+		PutObjectFunc.Param.Add(TEXT("-LocalPaths="), TEXT(""));
 		OSSCommands.Add(PutObjectFunc);
 
 		SimpleOSSCommand::FOSSCommand UploadObjectFunc;
 		UploadObjectFunc.CommandType = ESimpleOSSCommand::OSS_UPLOAD_PART;
+		UploadObjectFunc.Param.Add(TEXT("-UploadId="), TEXT(""));
+		UploadObjectFunc.Param.Add(TEXT("-BucketName="), TEXT(""));
+		UploadObjectFunc.Param.Add(TEXT("-ObjectName="), TEXT(""));
+		UploadObjectFunc.Param.Add(TEXT("-LocalPaths="), TEXT(""));
 		OSSCommands.Add(UploadObjectFunc);
 
 	}
@@ -509,6 +548,50 @@ struct FAutomatedOSSConfig : public FAutomatedConfigBase
 	TArray<SimpleOSSCommand::FOSSCommand> OSSCommands;
 		
 };
+
+USTRUCT(BlueprintType)
+struct FAutomatedHTTPConfig : public FAutomatedConfigBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	typedef FAutomatedConfigBase Super;
+	typedef FAutomatedHTTPRelated RelatedString;
+
+	FAutomatedHTTPConfig()
+	{
+		URL = TEXT("http://127.0.0.1");
+		VerbType = ESimpleHTTPVerbType::SIMPLE_POST;
+		bSync = true;
+		bBinaries = false;
+		Timeout = 100.f;
+		SavePath = TEXT("for Get");
+	}
+
+	UPROPERTY()
+	FString URL;
+
+	UPROPERTY()
+	ESimpleHTTPVerbType VerbType;
+
+	UPROPERTY()
+	TMap<FString, FString> CustomMetaData;
+
+	UPROPERTY()
+	bool bSync;//是否同步，默认同步
+
+	UPROPERTY()
+	bool bBinaries;
+
+	UPROPERTY()
+	FString ContentBody;//Json-string, Binaries-Path
+
+	UPROPERTY()
+	float Timeout;
+
+	UPROPERTY()
+	FString SavePath;//For get;
+};
+
 
 /// <summary>
 ///	Traits
@@ -528,6 +611,7 @@ template <> struct FCommandProtocol_ConfigType<FAutomatedUEPackagingConfig>			{ 
 template <> struct FCommandProtocol_ConfigType<FAutomatedUEPluginPackagingConfig>	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_UE_Plugin_Packaging; };
 template <> struct FCommandProtocol_ConfigType<FAutomatedConditionCommandConfig>	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Condition_Command; };
 template <> struct FCommandProtocol_ConfigType<FAutomatedOSSConfig>					{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_OSS; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedHTTPConfig>				{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_HTTP; };
 
 
 //如果有枚举号，我们能拿到什么
@@ -544,6 +628,6 @@ template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Packaging>
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Plugin_Packaging>	{ using ConfigType = FAutomatedUEPluginPackagingConfig;};
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Condition_Command>	{ using ConfigType = FAutomatedConditionCommandConfig;};
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_OSS>					{ using ConfigType = FAutomatedOSSConfig; };
-
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_HTTP>				{ using ConfigType = FAutomatedHTTPConfig; };
 
 

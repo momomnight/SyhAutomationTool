@@ -17,7 +17,8 @@ public:
 	using Base = FAutoExecElements;
 	using Self = FAutoExecElements;
 	using OwnConfig = FAutomatedConfigBase;
-protected:
+	
+public:
 
 	template <class AutomatedConfigType>
 	TSharedPtr<AutomatedConfigType> GetSelfConfig()
@@ -26,13 +27,11 @@ protected:
 	}
 
 	template <class AutomatedCommandType>
-	constexpr const TCHAR* GetCommandName()
+	static constexpr const TCHAR* GetCommandName()
 	{
 		static_assert(std::is_base_of<FAutoExecElements, AutomatedCommandType>::value, "This type is not derived of FAutoExecElements.");
-		return SimpleAutomationToolCommon::GetCommandName<static_cast<uint32>(FCommandProtocol_ConfigType<typename AutomatedCommandType::OwnConfig>::Value)>();
+		return SimpleAutomationToolCommon::GetCommandName<FCommandProtocol_ConfigType<typename AutomatedCommandType::OwnConfig>::Value>();
 	}
-
-public:
 
 	template <class AutomatedCommandType>
 	static void Init(TSharedPtr<FAutoExecElements> SelfPtr)
@@ -53,6 +52,7 @@ public:
 	//抽象基类的析构应该为虚函数，但是必须提供定义
 	virtual ~FAutoExecElements(){};
 
+	//可以在此处清理Config的初始值
 	virtual void Init() = 0;
 
 	//通过Json构建参数
