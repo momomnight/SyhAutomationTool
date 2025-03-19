@@ -102,11 +102,17 @@ namespace SimpleAutomationTool
 		}
 		else
 		{
-			FString CommandString;
-			AutomationJson::SerializeAllCommand(CommandString);
-			check(FFileHelper::SaveStringToFile(*CommandString, *CommandScriptPath));
+			SyhLogError(TEXT("%s does not exist."), *CommandScriptPath);
 			return false;
 		}
+	}
+
+	void GenerateAllCommandsFile()
+	{
+		FString CommandString;
+		FString CommandScriptPath = AutomatedExecutionPath::GetCommandPath() / TEXT("ScriptOfAllCommands.json");
+		AutomationJson::SerializeAllCommand(CommandString);
+		check(FFileHelper::SaveStringToFile(*CommandString, *CommandScriptPath));
 	}
 
 	void HandleTask(const TMultiMap<ECommandProtocol, FString>& InTaskCommand, TMultiMap<ECommandProtocol, bool>& OutTaskResult, bool bBreak)

@@ -32,7 +32,7 @@ bool FAutomatedCode_Git::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
-	if (GetValueFromCommandLine(OwnConfig::RelatedString::ProjectPathKey, SelfConfig->ProjectPath))
+	if (SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::ProjectPathKey, SelfConfig->ProjectPath))
 	{
 		FPaths::NormalizeFilename(SelfConfig->ProjectPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->ProjectPath);

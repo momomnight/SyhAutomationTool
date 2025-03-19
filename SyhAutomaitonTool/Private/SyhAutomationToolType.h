@@ -53,7 +53,7 @@ struct FAutomatedCallRelated
 struct FAutomatedCallCustomContentRelated : public FAutomatedCallRelated
 {
 	static const FString ContentKey;
-	static const FString WaitTimeKey;
+	static const FString WaitTime_IntKey;
 };
 
 struct FAutomatedUEProjectRefreshRelated : public FAutomatedCallRelated
@@ -139,7 +139,19 @@ struct FAutomatedOSSRelated
 
 struct FAutomatedHTTPRelated
 {
-	
+	static const FString URLKey;
+	static const FString VerbTypeKey;
+	static const FString CustomMetaDataKey;
+	static const FString Sync_BooleanKey;
+	static const FString Binaries_BooleanKey;
+	static const FString ContentBodyKey;
+	static const FString Timeout_FloatKey;
+	static const FString SavePathKey;
+
+	static const TArray<FString> VerbTypeName;
+	static const FString VerbTypeStringPrefix;
+	static const int32  VerbTypeStringPrefixLength;
+	static FString GetHttpVerbTypeFullName(const FString& InShortName);
 };
 
 //命令协议枚举
@@ -563,8 +575,10 @@ struct FAutomatedHTTPConfig : public FAutomatedConfigBase
 		VerbType = ESimpleHTTPVerbType::SIMPLE_POST;
 		bSync = true;
 		bBinaries = false;
+		ContentBody = TEXT("ContentBody may include a piece of normal text or binary data, depending on its relation to bBinaries.");
 		Timeout = 100.f;
-		SavePath = TEXT("for Get");
+		SavePath = TEXT("For GET, it is not empty.");
+		CustomMetaData.Add(TEXT("Key"), TEXT("Value"));
 	}
 
 	UPROPERTY()

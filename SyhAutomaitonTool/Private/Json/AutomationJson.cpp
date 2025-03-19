@@ -65,7 +65,7 @@ namespace AutomationJson
 	{
 		if (InJsonObject.IsValid())
 		{
-			return StringToComparisionType(InJsonObject->GetStringField(FAutomatedCommandNestingRelated::ComparisionTypeKey));
+			return SimpleAutomationToolCommon::StringToComparisionType(InJsonObject->GetStringField(FAutomatedCommandNestingRelated::ComparisionTypeKey));
 		}
 
 		return EComparisionType::COMPARISION_None;
@@ -84,37 +84,7 @@ namespace AutomationJson
 
 		return EComparisionType::COMPARISION_None;
 	}
-	
-	EComparisionType StringToComparisionType(const FString& InShortCommandName)
-	{
-		FString ProtocolName = FAutomatedCommandNestingRelated::GetComparisionTypeFullName(InShortCommandName);
-		int64 Result = UEnum::LookupEnumName(FName(), *ProtocolName);
-		if (Result == INDEX_NONE)
-		{
-			return EComparisionType::COMPARISION_None;
-		}
-		else
-		{
-			return (EComparisionType)Result;
-		}
-	}
 
-	FString ComparisionTypeToString(EComparisionType InProtocol)
-	{
-		//"ECommandProtocol::CMD_Call" -> "Call"
-		FName Temp = UEnum::GetValueAsName(InProtocol);
-		FString ComparisionTypeName;
-		if (Temp == NAME_None)
-		{
-			ComparisionTypeName = ComparisionTypeToString((EComparisionType)0);
-		}
-		else
-		{
-			ComparisionTypeName = Temp.ToString();
-		}
-		ComparisionTypeName.RightChopInline(FAutomatedCommandNestingRelated::ComparisionTypeStringPrefixLength);
-		return ComparisionTypeName;
-	}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

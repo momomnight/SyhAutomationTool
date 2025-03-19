@@ -44,6 +44,20 @@ FString FAutomatedCommandNestingRelated::GetComparisionTypeFullName(const FStrin
 }
 
 
+
+FString FAutomatedHTTPRelated::GetHttpVerbTypeFullName(const FString& InShortName)
+{
+	for (auto& Temp : FAutomatedHTTPRelated::VerbTypeName)
+	{
+		if (Temp.Equals(InShortName, ESearchCase::IgnoreCase))
+		{
+			return FAutomatedHTTPRelated::VerbTypeStringPrefix + Temp;
+		}
+	}
+
+	return FAutomatedHTTPRelated::VerbTypeStringPrefix + TEXT("None");
+}
+
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
 #pragma optimize("", on)
@@ -70,7 +84,7 @@ const FString FAutomatedCallRelated::CallPathKey = TEXT("CallPath");
 const FString FAutomatedCallRelated::ParametersKey = TEXT("Parameters");
 
 const FString FAutomatedCallCustomContentRelated::ContentKey = TEXT("Content");
-const FString FAutomatedCallCustomContentRelated::WaitTimeKey = TEXT("WaitTime");
+const FString FAutomatedCallCustomContentRelated::WaitTime_IntKey = TEXT("WaitTime");
 
 const FString FAutomatedUEProjectRefreshRelated::UnrealBuildToolPathKey = TEXT("UnrealBuildToolPath");
 const FString FAutomatedUEProjectRefreshRelated::ProjectUProjectPathKey = TEXT("ProjectUProjectPath");
@@ -107,3 +121,23 @@ const FString FAutomatedConditionCommandRelated::TrueCommandListKey = TEXT("True
 const FString FAutomatedConditionCommandRelated::FalseCommandListKey = TEXT("FalseCommandList");
 
 const FString FAutomatedOSSRelated::OSSComandsKey = TEXT("OSSComands");
+
+const FString FAutomatedHTTPRelated::URLKey = TEXT("URL");
+const FString FAutomatedHTTPRelated::VerbTypeKey = TEXT("VerbType");
+const FString FAutomatedHTTPRelated::CustomMetaDataKey = TEXT("CustomMetaData");
+const FString FAutomatedHTTPRelated::Sync_BooleanKey = TEXT("bSynchronous");
+const FString FAutomatedHTTPRelated::Binaries_BooleanKey = TEXT("bBinaries");
+const FString FAutomatedHTTPRelated::ContentBodyKey = TEXT("ContentBody");
+const FString FAutomatedHTTPRelated::Timeout_FloatKey = TEXT("Timeout");
+const FString FAutomatedHTTPRelated::SavePathKey = TEXT("SavePath");
+
+const TArray<FString> FAutomatedHTTPRelated::VerbTypeName=
+{
+	TEXT("POST"),
+	TEXT("PUT"),
+	TEXT("GET"),
+	TEXT("DELETE")
+};
+
+const FString	FAutomatedHTTPRelated::VerbTypeStringPrefix = TEXT("ESimpleHTTPVerbType::SIMPLE_");
+const int32		FAutomatedHTTPRelated::VerbTypeStringPrefixLength = FAutomatedHTTPRelated::VerbTypeStringPrefix.Len();

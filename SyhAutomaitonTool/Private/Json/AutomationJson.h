@@ -1,5 +1,6 @@
 #pragma once
 #include "Json/AutomationJsonTemplate.h"
+#include "SyhAutomationToolCommon.h"
 
 //	Example:
 //	[
@@ -32,11 +33,6 @@ namespace AutomationJson
 
 	EComparisionType GetComparisionType(const FString& InJsonString);
 
-	EComparisionType StringToComparisionType(const FString& InShortCommandName);
-
-	FString ComparisionTypeToString(EComparisionType InProtocol);
-
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	template <class AutomatedConfigType>
@@ -58,7 +54,7 @@ namespace AutomationJson
 	template<>
 	void AutomatedConfigToJsonObject<FAutomatedCallCustomContentConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedCallCustomContentConfig& InConfig)
 	{
-		OutJsonObject->SetNumberField(RelatedString<FAutomatedCallCustomContentConfig>::WaitTimeKey, InConfig.WaitTime);
+		OutJsonObject->SetNumberField(RelatedString<FAutomatedCallCustomContentConfig>::WaitTime_IntKey, InConfig.WaitTime);
 		OutJsonObject->SetStringField(RelatedString<FAutomatedCallCustomContentConfig>::ContentKey, InConfig.Content);
 	}
 
@@ -72,7 +68,7 @@ namespace AutomationJson
 	template<>
 	void AutomatedConfigToJsonObject<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedCommandNestingConfig& InConfig)
 	{
-		OutJsonObject->SetStringField(RelatedString<FAutomatedCommandNestingConfig>::ComparisionTypeKey, ComparisionTypeToString(InConfig.ComparisionType));
+		OutJsonObject->SetStringField(RelatedString<FAutomatedCommandNestingConfig>::ComparisionTypeKey, SimpleAutomationToolCommon::ComparisionTypeToString(InConfig.ComparisionType));
 
 		//上面的命令对于配置无需更多处理
 		TArray<TSharedPtr<FJsonValue>> Array;
@@ -206,7 +202,24 @@ namespace AutomationJson
 	template<>
 	void AutomatedConfigToJsonObject<FAutomatedHTTPConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedHTTPConfig& InConfig)
 	{
+		OutJsonObject->SetStringField(RelatedString<FAutomatedHTTPConfig>::URLKey, InConfig.URL);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedHTTPConfig>::VerbTypeKey, SimpleAutomationToolCommon::HTTPVervTypeToString(InConfig.VerbType));
+		
+		OutJsonObject->SetBoolField(RelatedString<FAutomatedHTTPConfig>::Sync_BooleanKey, InConfig.bSync);
+		OutJsonObject->SetBoolField(RelatedString<FAutomatedHTTPConfig>::Binaries_BooleanKey, InConfig.bBinaries);
+		OutJsonObject->SetNumberField(RelatedString<FAutomatedHTTPConfig>::Timeout_FloatKey, InConfig.Timeout);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedHTTPConfig>::SavePathKey, InConfig.SavePath);
 
+		TArray<TSharedPtr<FJsonValue>> JsonArray;
+		for (auto& Temp : InConfig.CustomMetaData)
+		{
+			TSharedPtr<FJsonObject> TempJsonObject = MakeShareable<FJsonObject>(new FJsonObject);
+			TempJsonObject->SetStringField(TEXT("Key"), Temp.Key);
+			TempJsonObject->SetStringField(TEXT("Value"), Temp.Value);
+			JsonArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(TempJsonObject)));
+		}
+		OutJsonObject->SetArrayField(RelatedString<FAutomatedHTTPConfig>::CustomMetaDataKey, JsonArray);
+		OutJsonObject->SetStringField(RelatedString<FAutomatedHTTPConfig>::ContentBodyKey, InConfig.ContentBody);
 	}
 
 
@@ -255,7 +268,7 @@ namespace AutomationJson
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedCallCustomContentConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCallCustomContentConfig& OutConfig)
 	{
-		OutConfig.WaitTime = InJsonObject->GetNumberField(RelatedString<FAutomatedCallCustomContentConfig>::WaitTimeKey);
+		OutConfig.WaitTime = InJsonObject->GetNumberField(RelatedString<FAutomatedCallCustomContentConfig>::WaitTime_IntKey);
 		OutConfig.Content = InJsonObject->GetStringField(RelatedString<FAutomatedCallCustomContentConfig>::ContentKey);
 	}
 
@@ -277,7 +290,7 @@ namespace AutomationJson
 	void JsonObjectToAutomatedConfig<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCommandNestingConfig& OutConfig)
 	{
 		FString TypeStr = InJsonObject->GetStringField(RelatedString<FAutomatedCommandNestingConfig>::ComparisionTypeKey);
-		OutConfig.ComparisionType = StringToComparisionType(TypeStr);
+		OutConfig.ComparisionType = SimpleAutomationToolCommon::StringToComparisionType(TypeStr);
 		const TArray<TSharedPtr<FJsonValue>>& InArrayObject = InJsonObject->GetArrayField(RelatedString<FAutomatedCommandNestingConfig>::CommandListKey);
 		OutConfig.CommandList.Empty();
 		for (auto& Temp : InArrayObject)
@@ -420,7 +433,28 @@ namespace AutomationJson
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedHTTPConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedHTTPConfig& OutConfig)
 	{
+		OutConfig.URL = InJsonObject->GetStringField(RelatedString<FAutomatedHTTPConfig>::URLKey);
 
+		OutConfig.VerbType = SimpleAutomationToolCommon::StringToHTTPVervType(InJsonObject->GetStringField(RelatedString<FAutomatedHTTPConfig>::VerbTypeKey));
+
+		OutConfig.bSync = InJsonObject->GetBoolField(RelatedString<FAutomatedHTTPConfig>::Sync_BooleanKey);
+		OutConfig.bBinaries = InJsonObject->GetBoolField(RelatedString<FAutomatedHTTPConfig>::Binaries_BooleanKey);
+		OutConfig.Timeout = InJsonObject->GetNumberField(RelatedString<FAutomatedHTTPConfig>::Timeout_FloatKey);
+		OutConfig.SavePath = InJsonObject->GetStringField(RelatedString<FAutomatedHTTPConfig>::SavePathKey);
+
+		OutConfig.ContentBody = InJsonObject->GetStringField(RelatedString<FAutomatedHTTPConfig>::ContentBodyKey);
+		OutConfig.CustomMetaData.Empty();
+		const TArray<TSharedPtr<FJsonValue>>& ObjectArray = InJsonObject->GetArrayField(RelatedString<FAutomatedHTTPConfig>::CustomMetaDataKey);
+		for (auto& Temp : ObjectArray)
+		{
+			if (TSharedPtr<FJsonObject> TempObject = Temp->AsObject())
+			{
+				FString Key = TempObject->GetStringField(TEXT("Key"));
+				FString Value = TempObject->GetStringField(TEXT("Value"));
+				OutConfig.CustomMetaData.Emplace(Key, Value);
+			}
+		}
+		
 	}
 
 

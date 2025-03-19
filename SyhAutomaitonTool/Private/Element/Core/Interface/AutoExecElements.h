@@ -69,45 +69,7 @@ public:
 
 protected:
 
-	template<class Type>
-	bool GetValueFromCommandLine(const FString& InKey, Type& OutValue)
-	{
-		if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
-			!FParse::Value(FCommandLine::Get(), *Key, OutValue))
-		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
-			return false;
-		}
-		return true;
-	}
-
-	template<>
-	bool GetValueFromCommandLine<bool>(const FString& InKey, bool& OutValue)
-	{
-		if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
-			!FParse::Bool(FCommandLine::Get(), *Key, OutValue))
-		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
-			return false;
-		}
-		return true;
-	}
-
-	template<>
-	bool GetValueFromCommandLine<EComparisionType>(const FString& InKey, EComparisionType& OutValue)
-	{
-		FString Result;
-		if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
-			!FParse::Value(FCommandLine::Get(), *Key, Result))
-		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
-			return false;
-		}
-
-		OutValue = AutomationJson::StringToComparisionType(Result);
-
-		return true;
-	}
+	
 
 	//Config，如此命名为的是在代码提示中隐藏
 	TSharedPtr<FAutomatedConfigBase> Z_C_o_n_f_i_g;

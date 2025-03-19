@@ -21,7 +21,6 @@ namespace SimpleAutomationToolCommon
 		ProtocolName.RightChopInline(FCommandProtocolRelated::ProtocolStringPrefixLength);
 		return ProtocolName;
 	}
-
 	ECommandProtocol StringToCommandProtocol(const FString& InShortCommandName)
 	{
 		FString ProtocolName = FCommandProtocolRelated::GetProtocolFullName(InShortCommandName);
@@ -34,6 +33,68 @@ namespace SimpleAutomationToolCommon
 		{
 			return (ECommandProtocol)Result;//无法使用模板，模板需要常量表达式输入
 		}
+	}
+
+
+	EComparisionType StringToComparisionType(const FString& InShortCommandName)
+	{
+		FString ProtocolName = FAutomatedCommandNestingRelated::GetComparisionTypeFullName(InShortCommandName);
+		int64 Result = UEnum::LookupEnumName(FName(), *ProtocolName);
+		if (Result == INDEX_NONE)
+		{
+			return EComparisionType::COMPARISION_None;
+		}
+		else
+		{
+			return (EComparisionType)Result;
+		}
+	}
+	FString ComparisionTypeToString(EComparisionType InProtocol)
+	{
+		//"ECommandProtocol::CMD_Call" -> "Call"
+		FName Temp = UEnum::GetValueAsName(InProtocol);
+		FString ComparisionTypeName;
+		if (Temp == NAME_None)
+		{
+			ComparisionTypeName = ComparisionTypeToString((EComparisionType)0);
+		}
+		else
+		{
+			ComparisionTypeName = Temp.ToString();
+		}
+		ComparisionTypeName.RightChopInline(FAutomatedCommandNestingRelated::ComparisionTypeStringPrefixLength);
+		return ComparisionTypeName;
+	}
+
+
+	//http的请求类型
+	ESimpleHTTPVerbType StringToHTTPVervType(const FString& InShortCommandName)
+	{
+		FString ProtocolName = FAutomatedHTTPRelated::GetHttpVerbTypeFullName(InShortCommandName);
+		int64 Result = UEnum::LookupEnumName(FName(), *ProtocolName);
+		if (Result == INDEX_NONE)
+		{
+			SyhLogError(TEXT("Not found the enum value. Returned a GET"));
+			return ESimpleHTTPVerbType::SIMPLE_GET;
+		}
+		else
+		{
+			return (ESimpleHTTPVerbType)Result;
+		}
+	}
+	FString HTTPVervTypeToString(ESimpleHTTPVerbType InVerbType)
+	{
+		//"ECommandProtocol::CMD_Call" -> "Call"
+		FName Temp = UEnum::GetValueAsName(InVerbType);
+		FString ComparisionTypeName;
+		if (Temp == NAME_None)
+		{
+			SyhLogError(TEXT("Not found the enum value. Returned a emtpy."));
+			return TEXT("");
+		}
+		ComparisionTypeName = Temp.ToString();
+		ComparisionTypeName.RightChopInline(FAutomatedHTTPRelated::VerbTypeStringPrefixLength);
+		return ComparisionTypeName;
 	}
 
 	bool ParseStrings(const FString& InKey, TArray<FString>& InArray, bool bPath)
@@ -86,23 +147,23 @@ namespace SimpleAutomationToolCommon
 
 		for (auto& Temp : TempArray)
 		{
-			FString Source;
-			FString Target;
+			FString Key;
+			FString Value;
 
-			if (Temp.Split(TEXT("||"), &Source, &Target))
+			if (Temp.Split(TEXT("||"), &Key, &Value))
 			{
 				if (bPath)
 				{
-					FPaths::NormalizeDirectoryName(Source);
-					FPaths::RemoveDuplicateSlashes(Source);
-					FPaths::NormalizeDirectoryName(Target);
-					FPaths::RemoveDuplicateSlashes(Target);
+					FPaths::NormalizeDirectoryName(Key);
+					FPaths::RemoveDuplicateSlashes(Key);
+					FPaths::NormalizeDirectoryName(Value);
+					FPaths::RemoveDuplicateSlashes(Value);
 				}
-				InMap.Add(Source, Target);
+				InMap.Add(Key, Value);
 			}
 			else
 			{
-				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to parse the string [%s]. Source=[%s] Target=[%s]"), *Temp, *Source, *Target);
+				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to parse the string [%s]. Key=[%s] Target=[%s]"), *Temp, *Key, *Value);
 				return false;
 			}
 		}
@@ -209,15 +270,6 @@ namespace SimpleAutomationToolCommon
 		}
 
 
-	}
-
-	bool IsMatchKey(const FString& InKey)
-	{
-		if (InKey.StartsWith(TEXT("-")) && InKey.EndsWith(TEXT("=")))
-		{
-			return true;
-		}
-		return false;
 	}
 
 	void HandleTimePath(FString& InPath)

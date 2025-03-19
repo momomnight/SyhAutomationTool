@@ -25,10 +25,10 @@ bool FAutomatedCode_VS_Compile::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
-	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::CallPathKey, SelfConfig->CallPath);
-	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::SlnProjectPathKey, SelfConfig->SlnProjectPath);
-	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::BuildStateKey, SelfConfig->BuildState);
-	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::ProjectKey, SelfConfig->Project);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::CallPathKey, SelfConfig->CallPath);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::SlnProjectPathKey, SelfConfig->SlnProjectPath);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::BuildStateKey, SelfConfig->BuildState);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::ProjectKey, SelfConfig->Project);
 
 	if (Result)
 	{

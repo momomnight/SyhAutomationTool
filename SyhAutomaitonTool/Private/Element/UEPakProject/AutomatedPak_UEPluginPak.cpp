@@ -49,7 +49,7 @@ bool FAutomatedCode_UE_Plugin_Packaging::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
-	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::EngineDirKey, SelfConfig->EngineDir);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::EngineDirKey, SelfConfig->EngineDir);
 	Result &= SimpleAutomationToolCommon::ParseStrings(OwnConfig::RelatedString::PathOfUPluginToTargetKey, SelfConfig->PathOfUPluginToTarget, true);
 	if (Result)
 	{

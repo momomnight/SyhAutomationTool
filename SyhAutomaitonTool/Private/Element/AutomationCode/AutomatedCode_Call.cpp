@@ -29,9 +29,9 @@ bool FAutomatedCode_Call::BuildParameter()
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	
 	bool Result = true;
-	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::CallTypeKey, SelfConfig->CallType);
-	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::CallPathKey, SelfConfig->CallPath);
-	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::ParametersKey, SelfConfig->Parameters);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::CallTypeKey, SelfConfig->CallType);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::CallPathKey, SelfConfig->CallPath);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::ParametersKey, SelfConfig->Parameters);
 
 	if (Result)
 	{

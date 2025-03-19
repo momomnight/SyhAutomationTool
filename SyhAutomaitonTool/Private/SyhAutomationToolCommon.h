@@ -2,17 +2,101 @@
 #include "CoreMinimal.h"
 #include "SyhAutomationToolLog.h"
 #include "SyhAutomationToolType.h"
+#include "Misc/Parse.h"
 
 namespace SimpleAutomationToolCommon
 {
 	//打包的文件路径，以时间为名
 	extern class FString PackagingSaveFileName;
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//命令协议
 	//从协议到去掉协议前缀的字符串
-	FString CommandProtocolToString(ECommandProtocol InProtocol);
+	FString CommandProtocolToString(ECommandProtocol InProtocolType);
 	//从去掉协议前缀的字符串到协议
 	ECommandProtocol StringToCommandProtocol(const FString& InShortCommandName);
 
+	//序列的执行类型
+	EComparisionType StringToComparisionType(const FString& InShortCommandName);
+	FString ComparisionTypeToString(EComparisionType InComparisionType);
+
+	//http的请求类型
+	ESimpleHTTPVerbType StringToHTTPVervType(const FString& InShortCommandName);
+	FString HTTPVervTypeToString(ESimpleHTTPVerbType InVerbType);
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//String(xxxx xxxx)-> "xxxx xxxx"
+	//对于.bat文件，使用"xxx/xxx xxx/xx"就可以读取
+	//对于.sh文件
+	void AdaptCommandArgsStringWithSpace(FString& InKey);
+	void GetBatPathString(FString& InPath);
+	inline FString GetMatchKey(const FString& InKey) { return FString(TEXT("-") + InKey + TEXT("=")); }
+	inline bool IsMatchKey(const FString& InKey)
+	{
+		if (InKey.StartsWith(TEXT("-")) && InKey.EndsWith(TEXT("=")))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	template<class Type>
+	bool GetValueFromCommandLine(const FString& InKey, Type& OutValue)
+	{
+		if (FString Key = GetMatchKey(InKey);
+			!FParse::Value(FCommandLine::Get(), *Key, OutValue))
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
+			return false;
+		}
+		return true;
+	}
+
+	template<>
+	bool GetValueFromCommandLine<bool>(const FString& InKey, bool& OutValue)
+	{
+		if (FString Key = GetMatchKey(InKey);
+			!FParse::Bool(FCommandLine::Get(), *Key, OutValue))
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
+			return false;
+		}
+		return true;
+	}
+
+	template<>
+	bool GetValueFromCommandLine<EComparisionType>(const FString& InKey, EComparisionType& OutValue)
+	{
+		FString Result;
+		if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
+			!FParse::Value(FCommandLine::Get(), *Key, Result))
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
+			return false;
+		}
+
+		OutValue = StringToComparisionType(Result);
+
+		return true;
+	}
+
+	template<>
+	bool GetValueFromCommandLine<ESimpleHTTPVerbType>(const FString& InKey, ESimpleHTTPVerbType& OutValue)
+	{
+		FString Result;
+		if (FString Key = GetMatchKey(InKey);
+			!FParse::Value(FCommandLine::Get(), *Key, Result))
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
+			return false;
+		}
+
+		OutValue = StringToHTTPVervType(Result);
+
+		return true;
+	}
+	
 	//xxx1&&xxx2
 	bool ParseStrings(const FString& InKey, TArray<FString>& InArray, bool bPath);
 
@@ -24,16 +108,6 @@ namespace SimpleAutomationToolCommon
 	bool DeletePath(const struct FFileStatData& InFileStatData, const FString& InPath);
 	bool DeletePath(const FString& InPath);
 
-	//String(xxxx xxxx)-> "xxxx xxxx"
-	//对于.bat文件，使用"xxx/xxx xxx/xx"就可以读取
-	//对于.sh文件
-	void AdaptCommandArgsStringWithSpace(FString& InKey);
-
-	void GetBatPathString(FString& InPath);
-
-	FString GetMatchKey(const FString& InKey) { return FString(TEXT("-") + InKey + TEXT("=")); }
-
-	bool IsMatchKey(const FString& InKey);
 
 	void HandleTimePath(FString& InPath);
 
@@ -185,4 +259,8 @@ namespace SimpleAutomationToolCommon
 		}
 		return true;
 	}
+
+
+
+	
 }

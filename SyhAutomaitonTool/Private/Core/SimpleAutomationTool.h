@@ -9,6 +9,8 @@ namespace SimpleAutomationTool
 
 	bool Init(TMultiMap<ECommandProtocol, FString>& OutTaskCommand, const FString& InRelativePath);
 
+	void GenerateAllCommandsFile();
+
 	//多条命令
 	void HandleTask(const TMultiMap<ECommandProtocol, FString>& InTaskCommand, TMultiMap<ECommandProtocol, bool>& OutTaskResult, bool bBreak = false);
 

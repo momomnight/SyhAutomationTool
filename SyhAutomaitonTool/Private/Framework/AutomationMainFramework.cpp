@@ -110,8 +110,12 @@ namespace AutomationMainFramework
 
 	int32 RunAutomatedBuild()
 	{
+		//注：FParse::Param 命令参数传入时，分析的字符串的位置不能是第一个位置
+		//	  且输入的参数前要有空格，且必须是"-xxxx" 或 "/xxxx"形式
+		//	 FParse::Value没有这个要求
 		if (FParse::Param(FCommandLine::Get(), TEXT("Helper")))
 		{
+			SimpleAutomationTool::GenerateAllCommandsFile();
 			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("-TimeLoop //Check start"));
 			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("-TimeSlotPerDay=%%H.%%M.%%S //Set a time"));
 			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("-CommandScript=new script command name"));
@@ -140,7 +144,7 @@ namespace AutomationMainFramework
 				//从Json执行多条命令
 				//1.初始化SNC全局配置
 				FSimpleNetGlobalInfo::Get()->Init();
-				if (FParse::Param(FCommandLine::Get(), TEXT("-SNCListen")))
+				if (FParse::Param(FCommandLine::Get(), TEXT("SNCListen")))
 				{
 					//2.创建服务器实例
 					ListenServer = FSimpleNetManage::CreateManage(ESimpleNetLinkState::LINKSTATE_LISTEN,
@@ -164,12 +168,12 @@ namespace AutomationMainFramework
 
 				}
 
-				if (FParse::Param(FCommandLine::Get(), TEXT("-HTTPServer")))
+				if (FParse::Param(FCommandLine::Get(), TEXT("HTTPServer")))
 				{
 
 				}
 
-				if (FParse::Param(FCommandLine::Get(), TEXT("-WebSocketServer")))
+				if (FParse::Param(FCommandLine::Get(), TEXT("WebSocketServer")))
 				{
 
 				}

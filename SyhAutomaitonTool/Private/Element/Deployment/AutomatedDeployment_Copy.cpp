@@ -54,7 +54,7 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
 	bool Result = true;
-	Result &= GetValueFromCommandLine(OwnConfig::RelatedString::DeleteMovedFiles_BooleanKey, SelfConfig->bDeleteMovedFiles);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::DeleteMovedFiles_BooleanKey, SelfConfig->bDeleteMovedFiles);
 
 	if (!Result)
 	{

@@ -49,7 +49,18 @@ bool FAutomatedCode_HTTP::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_HTTP::BuildParameter()
 {
-	return false;
+	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
+	bool Result = true;
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::URLKey, SelfConfig->URL);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::Sync_BooleanKey, SelfConfig->bSync);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::Binaries_BooleanKey, SelfConfig->bBinaries);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::VerbTypeKey, SelfConfig->VerbType);
+	Result &= SimpleAutomationToolCommon::ParseStrings(AutomationJson::RelatedString<OwnConfig>::CustomMetaDataKey, SelfConfig->CustomMetaData, false);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::ContentBodyKey, SelfConfig->ContentBody);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::Timeout_FloatKey, SelfConfig->Timeout);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::SavePathKey, SelfConfig->SavePath);
+	
+	return Result;
 }
 
 bool FAutomatedCode_HTTP::Execute()
@@ -114,7 +125,7 @@ void FAutomatedCode_HTTP::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpRe
 		{
 			if (InCode == 200)
 			{
-				if (HttpRequest->GetVerb().Equals(TEXT("GET")), ESearchCase::IgnoreCase)
+				if (HttpRequest->GetVerb().Equals(TEXT("GET"), ESearchCase::IgnoreCase))
 				{
 					FFileHelper::SaveArrayToFile(HttpResponse->GetContent(), *SelfConfig->SavePath);
 				}
@@ -174,12 +185,11 @@ void FAutomatedCode_HTTP::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 S
 
 void FAutomatedCode_HTTP::OnRequestHeaderReceived(FHttpRequestPtr HttpRequest, const FString& HeaderName, const FString& NewHeaderValue)
 {
-	if (HeaderName.Equals(TEXT("Content-Length")), ESearchCase::IgnoreCase)
+	if (HeaderName.Equals(TEXT("Content-Length"), ESearchCase::IgnoreCase))
 	{
 		ContentLength = FCString::Atoi(*NewHeaderValue);
 		SyhLogDisplay(TEXT("ContentLength=%i"), ContentLength);
 	}
-
 }
 
 
