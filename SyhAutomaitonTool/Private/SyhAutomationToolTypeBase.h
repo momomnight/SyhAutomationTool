@@ -6,6 +6,7 @@
 template <class EnumType, uint8 EnumMemberNameNumber>
 struct FEnumData
 {
+	static_assert(EnumMemberNameNumber > 0, "EnumMemberNameNumber must be greater to 0.");
 	const TCHAR* Prefix;
 	const int32	PrefixLength;
 	const TCHAR* NameKey;
@@ -17,17 +18,20 @@ struct FEnumRelatedBase
 {
 public:
 	static_assert(EnumMemberNameNumber > 0, "EnumMemberNameNumber must be greater to 0.");
+	static_assert(std::is_enum_v<EnumType>, "EnumType must be enum type.");
+
+
 	constexpr FEnumRelatedBase(const FEnumData<EnumType, EnumMemberNameNumber>& InData) : Data(InData){}
 	const FEnumData<EnumType, EnumMemberNameNumber>& Data;
 public:
 
 	template<EnumType EnumValue>
-	constexpr const TCHAR* GetNameKey() const
+	constexpr const TCHAR* GetNameKey() const noexcept
 	{
-		static_assert(EnumValue >= 0 && EnumValue < EnumMemberNameNumber, "EnumValue must be greater or equal to 0 and less to EnumMemberNameNumber.");
+		static_assert((uint8)EnumValue >= (uint8)0 && (uint8)EnumValue < (uint8)EnumMemberNameNumber, "EnumValue must be greater or equal to 0 and less to EnumMemberNameNumber.");
 		return Data.EnumMemberName[static_cast<uint8>(EnumValue)];
 	}
-	constexpr const TCHAR* GetEnumNameKey() const
+	constexpr const TCHAR* GetEnumNameKey() const noexcept
 	{
 		return Data.NameKey;
 	}
@@ -154,6 +158,13 @@ public:
 	}
 };
 
+//用于给FEnumRelated初始化
+template <class EnumType>
+struct FEnumTrait
+{
+	constexpr static auto InitialValue = nullptr;
+};
+
 struct FEnumFunctionObjectRelated
 {
 	template <class EnumType>
@@ -178,14 +189,11 @@ struct FEnumFunctionObjectRelated
 template <class EnumType, uint8 EnumMemberNameNumber, class InvalidEnumValueOperator = FEnumFunctionObjectRelated::DefaultInvalidEnumValueOperator<EnumType>>
 struct FEnumRelated
 {
-public:
-	static void CreateImpl(const FEnumRelatedBase<EnumType, EnumMemberNameNumber>& InData)
-	{
-		if (Impl == nullptr)
-		{
-			Impl = &InData;
-		}
-	}
+	static_assert(EnumMemberNameNumber > 0, "EnumMemberNameNumber must be greater to 0.");
+	static_assert(std::is_enum_v<EnumType>, "EnumType must be enum type.");
+	static_assert(std::is_same_v<InvalidEnumValueOperator, FEnumFunctionObjectRelated::DefaultInvalidEnumValueOperator<EnumType>> || 
+		std::is_base_of_v<FEnumFunctionObjectRelated::DefaultInvalidEnumValueOperator<EnumType>, InvalidEnumValueOperator>, 
+		"EnumType must be enum type.");
 
 public:
 	static FString GetFullName(const FString& InName)
@@ -261,13 +269,26 @@ public:
 	}
 
 	template <EnumType EnumValue>
-	constexpr static const TCHAR* ToString()
+	constexpr static const TCHAR* GetCString()
 	{
 		check(Impl && "Impl can not be nullptr.");
 		return Impl->GetNameKey<EnumValue>();
 	}
 
-	constexpr static const TCHAR* GetEnumNameKey()
+	template <EnumType EnumValue>
+	static FString ToString()
+	{
+		check(Impl && "Impl can not be nullptr.");
+		return GetCString<EnumValue>();
+	}
+
+	constexpr static const TCHAR* GetEnumNameKeyCString()
+	{
+		check(Impl && "Impl can not be nullptr.");
+		return Impl->GetEnumNameKey();
+	}
+
+	static FString GetEnumNameKey()
 	{
 		check(Impl && "Impl can not be nullptr.");
 		return Impl->GetEnumNameKey();
@@ -288,8 +309,6 @@ public:
 	}
 
 protected:
-	static const FEnumRelatedBase<EnumType, EnumMemberNameNumber>* Impl;
+	constexpr static const FEnumRelatedBase<EnumType, EnumMemberNameNumber>* Impl = FEnumTrait<EnumType>::InitialValue;
 };
 
-template <class EnumType, uint8 EnumMemberNameNumber, class InvalidEnumValueOperator>
-const FEnumRelatedBase<EnumType, EnumMemberNameNumber>* FEnumRelated<EnumType, EnumMemberNameNumber, InvalidEnumValueOperator>::Impl = nullptr;

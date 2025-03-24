@@ -27,8 +27,8 @@ bool FAutomatedCode_UEProjectRefresh::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::UnrealBuildToolPathKey, SelfConfig->UnrealBuildToolPath);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::ProjectUProjectPathKey, SelfConfig->ProjectUProjectPath);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::UnrealBuildToolPathKey, SelfConfig->UnrealBuildToolPath);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ProjectUProjectPathKey, SelfConfig->ProjectUProjectPath);
 
 	if (Result)
 	{

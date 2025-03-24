@@ -66,6 +66,8 @@ const FString FAutomatedConditionCommandRelated::TrueCommandListKey = TEXT("True
 const FString FAutomatedConditionCommandRelated::FalseCommandListKey = TEXT("FalseCommandList");
 
 const FString FAutomatedOSSRelated::OSSComandsKey = TEXT("OSSComands");
+const FString FAutomatedOSSRelated::OSSComandTypeKey = TEXT("ComandType");
+const FString FAutomatedOSSRelated::OSSComandParameterKey = TEXT("Parameter");
 
 const FString FAutomatedHTTPRelated::URLKey = TEXT("URL");
 const FString FAutomatedHTTPRelated::CustomMetaDataKey = TEXT("CustomMetaData");
@@ -75,9 +77,3 @@ const FString FAutomatedHTTPRelated::ContentBodyKey = TEXT("ContentBody");
 const FString FAutomatedHTTPRelated::Timeout_FloatKey = TEXT("Timeout");
 const FString FAutomatedHTTPRelated::SavePathKey = TEXT("SavePath");
 
-void SetEnumImpl()
-{
-	FCommandProtocolRelated::CreateImpl(CommandProtocolBase);
-	FComparisionTypeRelated::CreateImpl(ComparisionTypeBase);
-	FHttpVerbTypeRelated::CreateImpl(HttpVerbTypeBase);
-}

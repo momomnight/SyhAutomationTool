@@ -132,10 +132,7 @@ namespace AutomationJson
 	
 	}
 
-	void ConfigureCommandProtocol(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InProtocol)
-	{	
-		InJsonObject->SetStringField(FCommandProtocolRelated::GetEnumNameKey(), FCommandProtocolRelated::GetShortName(InProtocol));
-	}
+
 }
 
 

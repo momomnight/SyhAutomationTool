@@ -53,7 +53,6 @@ namespace SimpleAutomationTool
 
 	void Init()
 	{
-		SetEnumImpl();
 	}
 
 	bool Init(TMultiMap<ECommandProtocol, FString>& OutTaskCommand)

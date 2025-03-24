@@ -51,14 +51,14 @@ bool FAutomatedCode_HTTP::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::URLKey, SelfConfig->URL);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::Sync_BooleanKey, SelfConfig->bSync);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::Binaries_BooleanKey, SelfConfig->bBinaries);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(FHttpVerbTypeRelated::GetEnumNameKey(), SelfConfig->VerbType);
-	Result &= SimpleAutomationToolCommon::ParseStrings(AutomationJson::RelatedString<OwnConfig>::CustomMetaDataKey, SelfConfig->CustomMetaData, false);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::ContentBodyKey, SelfConfig->ContentBody);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::Timeout_FloatKey, SelfConfig->Timeout);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::SavePathKey, SelfConfig->SavePath);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::URLKey, SelfConfig->URL);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Sync_BooleanKey, SelfConfig->bSync);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Binaries_BooleanKey, SelfConfig->bBinaries);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(EnumTool<decltype(SelfConfig->VerbType)>::GetEnumNameKey(), SelfConfig->VerbType);
+	Result &= SimpleAutomationToolCommon::ParseStrings(Tool<OwnConfig>::CustomMetaDataKey, SelfConfig->CustomMetaData, false);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ContentBodyKey, SelfConfig->ContentBody);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Timeout_FloatKey, SelfConfig->Timeout);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::SavePathKey, SelfConfig->SavePath);
 	
 	return Result;
 }

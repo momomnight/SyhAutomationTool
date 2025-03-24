@@ -24,12 +24,12 @@ bool FAutomatedCode_UE_Packaging::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::EngineDirKey, SelfConfig->EngineDir);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::UProjectPathKey, SelfConfig->UProjectPath);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::PlatformKey, SelfConfig->Platform);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::BuildStateKey, SelfConfig->BuildState);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::BuildTargetKey, SelfConfig->BuildTarget);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::ArchiveDirectoryKey, SelfConfig->ArchiveDirectory);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::EngineDirKey, SelfConfig->EngineDir);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::UProjectPathKey, SelfConfig->UProjectPath);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::PlatformKey, SelfConfig->Platform);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::BuildStateKey, SelfConfig->BuildState);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::BuildTargetKey, SelfConfig->BuildTarget);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ArchiveDirectoryKey, SelfConfig->ArchiveDirectory);
 	
 	if (Result)
 	{

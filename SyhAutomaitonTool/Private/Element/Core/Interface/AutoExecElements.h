@@ -30,7 +30,7 @@ public:
 	static constexpr const TCHAR* GetCommandName()
 	{
 		static_assert(std::is_base_of<FAutoExecElements, AutomatedCommandType>::value, "This type is not derived of FAutoExecElements.");
-		return FCommandProtocolRelated::GetEnumNameKey();
+		return EnumTool<ECommandProtocol>::GetCString<FCommandProtocol_ConfigType<AutomatedCommandType>::Value>();
 	}
 
 	template <class AutomatedCommandType>

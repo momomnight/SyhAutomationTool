@@ -7,6 +7,7 @@
 // 需要修改SyhAutomationToolType.h和SyhAutomationToolType.cpp文件
 // 需要修改AutomationJson.h和AutomationJson.cpp文件
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 constexpr const TCHAR* CommandProtocolName[] =
 {
@@ -42,10 +43,17 @@ constexpr static FEnumData<ECommandProtocol, CommandProtocolNameLength> CommandP
 
 constexpr static FEnumRelatedBase<ECommandProtocol, CommandProtocolNameLength> CommandProtocolBase(CommandProtocolData);
 
+//必须放在struct FCommandProtocolRelated : public FEnumRelated<ECommandProtocol, CommandProtocolNameLength>之前
+//静态变量初始化要用到FEnumTrait<EnumType>
+template <>
+struct FEnumTrait<ECommandProtocol>
+{
+	constexpr static auto InitialValue = &CommandProtocolBase;
+};
+
 struct FCommandProtocolRelated : public FEnumRelated<ECommandProtocol, CommandProtocolNameLength>
 {
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,6 +76,12 @@ constexpr static FEnumData<EComparisionType, ComparisionTypeNameLength> Comparis
 };
 
 constexpr static FEnumRelatedBase<EComparisionType, ComparisionTypeNameLength> ComparisionTypeBase(ComparisionTypeData);
+
+template <>
+struct FEnumTrait<EComparisionType>
+{
+	constexpr static auto InitialValue = &ComparisionTypeBase;
+};
 
 struct FComparisionTypeRelated : public FEnumRelated<EComparisionType, ComparisionTypeNameLength>
 {
@@ -96,6 +110,11 @@ constexpr static FEnumData<ESimpleHTTPVerbType, HttpVerbTypeLength> HttpVerbType
 
 constexpr static FEnumRelatedBase<ESimpleHTTPVerbType, HttpVerbTypeLength> HttpVerbTypeBase(HttpVerbTypeData);
 
+template <>
+struct FEnumTrait<ESimpleHTTPVerbType>
+{
+	constexpr static auto InitialValue = &HttpVerbTypeBase;
+};
 
 struct FHttpVerbTypeRelated : public FEnumRelated<ESimpleHTTPVerbType, HttpVerbTypeLength, 
 	FEnumFunctionObjectRelated::InvalidEnumValueOperator_Error<ESimpleHTTPVerbType>>
@@ -105,8 +124,46 @@ struct FHttpVerbTypeRelated : public FEnumRelated<ESimpleHTTPVerbType, HttpVerbT
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void SetEnumImpl();
+constexpr const TCHAR* OSSCommandTypeName[] =
+{
+	TEXT("Init"),
+	TEXT("Bucket_Exist"),
+	TEXT("Object_Exist"),
+	TEXT("Copy_Object"),
+	TEXT("Delete_Object"),
+	TEXT("Get_Object"),
+	TEXT("Resumable_Download_Object"),
+	TEXT("Put_Object"),
+	TEXT("Resumable_Upload_Object"),
+	TEXT("Upload_Part"),
+	TEXT("Max")
+};
+
+constexpr uint32 OSSCommandTypeLength = UE_ARRAY_COUNT(OSSCommandTypeName);
+
+constexpr static FEnumData<ESimpleOSSCommand, OSSCommandTypeLength> OSSCommandTypeData = {
+	TEXT("ESimpleOSSCommand::OSS_"),
+	UE_ARRAY_COUNT(TEXT("ESimpleOSSCommand::OSS_")),
+	TEXT("OSSCommandType"),
+	OSSCommandTypeName
+};
+
+constexpr static FEnumRelatedBase<ESimpleOSSCommand, OSSCommandTypeLength> OSSCommandTypeBase(OSSCommandTypeData);
+
+template <>
+struct FEnumTrait<ESimpleOSSCommand>
+{
+	constexpr static auto InitialValue = &OSSCommandTypeBase;
+};
+
+struct FOSSCommandTypeRelated : public FEnumRelated<ESimpleOSSCommand, OSSCommandTypeLength,
+	FEnumFunctionObjectRelated::InvalidEnumValueOperator_Error<ESimpleOSSCommand>>
+{
+	//ESimpleHTTPVerbType没有None值，所以需要一个错误处理
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -197,6 +254,8 @@ struct FAutomatedConditionCommandRelated : public FAutomatedCommandNestingRelate
 struct FAutomatedOSSRelated
 {
 	static const FString OSSComandsKey;
+	static const FString OSSComandTypeKey;
+	static const FString OSSComandParameterKey;
 };
 
 struct FAutomatedHTTPRelated
@@ -252,6 +311,7 @@ struct FAutomatedConfigBase
 	FAutomatedConfigBase(){}
 };
 
+
 //呼叫指定脚本
 USTRUCT(BlueprintType)
 struct FAutomatedCallConfig : public FAutomatedConfigBase
@@ -259,7 +319,6 @@ struct FAutomatedCallConfig : public FAutomatedConfigBase
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedConfigBase Super;
-	typedef FAutomatedCallRelated RelatedString;
 
 	FAutomatedCallConfig()
 	{
@@ -286,7 +345,6 @@ struct FAutomatedCallCustomContentConfig : public FAutomatedCallConfig
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedCallConfig Super;
-	typedef FAutomatedCallCustomContentRelated RelatedString;
 
 	FAutomatedCallCustomContentConfig()
 	{
@@ -311,15 +369,14 @@ struct FAutomatedUEProjectRefreshConfig : public FAutomatedCallConfig
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedCallConfig Super;
-	typedef FAutomatedUEProjectRefreshRelated RelatedString;
 
 	FAutomatedUEProjectRefreshConfig() 
 	{
 		CallType = TEXT("autofill");
 		CallPath = TEXT("autofill");
 		Parameters = TEXT("autofill");
-		UnrealBuildToolPath = RelatedString::GetUnrealBuildToolPath(FPaths::EngineDir());
-		ProjectUProjectPath = RelatedString::GetProjectUProjectPath(FPaths::ProjectDir());
+		UnrealBuildToolPath = FAutomatedUEProjectRefreshRelated::GetUnrealBuildToolPath(FPaths::EngineDir());
+		ProjectUProjectPath = FAutomatedUEProjectRefreshRelated::GetProjectUProjectPath(FPaths::ProjectDir());
 	}
 
 	UPROPERTY()
@@ -329,13 +386,13 @@ struct FAutomatedUEProjectRefreshConfig : public FAutomatedCallConfig
 	FString ProjectUProjectPath;
 };
 
+//
 USTRUCT(BlueprintType)
 struct FAutomatedCommandNestingConfig : public FAutomatedConfigBase
 {
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedConfigBase Super;
-	typedef FAutomatedCommandNestingRelated RelatedString;
 
 	FAutomatedCommandNestingConfig() 
 	{
@@ -351,13 +408,13 @@ struct FAutomatedCommandNestingConfig : public FAutomatedConfigBase
 	TArray<FString> CommandList;
 };
 
+//
 USTRUCT(BlueprintType)
 struct FAutomatedDeploymentCopyConfig : public FAutomatedConfigBase
 {
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedConfigBase Super;
-	typedef FAutomatedDeploymentCopyRelated RelatedString;
 
 	FAutomatedDeploymentCopyConfig() : bDeleteMovedFiles(true)
 	{
@@ -372,13 +429,13 @@ struct FAutomatedDeploymentCopyConfig : public FAutomatedConfigBase
 	TMap<FString, FString> Files;	//<dest, src>
 };
 
+//
 USTRUCT(BlueprintType)
 struct FAutomatedDeploymentDeleteConfig : public FAutomatedConfigBase
 {
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedConfigBase Super;
-	typedef FAutomatedDeploymentDeleteRelated RelatedString;
 
 	FAutomatedDeploymentDeleteConfig()
 	{
@@ -390,13 +447,13 @@ struct FAutomatedDeploymentDeleteConfig : public FAutomatedConfigBase
 	TArray<FString> Files;	//<src>
 };
 
+//
 USTRUCT(BlueprintType)
 struct FAutomatedVSCompileConfig : public FAutomatedCallConfig
 {
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedCallConfig Super;
-	typedef FAutomatedVSCompileRelated RelatedString;
 
 	FAutomatedVSCompileConfig()
 	{
@@ -419,13 +476,13 @@ struct FAutomatedVSCompileConfig : public FAutomatedCallConfig
 
 };
 
+//
 USTRUCT(BlueprintType)
 struct FAutomatedGitConfig : public FAutomatedCallConfig
 {
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedCallConfig Super;
-	typedef FAutomatedGitRelated RelatedString;
 
 	FAutomatedGitConfig()
 	{
@@ -447,13 +504,13 @@ struct FAutomatedGitConfig : public FAutomatedCallConfig
 
 };
 
+//
 USTRUCT(BlueprintType)
 struct FAutomatedUEPackagingConfig : public FAutomatedCallConfig
 {
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedCallConfig Super;
-	typedef FAutomatedUEPackagingRelated RelatedString;
 
 	FAutomatedUEPackagingConfig()
 	{
@@ -487,13 +544,13 @@ struct FAutomatedUEPackagingConfig : public FAutomatedCallConfig
 	FString BuildTarget;
 };
 
+//
 USTRUCT(BlueprintType)
 struct FAutomatedUEPluginPackagingConfig : public FAutomatedCallConfig
 {
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedCallConfig Super;
-	typedef FAutomatedUEPluginPackagingRelated RelatedString;
 
 	FAutomatedUEPluginPackagingConfig()
 	{
@@ -512,13 +569,13 @@ struct FAutomatedUEPluginPackagingConfig : public FAutomatedCallConfig
 
 };
 
+//
 USTRUCT(BlueprintType)
 struct FAutomatedConditionCommandConfig : public FAutomatedCommandNestingConfig
 {
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedCommandNestingConfig Super;
-	typedef FAutomatedConditionCommandRelated RelatedString;
 
 	FAutomatedConditionCommandConfig()
 	{
@@ -533,13 +590,13 @@ struct FAutomatedConditionCommandConfig : public FAutomatedCommandNestingConfig
 	TArray<FString> FalseCommandList;
 };
 
+//
 USTRUCT(BlueprintType)
 struct FAutomatedOSSConfig : public FAutomatedConfigBase
 {
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedConfigBase Super;
-	typedef FAutomatedOSSRelated RelatedString;
 
 	FAutomatedOSSConfig()
 	{
@@ -617,13 +674,13 @@ struct FAutomatedOSSConfig : public FAutomatedConfigBase
 		
 };
 
+//
 USTRUCT(BlueprintType)
 struct FAutomatedHTTPConfig : public FAutomatedConfigBase
 {
 	GENERATED_USTRUCT_BODY()
 
 	typedef FAutomatedConfigBase Super;
-	typedef FAutomatedHTTPRelated RelatedString;
 
 	FAutomatedHTTPConfig()
 	{
@@ -700,3 +757,31 @@ template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Condition_Com
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_OSS>					{ using ConfigType = FAutomatedOSSConfig; };
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_HTTP>				{ using ConfigType = FAutomatedHTTPConfig; };
 
+
+
+template <class RelatedType> struct FRelatedTool{ using Type = void; };
+template <> struct FRelatedTool<ECommandProtocol>					{ using Type = FCommandProtocolRelated; };
+template <> struct FRelatedTool<EComparisionType>					{ using Type = FComparisionTypeRelated; };
+template <> struct FRelatedTool<ESimpleHTTPVerbType>				{ using Type = FHttpVerbTypeRelated; };
+template <> struct FRelatedTool<ESimpleOSSCommand>					{ using Type = FOSSCommandTypeRelated; };
+template <> struct FRelatedTool<FAutomatedCallConfig>				{ using Type = FAutomatedCallRelated; };
+template <> struct FRelatedTool<FAutomatedCallCustomContentConfig>	{ using Type = FAutomatedCallCustomContentRelated; };
+template <> struct FRelatedTool<FAutomatedUEProjectRefreshConfig>	{ using Type = FAutomatedUEProjectRefreshRelated; };
+template <> struct FRelatedTool<FAutomatedCommandNestingConfig>		{ using Type = FAutomatedCommandNestingRelated; };
+template <> struct FRelatedTool<FAutomatedDeploymentCopyConfig>		{ using Type = FAutomatedDeploymentCopyRelated; };
+template <> struct FRelatedTool<FAutomatedDeploymentDeleteConfig>	{ using Type = FAutomatedDeploymentDeleteRelated; };
+template <> struct FRelatedTool<FAutomatedVSCompileConfig>			{ using Type = FAutomatedVSCompileRelated; };
+template <> struct FRelatedTool<FAutomatedGitConfig>				{ using Type = FAutomatedGitRelated; };
+template <> struct FRelatedTool<FAutomatedUEPackagingConfig>		{ using Type = FAutomatedUEPackagingRelated; };
+template <> struct FRelatedTool<FAutomatedUEPluginPackagingConfig>	{ using Type = FAutomatedUEPluginPackagingRelated; };
+template <> struct FRelatedTool<FAutomatedConditionCommandConfig>	{ using Type = FAutomatedConditionCommandRelated; };
+template <> struct FRelatedTool<FAutomatedOSSConfig>				{ using Type = FAutomatedOSSRelated; };
+template <> struct FRelatedTool<FAutomatedHTTPConfig>				{ using Type = FAutomatedHTTPRelated; };
+
+
+
+
+template <class AutomatedConfig, class = std::enable_if_t<std::is_base_of_v<FAutomatedConfigBase, AutomatedConfig>>>
+using Tool = typename FRelatedTool<AutomatedConfig>::Type;
+template <class EnumType, class = std::enable_if_t<std::is_enum_v<EnumType>, void>>
+using EnumTool = typename FRelatedTool<EnumType>::Type;

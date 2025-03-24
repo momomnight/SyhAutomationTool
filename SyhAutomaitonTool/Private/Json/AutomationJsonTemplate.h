@@ -13,9 +13,6 @@ namespace AutomationJson
 		constexpr Transfer() {}
 	};
 
-	template <class AutomatedConfigType, class Test = typename std::enable_if_t<std::is_base_of<FAutomatedConfigBase, AutomatedConfigType>::value>>
-	using RelatedString = typename AutomatedConfigType::RelatedString;
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	// JsonObjectToAutomatedConfig用于从 自定义的Json文件 中读出配置

@@ -32,7 +32,7 @@ bool FAutomatedCode_Git::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
-	if (SimpleAutomationToolCommon::GetValueFromCommandLine(OwnConfig::RelatedString::ProjectPathKey, SelfConfig->ProjectPath))
+	if (SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ProjectPathKey, SelfConfig->ProjectPath))
 	{
 		FPaths::NormalizeFilename(SelfConfig->ProjectPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->ProjectPath);
@@ -43,7 +43,7 @@ bool FAutomatedCode_Git::BuildParameter()
 		return false;
 	}
 
-	if(!SimpleAutomationToolCommon::ParseStrings(OwnConfig::RelatedString::GitCommandsKey, SelfConfig->GitCommands, false))
+	if(!SimpleAutomationToolCommon::ParseStrings(Tool<OwnConfig>::GitCommandsKey, SelfConfig->GitCommands, false))
 	{
 		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
 		return false;
