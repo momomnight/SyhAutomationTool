@@ -110,6 +110,7 @@ namespace AutomationMainFramework
 
 	int32 RunAutomatedBuild()
 	{
+		SimpleAutomationTool::Init();
 		//注：FParse::Param 命令参数传入时，分析的字符串的位置不能是第一个位置
 		//	  且输入的参数前要有空格，且必须是"-xxxx" 或 "/xxxx"形式
 		//	 FParse::Value没有这个要求

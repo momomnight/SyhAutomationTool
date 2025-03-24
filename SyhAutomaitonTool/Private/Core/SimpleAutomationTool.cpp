@@ -51,6 +51,11 @@ namespace SimpleAutomationTool
 		return true;
 	}
 
+	void Init()
+	{
+		SetEnumImpl();
+	}
+
 	bool Init(TMultiMap<ECommandProtocol, FString>& OutTaskCommand)
 	{
 		OutTaskCommand.Empty();
@@ -141,7 +146,7 @@ namespace SimpleAutomationTool
 
 	void HandleTask(const FString& InTaskCommand)
 	{
-		Execute(SimpleAutomationToolCommon::StringToCommandProtocol(InTaskCommand), TEXT(""));
+		Execute(FCommandProtocolRelated::GetEnumValue(InTaskCommand), TEXT(""));
 	}
 
 	void BuildConfig()

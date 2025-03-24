@@ -68,7 +68,7 @@ namespace AutomationJson
 	template<>
 	void AutomatedConfigToJsonObject<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedCommandNestingConfig& InConfig)
 	{
-		OutJsonObject->SetStringField(RelatedString<FAutomatedCommandNestingConfig>::ComparisionTypeKey, SimpleAutomationToolCommon::ComparisionTypeToString(InConfig.ComparisionType));
+		OutJsonObject->SetStringField(FComparisionTypeRelated::GetEnumNameKey(), FComparisionTypeRelated::GetShortName(InConfig.ComparisionType));
 
 		//上面的命令对于配置无需更多处理
 		TArray<TSharedPtr<FJsonValue>> Array;
@@ -203,7 +203,7 @@ namespace AutomationJson
 	void AutomatedConfigToJsonObject<FAutomatedHTTPConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedHTTPConfig& InConfig)
 	{
 		OutJsonObject->SetStringField(RelatedString<FAutomatedHTTPConfig>::URLKey, InConfig.URL);
-		OutJsonObject->SetStringField(RelatedString<FAutomatedHTTPConfig>::VerbTypeKey, SimpleAutomationToolCommon::HTTPVervTypeToString(InConfig.VerbType));
+		OutJsonObject->SetStringField(FHttpVerbTypeRelated::GetEnumNameKey(), FHttpVerbTypeRelated::GetShortName(InConfig.VerbType));
 		
 		OutJsonObject->SetBoolField(RelatedString<FAutomatedHTTPConfig>::Sync_BooleanKey, InConfig.bSync);
 		OutJsonObject->SetBoolField(RelatedString<FAutomatedHTTPConfig>::Binaries_BooleanKey, InConfig.bBinaries);
@@ -289,8 +289,8 @@ namespace AutomationJson
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCommandNestingConfig& OutConfig)
 	{
-		FString TypeStr = InJsonObject->GetStringField(RelatedString<FAutomatedCommandNestingConfig>::ComparisionTypeKey);
-		OutConfig.ComparisionType = SimpleAutomationToolCommon::StringToComparisionType(TypeStr);
+		FString TypeStr = InJsonObject->GetStringField(FComparisionTypeRelated::GetEnumNameKey());
+		OutConfig.ComparisionType = FComparisionTypeRelated::GetEnumValue(TypeStr);
 		const TArray<TSharedPtr<FJsonValue>>& InArrayObject = InJsonObject->GetArrayField(RelatedString<FAutomatedCommandNestingConfig>::CommandListKey);
 		OutConfig.CommandList.Empty();
 		for (auto& Temp : InArrayObject)
@@ -435,7 +435,7 @@ namespace AutomationJson
 	{
 		OutConfig.URL = InJsonObject->GetStringField(RelatedString<FAutomatedHTTPConfig>::URLKey);
 
-		OutConfig.VerbType = SimpleAutomationToolCommon::StringToHTTPVervType(InJsonObject->GetStringField(RelatedString<FAutomatedHTTPConfig>::VerbTypeKey));
+		OutConfig.VerbType = FHttpVerbTypeRelated::GetEnumValue(InJsonObject->GetStringField(FHttpVerbTypeRelated::GetEnumNameKey()));
 
 		OutConfig.bSync = InJsonObject->GetBoolField(RelatedString<FAutomatedHTTPConfig>::Sync_BooleanKey);
 		OutConfig.bBinaries = InJsonObject->GetBoolField(RelatedString<FAutomatedHTTPConfig>::Binaries_BooleanKey);

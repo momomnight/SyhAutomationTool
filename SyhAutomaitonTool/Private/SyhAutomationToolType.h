@@ -1,47 +1,114 @@
 #pragma once
-#include "CoreMinimal.h"
-#include "SimpleOSSCommand.h"
-#include "SimpleHTTPType.h"
+#include "SyhAutomationToolTypeFwd.h"
+#include "SyhAutomationToolTypeBase.h"
 #include "SyhAutomationToolType.generated.h"
 
 // 添加自己命令时:
 // 需要修改SyhAutomationToolType.h和SyhAutomationToolType.cpp文件
 // 需要修改AutomationJson.h和AutomationJson.cpp文件
 
-/// <summary>
-/// Related Some things;
-/// </summary>
-struct FCommandProtocolRelated
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+constexpr const TCHAR* CommandProtocolName[] =
 {
-	static const FString ProtocolStringPrefix;
-	static const int32 ProtocolStringPrefixLength;
-	static const FString CommandKey;
-	
-	static constexpr const TCHAR* CommandName[sizeof(uint8) * 256] =
-	{
-	TEXT("None"),					//0
-	TEXT("Call"),					//1
-	TEXT("Call_Custom_Content"),	//2
-	TEXT("UE_Project_Refresh"),		//3
-	TEXT("Command_Nesting"),		//4
-	TEXT("Deployment_Copy"),		//5
-	TEXT("Deployment_Delete"),		//6
-	TEXT("VS_Compile"),				//7
-	TEXT("Git"),					//8
-	TEXT("UE_Packaging"),			//9
-	TEXT("UE_Plugin_Packaging"),	//10
-	TEXT("Condition_Command"),		//11
-	TEXT("OSS"),					//12
-	TEXT("HTTP"),					//13
-	TEXT("HTTP_Server"),			//14
-	TEXT("Web_Socket"),				//15
+TEXT("None"),					//0
+TEXT("Call"),					//1
+TEXT("Call_Custom_Content"),	//2
+TEXT("Ue_Project_Refresh"),		//3
+TEXT("Command_Nesting"),		//4
+TEXT("Deployment_Copy"),		//5
+TEXT("Deployment_Delete"),		//6
+TEXT("Vs_Compile"),				//7
+TEXT("Git"),					//8
+TEXT("Ue_Packaging"),			//9
+TEXT("Ue_Plugin_Packaging"),	//10
+TEXT("Condition_Command"),		//11
+TEXT("Oss"),					//12
+TEXT("Http"),					//13
+TEXT("Http_Server"),			//14
+TEXT("Web_Socket"),				//15
 
+
+TEXT("Max")
+};
+
+constexpr uint32 CommandProtocolNameLength = UE_ARRAY_COUNT(CommandProtocolName);
+
+constexpr static FEnumData<ECommandProtocol, CommandProtocolNameLength> CommandProtocolData = {
+	TEXT("ECommandProtocol::CMD_"),
+	UE_ARRAY_COUNT(TEXT("EComparisionType::COMPARISION_")),
+	TEXT("Command"),
+	CommandProtocolName
+};
+
+constexpr static FEnumRelatedBase<ECommandProtocol, CommandProtocolNameLength> CommandProtocolBase(CommandProtocolData);
+
+struct FCommandProtocolRelated : public FEnumRelated<ECommandProtocol, CommandProtocolNameLength>
+{
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+constexpr const TCHAR* ComparisionTypeName[] =
+{
+	TEXT("None"),
+	TEXT("Sequence"),
+	TEXT("Break"),
 
 	TEXT("Max")
-	};
-	
-	static FString GetProtocolFullName(const FString& InShortName);
 };
+constexpr uint32 ComparisionTypeNameLength = UE_ARRAY_COUNT(ComparisionTypeName);
+
+constexpr static FEnumData<EComparisionType, ComparisionTypeNameLength> ComparisionTypeData = {
+	TEXT("EComparisionType::COMPARISION_"),
+	UE_ARRAY_COUNT(TEXT("EComparisionType::COMPARISION_")),
+	TEXT("ComparisionType"),
+	ComparisionTypeName
+};
+
+constexpr static FEnumRelatedBase<EComparisionType, ComparisionTypeNameLength> ComparisionTypeBase(ComparisionTypeData);
+
+struct FComparisionTypeRelated : public FEnumRelated<EComparisionType, ComparisionTypeNameLength>
+{
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+constexpr const TCHAR* HttpVerbTypeName[] =
+{
+	TEXT("Post"),
+	TEXT("Put"),
+	TEXT("Get"),
+	TEXT("Delete"),
+
+	TEXT("Max")
+};
+constexpr uint32 HttpVerbTypeLength = UE_ARRAY_COUNT(HttpVerbTypeName);
+
+constexpr static FEnumData<ESimpleHTTPVerbType, HttpVerbTypeLength> HttpVerbTypeData = {
+	TEXT("ESimpleHTTPVerbType::SIMPLE_"),
+	UE_ARRAY_COUNT(TEXT("ESimpleHTTPVerbType::SIMPLE_")),
+	TEXT("HTTPVerbType"),
+	HttpVerbTypeName
+};
+
+constexpr static FEnumRelatedBase<ESimpleHTTPVerbType, HttpVerbTypeLength> HttpVerbTypeBase(HttpVerbTypeData);
+
+
+struct FHttpVerbTypeRelated : public FEnumRelated<ESimpleHTTPVerbType, HttpVerbTypeLength, 
+	FEnumFunctionObjectRelated::InvalidEnumValueOperator_Error<ESimpleHTTPVerbType>>
+{
+	//ESimpleHTTPVerbType没有None值，所以需要一个错误处理
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void SetEnumImpl();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct FAutomatedCallRelated
 {
@@ -69,11 +136,6 @@ struct FAutomatedUEProjectRefreshRelated : public FAutomatedCallRelated
 struct FAutomatedCommandNestingRelated
 {
 	static const FString CommandListKey;
-	static const FString ComparisionTypeKey;
-	static const FString ComparisionTypeStringPrefix;
-	static const int32  ComparisionTypeStringPrefixLength;
-	static const TArray<FString> ComparisionTypeName;
-	static FString GetComparisionTypeFullName(const FString& InShortName);
 };
 
 struct FAutomatedDeploymentRelated
@@ -140,18 +202,12 @@ struct FAutomatedOSSRelated
 struct FAutomatedHTTPRelated
 {
 	static const FString URLKey;
-	static const FString VerbTypeKey;
 	static const FString CustomMetaDataKey;
 	static const FString Sync_BooleanKey;
 	static const FString Binaries_BooleanKey;
 	static const FString ContentBodyKey;
 	static const FString Timeout_FloatKey;
 	static const FString SavePathKey;
-
-	static const TArray<FString> VerbTypeName;
-	static const FString VerbTypeStringPrefix;
-	static const int32  VerbTypeStringPrefixLength;
-	static FString GetHttpVerbTypeFullName(const FString& InShortName);
 };
 
 //命令协议枚举
@@ -643,5 +699,4 @@ template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Plugin_Pac
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Condition_Command>	{ using ConfigType = FAutomatedConditionCommandConfig;};
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_OSS>					{ using ConfigType = FAutomatedOSSConfig; };
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_HTTP>				{ using ConfigType = FAutomatedHTTPConfig; };
-
 

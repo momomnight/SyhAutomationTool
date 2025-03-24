@@ -39,7 +39,7 @@ namespace AutomationJson
 	{
 		if (InJsonObject.IsValid())
 		{
-			return SimpleAutomationToolCommon::StringToCommandProtocol(InJsonObject->GetStringField(FCommandProtocolRelated::CommandKey));
+			return FCommandProtocolRelated::GetEnumValue(InJsonObject->GetStringField(FCommandProtocolRelated::GetEnumNameKey()));
 		}
 
 		return ECommandProtocol::CMD_None;
@@ -65,7 +65,7 @@ namespace AutomationJson
 	{
 		if (InJsonObject.IsValid())
 		{
-			return SimpleAutomationToolCommon::StringToComparisionType(InJsonObject->GetStringField(FAutomatedCommandNestingRelated::ComparisionTypeKey));
+			return FComparisionTypeRelated::GetEnumValue(InJsonObject->GetStringField(FComparisionTypeRelated::GetEnumNameKey()));
 		}
 
 		return EComparisionType::COMPARISION_None;
@@ -134,7 +134,7 @@ namespace AutomationJson
 
 	void ConfigureCommandProtocol(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InProtocol)
 	{	
-		InJsonObject->SetStringField(FCommandProtocolRelated::CommandKey, SimpleAutomationToolCommon::CommandProtocolToString(InProtocol));
+		InJsonObject->SetStringField(FCommandProtocolRelated::GetEnumNameKey(), FCommandProtocolRelated::GetShortName(InProtocol));
 	}
 }
 

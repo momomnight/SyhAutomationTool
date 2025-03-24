@@ -5,6 +5,8 @@
 
 namespace SimpleAutomationTool
 {
+	void Init();
+
 	bool Init(TMultiMap<ECommandProtocol, FString>& OutTaskCommand);
 
 	bool Init(TMultiMap<ECommandProtocol, FString>& OutTaskCommand, const FString& InRelativePath);

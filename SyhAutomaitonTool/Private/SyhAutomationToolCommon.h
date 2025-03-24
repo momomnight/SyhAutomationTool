@@ -10,21 +10,6 @@ namespace SimpleAutomationToolCommon
 	extern class FString PackagingSaveFileName;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//命令协议
-	//从协议到去掉协议前缀的字符串
-	FString CommandProtocolToString(ECommandProtocol InProtocolType);
-	//从去掉协议前缀的字符串到协议
-	ECommandProtocol StringToCommandProtocol(const FString& InShortCommandName);
-
-	//序列的执行类型
-	EComparisionType StringToComparisionType(const FString& InShortCommandName);
-	FString ComparisionTypeToString(EComparisionType InComparisionType);
-
-	//http的请求类型
-	ESimpleHTTPVerbType StringToHTTPVervType(const FString& InShortCommandName);
-	FString HTTPVervTypeToString(ESimpleHTTPVerbType InVerbType);
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//String(xxxx xxxx)-> "xxxx xxxx"
 	//对于.bat文件，使用"xxx/xxx xxx/xx"就可以读取
@@ -76,7 +61,7 @@ namespace SimpleAutomationToolCommon
 			return false;
 		}
 
-		OutValue = StringToComparisionType(Result);
+		OutValue = FComparisionTypeRelated::GetEnumValue(Result);
 
 		return true;
 	}
@@ -92,7 +77,7 @@ namespace SimpleAutomationToolCommon
 			return false;
 		}
 
-		OutValue = StringToHTTPVervType(Result);
+		OutValue = FHttpVerbTypeRelated::GetEnumValue(Result);
 
 		return true;
 	}
@@ -129,11 +114,6 @@ namespace SimpleAutomationToolCommon
 		return FileStatData.bIsValid;
 	}
 
-	template <ECommandProtocol Index>
-	constexpr const TCHAR* GetCommandName()
-	{
-		return FCommandProtocolRelated::CommandName[static_cast<uint8>(Index)];
-	}
 
 	template<class Type> struct ReturnTypeTrait	{ using ReturnType = void; using ParameterType = void;};
 	template <> struct ReturnTypeTrait<ECommandProtocol>	{ using ReturnType = FString;  using ParameterType = ECommandProtocol;};
@@ -146,7 +126,7 @@ namespace SimpleAutomationToolCommon
 	template<>
 	typename ReturnTypeTrait<ECommandProtocol>::ReturnType ToString<ECommandProtocol>(typename ReturnTypeTrait<ECommandProtocol>::ParameterType InCommandProtocol)
 	{
-		return CommandProtocolToString(InCommandProtocol);
+		return FCommandProtocolRelated::GetShortName(InCommandProtocol);
 	}
 
 	template<>

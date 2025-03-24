@@ -6,18 +6,6 @@
 #endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
-FString FCommandProtocolRelated::GetProtocolFullName(const FString& InShortName)
-{
-	for (auto& Temp : FCommandProtocolRelated::CommandName)
-	{
-		if (FString(Temp).Equals(InShortName, ESearchCase::IgnoreCase))
-		{
-			return FCommandProtocolRelated::ProtocolStringPrefix + Temp;
-		}
-	}
-
-	return FCommandProtocolRelated::ProtocolStringPrefix + TEXT("None");
-}
 
 FString FAutomatedUEProjectRefreshRelated::GetUnrealBuildToolPath(const FString& InEnginePath)
 {
@@ -30,53 +18,11 @@ FString FAutomatedUEProjectRefreshRelated::GetProjectUProjectPath(const FString&
 }
 
 
-FString FAutomatedCommandNestingRelated::GetComparisionTypeFullName(const FString& InShortName)
-{
-	for (auto& Temp : FAutomatedCommandNestingRelated::ComparisionTypeName)
-	{
-		if (Temp.Equals(InShortName, ESearchCase::IgnoreCase))
-		{
-			return FAutomatedCommandNestingRelated::ComparisionTypeStringPrefix + Temp;
-		}
-	}
-
-	return FAutomatedCommandNestingRelated::ComparisionTypeStringPrefix + TEXT("None");
-}
-
-
-
-FString FAutomatedHTTPRelated::GetHttpVerbTypeFullName(const FString& InShortName)
-{
-	for (auto& Temp : FAutomatedHTTPRelated::VerbTypeName)
-	{
-		if (Temp.Equals(InShortName, ESearchCase::IgnoreCase))
-		{
-			return FAutomatedHTTPRelated::VerbTypeStringPrefix + Temp;
-		}
-	}
-
-	return FAutomatedHTTPRelated::VerbTypeStringPrefix + TEXT("None");
-}
-
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
 #pragma optimize("", on)
 #endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
-
-const FString FCommandProtocolRelated::ProtocolStringPrefix = TEXT("ECommandProtocol::CMD_");
-const int32 FCommandProtocolRelated::ProtocolStringPrefixLength = FCommandProtocolRelated::ProtocolStringPrefix.Len();
-const FString FCommandProtocolRelated::CommandKey = TEXT("Command");
-
-const TArray<FString> FAutomatedCommandNestingRelated::ComparisionTypeName =
-{
-	TEXT("None"),
-	TEXT("Sequence"),
-	TEXT("Break"),
-};
-
-const FString FAutomatedCommandNestingRelated::ComparisionTypeStringPrefix = TEXT("EComparisionType::COMPARISION_");
-const int32 FAutomatedCommandNestingRelated::ComparisionTypeStringPrefixLength = FAutomatedCommandNestingRelated::ComparisionTypeStringPrefix.Len();
 
 
 const FString FAutomatedCallRelated::CallTypeKey = TEXT("CallType");
@@ -89,7 +35,6 @@ const FString FAutomatedCallCustomContentRelated::WaitTime_IntKey = TEXT("WaitTi
 const FString FAutomatedUEProjectRefreshRelated::UnrealBuildToolPathKey = TEXT("UnrealBuildToolPath");
 const FString FAutomatedUEProjectRefreshRelated::ProjectUProjectPathKey = TEXT("ProjectUProjectPath");
 
-const FString FAutomatedCommandNestingRelated::ComparisionTypeKey = TEXT("ComparisionType");
 const FString FAutomatedCommandNestingRelated::CommandListKey = TEXT("CommandList");
 
 const FString  FAutomatedDeploymentRelated::FilesKey = TEXT("Files");
@@ -123,7 +68,6 @@ const FString FAutomatedConditionCommandRelated::FalseCommandListKey = TEXT("Fal
 const FString FAutomatedOSSRelated::OSSComandsKey = TEXT("OSSComands");
 
 const FString FAutomatedHTTPRelated::URLKey = TEXT("URL");
-const FString FAutomatedHTTPRelated::VerbTypeKey = TEXT("VerbType");
 const FString FAutomatedHTTPRelated::CustomMetaDataKey = TEXT("CustomMetaData");
 const FString FAutomatedHTTPRelated::Sync_BooleanKey = TEXT("bSynchronous");
 const FString FAutomatedHTTPRelated::Binaries_BooleanKey = TEXT("bBinaries");
@@ -131,13 +75,9 @@ const FString FAutomatedHTTPRelated::ContentBodyKey = TEXT("ContentBody");
 const FString FAutomatedHTTPRelated::Timeout_FloatKey = TEXT("Timeout");
 const FString FAutomatedHTTPRelated::SavePathKey = TEXT("SavePath");
 
-const TArray<FString> FAutomatedHTTPRelated::VerbTypeName=
+void SetEnumImpl()
 {
-	TEXT("POST"),
-	TEXT("PUT"),
-	TEXT("GET"),
-	TEXT("DELETE")
-};
-
-const FString	FAutomatedHTTPRelated::VerbTypeStringPrefix = TEXT("ESimpleHTTPVerbType::SIMPLE_");
-const int32		FAutomatedHTTPRelated::VerbTypeStringPrefixLength = FAutomatedHTTPRelated::VerbTypeStringPrefix.Len();
+	FCommandProtocolRelated::CreateImpl(CommandProtocolBase);
+	FComparisionTypeRelated::CreateImpl(ComparisionTypeBase);
+	FHttpVerbTypeRelated::CreateImpl(HttpVerbTypeBase);
+}

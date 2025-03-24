@@ -54,7 +54,7 @@ bool FAutomatedCode_HTTP::BuildParameter()
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::URLKey, SelfConfig->URL);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::Sync_BooleanKey, SelfConfig->bSync);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::Binaries_BooleanKey, SelfConfig->bBinaries);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::VerbTypeKey, SelfConfig->VerbType);
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(FHttpVerbTypeRelated::GetEnumNameKey(), SelfConfig->VerbType);
 	Result &= SimpleAutomationToolCommon::ParseStrings(AutomationJson::RelatedString<OwnConfig>::CustomMetaDataKey, SelfConfig->CustomMetaData, false);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::ContentBodyKey, SelfConfig->ContentBody);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(AutomationJson::RelatedString<OwnConfig>::Timeout_FloatKey, SelfConfig->Timeout);
