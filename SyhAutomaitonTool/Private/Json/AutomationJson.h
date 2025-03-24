@@ -44,18 +44,6 @@ namespace AutomationJson
 	template EComparisionType GetEnum<EComparisionType>(TSharedPtr<FJsonObject> InJsonObject);
 
 
-	//从Json对象中提取命令
-	ECommandProtocol GetCommandProtocol(TSharedPtr<FJsonObject> InJsonObject);
-
-	//从Json字符串中提取命令
-	ECommandProtocol GetCommandProtocol(const FString& InJsonString);
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	EComparisionType GetComparisionType(TSharedPtr<FJsonObject> InJsonObject);
-
-	EComparisionType GetComparisionType(const FString& InJsonString);
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	template <class AutomatedConfigType>

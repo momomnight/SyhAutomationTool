@@ -34,61 +34,9 @@ namespace AutomationJson
 	}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	ECommandProtocol GetCommandProtocol(TSharedPtr<FJsonObject> InJsonObject)
-	{
-		if (InJsonObject.IsValid())
-		{
-			return FCommandProtocolRelated::GetEnumValue(InJsonObject->GetStringField(FCommandProtocolRelated::GetEnumNameKey()));
-		}
-
-		return ECommandProtocol::CMD_None;
-	}
-
-	ECommandProtocol GetCommandProtocol(const FString& InJsonString)
-	{
-		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(*InJsonString);
-		TSharedPtr<FJsonObject> RootObject;
-
-		if (FJsonSerializer::Deserialize(Reader, RootObject))
-		{
-			//从Json字符串到C++ Json对象，再从Json对象中提取协议命令
-			return GetCommandProtocol(RootObject);
-		}
-
-		return ECommandProtocol::CMD_None;
-	}
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	EComparisionType GetComparisionType(TSharedPtr<FJsonObject> InJsonObject)
-	{
-		if (InJsonObject.IsValid())
-		{
-			return FComparisionTypeRelated::GetEnumValue(InJsonObject->GetStringField(FComparisionTypeRelated::GetEnumNameKey()));
-		}
-
-		return EComparisionType::COMPARISION_None;
-	}
-
-	EComparisionType GetComparisionType(const FString& InJsonString)
-	{
-		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(*InJsonString);
-		TSharedPtr<FJsonObject> RootObject;
-
-		if (FJsonSerializer::Deserialize(Reader, RootObject))
-		{
-			//从Json字符串到C++ Json对象，再从Json对象中提取协议命令
-			return GetComparisionType(RootObject);
-		}
-
-		return EComparisionType::COMPARISION_None;
-	}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void HandleJsonStringByProtocol(ECommandProtocol InProtocol, TSharedPtr<FJsonObject> InObject, FString& OutString)
+	void HandleJsonStringByProtocol(TSharedPtr<FJsonObject> InObject, FString& OutString)
 	{	
 		//????
 		//绑定字符串流的Writer
@@ -118,11 +66,11 @@ namespace AutomationJson
 			{
 				if (TSharedPtr<FJsonObject> Object = Temp->AsObject())
 				{
-					ECommandProtocol Protocol = GetCommandProtocol(Object);
+					ECommandProtocol Protocol = GetEnum<ECommandProtocol>(Object);
 					if (Protocol != ECommandProtocol::CMD_None)
 					{
 						FString JsonString;
-						HandleJsonStringByProtocol(Protocol, Object, JsonString);//??
+						HandleJsonStringByProtocol(Object, JsonString);
 						OutCommand.Add(Protocol, JsonString);
 					}
 				}
