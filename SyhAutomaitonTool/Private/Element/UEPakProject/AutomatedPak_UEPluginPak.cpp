@@ -37,7 +37,6 @@ FAutomatedCode_UE_Plugin_Packaging::~FAutomatedCode_UE_Plugin_Packaging()
 
 void FAutomatedCode_UE_Plugin_Packaging::Init()
 {
-	GetSelfConfig<OwnConfig>()->PathOfUPluginToTarget.Empty();
 }
 
 bool FAutomatedCode_UE_Plugin_Packaging::BuildParameter(const FString& InJsonStr)

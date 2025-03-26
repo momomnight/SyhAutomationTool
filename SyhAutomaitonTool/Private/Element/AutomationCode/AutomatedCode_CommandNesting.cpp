@@ -21,7 +21,6 @@ FAutomatedCode_CommandNesting::~FAutomatedCode_CommandNesting()
 
 void FAutomatedCode_CommandNesting::Init()
 {
-	GetSelfConfig<OwnConfig>()->CommandList.Empty();
 }
 
 bool FAutomatedCode_CommandNesting::BuildParameter(const FString& InJsonStr)
@@ -36,7 +35,7 @@ bool FAutomatedCode_CommandNesting::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(EnumTool<decltype(SelfConfig->ComparisionType)>::GetEnumNameKey(), SelfConfig->ComparisionType);
+	SimpleAutomationToolCommon::GetValueFromCommandLine(EnumTool<decltype(SelfConfig->ComparisionType)>::GetEnumNameKey(), SelfConfig->ComparisionType);
 	Result &= SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::CommandListKey, SelfConfig->CommandList, false);
 	Result = InitTaskCommand();
 	SetExecuteToken(Result);

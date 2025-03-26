@@ -6,15 +6,16 @@ namespace SimpleAutomationToolCommon
 	FString PackagingSaveFileName;
 
 
-	bool ParseCommandLineByKey(const FString& InKey, TArray<FString>& InArray, bool bPath)
+	bool ParseCommandLineByKey(const FString& InKey, TArray<FString>& OutArray, bool bPath)
 	{
+		OutArray.Empty();
 		FString NewString;
 
 		FString MatchKey = IsMatchKey(InKey) ? InKey : GetMatchKey(InKey);
 
 		if (!FParse::Value(FCommandLine::Get(), *MatchKey, NewString))
 		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *MatchKey);
+			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value."), *MatchKey);
 			return false;
 		}
 
@@ -24,11 +25,11 @@ namespace SimpleAutomationToolCommon
 			return false;
 		}
 
-		if (NewString.ParseIntoArray(InArray, TEXT("&&")))
+		if (NewString.ParseIntoArray(OutArray, TEXT("&&")))
 		{
 			if (bPath)
 			{
-				for (auto& Temp : InArray)
+				for (auto& Temp : OutArray)
 				{
 					FPaths::NormalizeDirectoryName(Temp);
 					FPaths::RemoveDuplicateSlashes(Temp);
@@ -43,8 +44,9 @@ namespace SimpleAutomationToolCommon
 		}
 	}
 
-	bool ParseCommandLineByKey(const FString& InKey, TMap<FString, FString>& InMap, bool bPath)
+	bool ParseCommandLineByKey(const FString& InKey, TMap<FString, FString>& OutMap, bool bPath)
 	{
+		OutMap.Empty();
 		bool Result = true;
 		TArray<FString> TempArray;
 		//xxx||yyy数组
@@ -67,7 +69,7 @@ namespace SimpleAutomationToolCommon
 					FPaths::NormalizeDirectoryName(Value);
 					FPaths::RemoveDuplicateSlashes(Value);
 				}
-				InMap.Add(Key, Value);
+				OutMap.Add(Key, Value);
 			}
 			else
 			{
@@ -75,7 +77,7 @@ namespace SimpleAutomationToolCommon
 				return false;
 			}
 		}
-		return InMap.Num() > 0;
+		return OutMap.Num() > 0;
 	}
 
 	bool DeleteFile(const FString& InPath)

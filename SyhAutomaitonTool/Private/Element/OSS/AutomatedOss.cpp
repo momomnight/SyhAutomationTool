@@ -19,7 +19,6 @@ FAutomatedCode_OSS::~FAutomatedCode_OSS()
 
 void FAutomatedCode_OSS::Init()
 {
-	GetSelfConfig<OwnConfig>()->OSSCommands.Empty();
 }
 
 bool FAutomatedCode_OSS::BuildParameter(const FString& InJsonStr)

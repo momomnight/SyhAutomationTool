@@ -18,6 +18,8 @@
 
 int64 TimeSlotDateTime = 0;
 FSimpleNetManage* ListenServer = nullptr;
+bool bEnabledServer = false;	
+
 
 namespace AutomationMainFramework
 {
@@ -187,11 +189,18 @@ namespace AutomationMainFramework
 	{
 		double LastTime = FPlatformTime::Seconds();
 
-		if (FAutomatedHttp_HttpServer::Get()->IsValid() || ListenServer)
+		if (bEnabledServer)
 		{
-			while (!IsEngineExitRequested())
+			if (FAutomatedHttp_HttpServer::Get()->IsValid() || ListenServer)
 			{
-				RunServer(LastTime);
+				while (!IsEngineExitRequested())
+				{
+					RunServer(LastTime);
+				}
+			}
+			else
+			{
+				SyhLogError(TEXT("Server did not start successfully."));
 			}
 		}
 		else
@@ -239,6 +248,8 @@ namespace AutomationMainFramework
 				FSimpleNetGlobalInfo::Get()->Init();
 				if (FParse::Param(FCommandLine::Get(), TEXT("SNCListen")))
 				{
+					bEnabledServer = true;
+
 					//2.创建服务器实例
 					ListenServer = FSimpleNetManage::CreateManage(ESimpleNetLinkState::LINKSTATE_LISTEN,
 						ESimpleSocketType::SIMPLESOCKETTYPE_UDP);//应该修改，以增加更多选择
@@ -261,14 +272,15 @@ namespace AutomationMainFramework
 
 				}
 
-				if (FParse::Param(FCommandLine::Get(), TEXT("HTTPServer")))
+				if (FParse::Param(FCommandLine::Get(), TEXT("HttpServer")))
 				{
+					bEnabledServer = true;	
 					FAutomatedHttp_HttpServer::Get()->Init();
 				}
 
 				if (FParse::Param(FCommandLine::Get(), TEXT("WebSocketServer")))
 				{
-
+					bEnabledServer = true;
 				}
 
 				if (BuildTimePerDay())

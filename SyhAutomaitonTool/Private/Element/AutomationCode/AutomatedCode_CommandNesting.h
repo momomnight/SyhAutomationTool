@@ -10,7 +10,7 @@ bool SimpleAutomationToolCommon::GetValueFromCommandLine<EComparisionType>(const
 	if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
 		!FParse::Value(FCommandLine::Get(), *Key, Result))
 	{
-		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
+		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value. Use default value."), *Key);
 		return false;
 	}
 

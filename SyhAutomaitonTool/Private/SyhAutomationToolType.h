@@ -703,7 +703,7 @@ struct FAutomatedHTTPConfig : public FAutomatedConfigBase
 		bSync = true;
 		bBinaries = false;
 		ContentBody = TEXT("ContentBody may include a piece of normal text or binary data, depending on its relation to bBinaries.");
-		Timeout = 100.f;
+		Timeout = 200;
 		SavePath = TEXT("For GET, it is not empty.");
 		CustomMetaData.Add(TEXT("Key"), TEXT("Value"));
 	}
@@ -736,7 +736,7 @@ struct FAutomatedHTTPConfig : public FAutomatedConfigBase
 
 //不与Elements产生关联
 USTRUCT(BlueprintType)
-struct FAutomatedHTTPServerConfig
+struct FAutomatedHTTPServerConfig : public FAutomatedConfigBase	
 {
 	GENERATED_USTRUCT_BODY()
 

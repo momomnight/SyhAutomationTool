@@ -48,7 +48,15 @@ public:
 	//不会检查是否具有前缀
 	FString GetEnumValueFullName(const FString& InShortName) const
 	{
-		return Data.Prefix + GetEnumValueNormalName(InShortName);
+		FString Temp = GetEnumValueNormalName(InShortName);
+		if (Temp.IsEmpty())
+		{
+			return {};
+		}
+		else
+		{
+			return Data.Prefix + Temp;
+		}
 	}
 
 	//不会检查是否具有前缀
@@ -126,9 +134,11 @@ public:
 
 	FString ErasePrefix(const FString& InLongName) const { return InLongName.RightChop(Data.PrefixLength); }
 
-	// 带下划线区分xxx_xxx_xxx、大写小写区分XxxXxxXxx、带空格区分Xxx xxx Xxx，统一格式：xxx_Xxx_xxx, 非标准
+	// 带下划线区分xxx_xxx_xxx、大写小写区分XxxXxxXxx、带空格区分Xxx xxx Xxx，统一格式：xxx_Xxx_xxx, 非标准, xxxyyyzzz找不到
 	FString NormalizeShortName(const FString& InShortName) const
 	{
+
+
 		FString Name = InShortName;
 		if (Name.Contains(TEXT(" ")))
 		{
@@ -160,14 +170,17 @@ public:
 	{
 		if (InShortName.Contains(TEXT("None")) || InShortName.Contains(TEXT("Max"))) return {};
 
-		if (IsNormalShortName(InShortName))
+		//先看是否能找到
+		FString Name = TraverseNameKey(InShortName);
+
+		if (Name.IsEmpty())
 		{
-			//如果没找到会返回空字符串
-			return TraverseNameKey(InShortName);
+			//如果没找可能需要规范化，规范化后再找，还没找到返回空字符串
+			return TraverseNameKey(NormalizeShortName(InShortName));
 		}
 		else
 		{
-			return TraverseNameKey(NormalizeShortName(InShortName));
+			return Name;
 		}
 	}
 

@@ -35,7 +35,7 @@ namespace SimpleAutomationToolCommon
 		if (FString Key = GetMatchKey(InKey);
 			!FParse::Value(FCommandLine::Get(), *Key, OutValue))
 		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
+			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value. Use default value."), *Key);
 			return false;
 		}
 		return true;
@@ -47,12 +47,24 @@ namespace SimpleAutomationToolCommon
 		if (FString Key = GetMatchKey(InKey);
 			!FParse::Bool(FCommandLine::Get(), *Key, OutValue))
 		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
+			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value. Use default value."), *Key);
 			return false;
 		}
 		return true;
 	}
 
+	template<>
+	bool GetValueFromCommandLine<FString>(const FString& InKey, FString& OutValue)
+	{
+		OutValue.Empty();
+		if (FString Key = GetMatchKey(InKey);
+			!FParse::Value(FCommandLine::Get(), *Key, OutValue))
+		{
+			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value. Use default value."), *Key);
+			return false;
+		}
+		return true;
+	}
 
 	
 	//xxx1&&xxx2

@@ -55,6 +55,8 @@ private:
 public:
 	virtual ECommandProtocol GetType() const override { return ECommandProtocol::CMD_HTTP; }
 
+private:
+	void ResetTimeout();
 
 private:
 	TSharedPtr<SimpleHTTPObject::FHTTP> HttpObject;

@@ -12,8 +12,9 @@ DEFINE_GLOBAL_SINGLETON_CPP(AutomatedHttp_HttpServer);
 
 void FAutomatedHttp_HttpServer::Init()
 {
-	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine<bool>(Tool<FAutomatedHTTPServerConfig>::bHttps_BooleanKey, Config.bHttps);
+
+	SimpleAutomationToolCommon::GetValueFromCommandLine<bool>(Tool<FAutomatedHTTPServerConfig>::bHttps_BooleanKey, Config.bHttps);
+	
 	if(Config.bHttps)
 	{
 		bool SubResult = true;
@@ -24,15 +25,22 @@ void FAutomatedHttp_HttpServer::Init()
 			SyhLogError(TEXT("If bHttps is enabled, Certificate and Key must be provided."));
 		}
 	}
+	bool Result = true;
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine<FString>(Tool<FAutomatedHTTPServerConfig>::IPKey, Config.IP);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine<int32>(Tool<FAutomatedHTTPServerConfig>::Port_IntKey, Config.Port);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine<float>(Tool<FAutomatedHTTPServerConfig>::Timeout_FloatKey, Config.Timeout);
+	SimpleAutomationToolCommon::GetValueFromCommandLine<float>(Tool<FAutomatedHTTPServerConfig>::Timeout_FloatKey, Config.Timeout);
 	if (Result)
 	{
-		FPaths::NormalizeFilename(Config.Certificate);
-		FPaths::NormalizeFilename(Config.Key);
+		SyhLogDisplay(TEXT("HttpServer IP: %s."), *Config.IP);
+		SyhLogDisplay(TEXT("HttpServer Port: %d."), Config.Port);
 		if (Config.bHttps)
 		{
+			FPaths::NormalizeFilename(Config.Certificate);
+			FPaths::NormalizeFilename(Config.Key);
+
+			SyhLogDisplay(TEXT("HttpServer Use https."));
+			SyhLogDisplay(TEXT("HttpServer Certificate: %s."), *Config.Certificate);
+			SyhLogDisplay(TEXT("HttpServer Key: %s."), *Config.Key);
 			HttpServer = FSimpleHttplibManage::Get()->CreateSSLHTTPServer
 			(
 				Config.IP,
@@ -43,6 +51,7 @@ void FAutomatedHttp_HttpServer::Init()
 		}
 		else
 		{
+			SyhLogDisplay(TEXT("HttpServer Use http."));
 			HttpServer = FSimpleHttplibManage::Get()->CreateHTTPServer
 			(
 				Config.IP,
@@ -57,14 +66,21 @@ void FAutomatedHttp_HttpServer::Init()
 			HttpServer->BindAction(TEXT("/test"), EHTTPLibVerbType::HTTPLIB_POST,
 				[&](const FHTTPLibRequest& InRequest, FHTTPLibResponse& InResponse)
 				{
+					//执行完成，就已经发送响应报文了
 					InResponse.SetStatus(200);
 					InResponse.SetContent(TEXT("{\"Msg\":\"Ok.\"}"), TEXT("application/json"));
-				
+					SyhLogDisplay(TEXT("--------------------------------------------------------------------------------"));
+					SyhLogDisplay(TEXT("HttpServer Client %s:%d requests."), *InRequest.RemoteAddr, InRequest.RemotePort);
+					SyhLogDisplay(TEXT("HttpServer VerbType: Post"));
+					SyhLogDisplay(TEXT("--------------------------------------------------------------------------------"));
+					//InRequest.
 					//接脚本
 				
 				});
 		}
 
+		SyhLogDisplay(TEXT("HttpServer %s://%s:%d"), Config.bHttps ? TEXT("https") : TEXT("http"), *Config.IP, Config.Port);
+		SyhLogDisplay(TEXT("HttpServer Start."));
 		HttpServer->Start();
 
 	}
@@ -76,7 +92,7 @@ void FAutomatedHttp_HttpServer::Init()
 
 void FAutomatedHttp_HttpServer::Tick(float DeltaSeconds)
 {
-
+	//SyhLogDisplay(TEXT("HttpServer Tick."));
 }
 
 bool FAutomatedHttp_HttpServer::IsValid() const

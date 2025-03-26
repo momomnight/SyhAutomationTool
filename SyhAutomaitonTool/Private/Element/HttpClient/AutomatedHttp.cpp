@@ -1,4 +1,6 @@
 #include "Element/HttpClient/AutomatedHttp.h"
+#include "HttpModule.h"
+#include "HttpManager.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -41,7 +43,6 @@ FAutomatedCode_HTTP::~FAutomatedCode_HTTP()
 
 void FAutomatedCode_HTTP::Init()
 {
-	GetSelfConfig<OwnConfig>()->CustomMetaData.Empty();
 }
 
 bool FAutomatedCode_HTTP::BuildParameter(const FString& InJsonStr)
@@ -54,13 +55,13 @@ bool FAutomatedCode_HTTP::BuildParameter()
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::URLKey, SelfConfig->URL);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Sync_BooleanKey, SelfConfig->bSync);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Binaries_BooleanKey, SelfConfig->bBinaries);
+	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Sync_BooleanKey, SelfConfig->bSync);
+	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Binaries_BooleanKey, SelfConfig->bBinaries);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(EnumTool<decltype(SelfConfig->VerbType)>::GetEnumNameKey(), SelfConfig->VerbType);
-	Result &= SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::CustomMetaDataKey, SelfConfig->CustomMetaData, false);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ContentBodyKey, SelfConfig->ContentBody);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Timeout_FloatKey, SelfConfig->Timeout);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::SavePathKey, SelfConfig->SavePath);
+	SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::CustomMetaDataKey, SelfConfig->CustomMetaData, false);
+	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ContentBodyKey, SelfConfig->ContentBody);
+	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Timeout_FloatKey, SelfConfig->Timeout);
+	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::SavePathKey, SelfConfig->SavePath);
 	
 	if (Result)
 	{
@@ -86,7 +87,7 @@ bool FAutomatedCode_HTTP::Execute()
 		SelfConfig->Timeout = 30.f;
 	}
 
-	HttpObject->SetOutTime(SelfConfig->Timeout);
+	ResetTimeout();
 
 	//检测
 	switch (SelfConfig->VerbType)
@@ -204,6 +205,38 @@ void FAutomatedCode_HTTP::OnRequestHeaderReceived(FHttpRequestPtr HttpRequest, c
 		ContentLength = FCString::Atoi(*NewHeaderValue);
 		SyhLogDisplay(TEXT("ContentLength=%i"), ContentLength);
 	}
+}
+
+void FAutomatedCode_HTTP::ResetTimeout()
+{
+	double SoftLimitSecondes = 2.;
+	double HardLimitSecondes = 4.;
+
+	GConfig->GetDouble(TEXT("HTTP"), TEXT("FlushSoftTimeLimitDefault"), SoftLimitSecondes, GEngineIni);
+	GConfig->GetDouble(TEXT("HTTP"), TEXT("FlushHardTimeLimitDefault"), HardLimitSecondes, GEngineIni);
+	
+	bool bReloadConfig = false;
+
+	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
+
+	if (SoftLimitSecondes > 0 && SoftLimitSecondes <= SelfConfig->Timeout)
+	{
+		GConfig->SetDouble(TEXT("HTTP"), TEXT("FlushSoftTimeLimitDefault"), SelfConfig->Timeout, GEngineIni);
+		bReloadConfig = true;
+	}
+
+	if (HardLimitSecondes > 0 && HardLimitSecondes <= SelfConfig->Timeout * 2.)
+	{
+		GConfig->SetDouble(TEXT("HTTP"), TEXT("FlushHardTimeLimitDefault"), SelfConfig->Timeout * 2., GEngineIni);
+		bReloadConfig = true;
+	}
+	
+	if (bReloadConfig)
+	{
+		FHttpModule::Get().GetHttpManager().UpdateConfigs();
+	}
+
+	HttpObject->SetOutTime(SelfConfig->Timeout);
 }
 
 
