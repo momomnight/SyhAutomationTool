@@ -65,8 +65,8 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter()
 	TArray<FString> Source;
 	TArray<FString> Destination;
 
-	if (!SimpleAutomationToolCommon::ParseStrings(TEXT("-Source="), Source, true) || 
-		!SimpleAutomationToolCommon::ParseStrings(TEXT("-Destination="), Destination, true))
+	if (!SimpleAutomationToolCommon::ParseCommandLineByKey(TEXT("-Source="), Source, true) || 
+		!SimpleAutomationToolCommon::ParseCommandLineByKey(TEXT("-Destination="), Destination, true))
 	{
 		SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
 		return false;

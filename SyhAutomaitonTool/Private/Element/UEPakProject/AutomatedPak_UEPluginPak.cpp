@@ -50,7 +50,7 @@ bool FAutomatedCode_UE_Plugin_Packaging::BuildParameter()
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::EngineDirKey, SelfConfig->EngineDir);
-	Result &= SimpleAutomationToolCommon::ParseStrings(Tool<OwnConfig>::PathOfUPluginToTargetKey, SelfConfig->PathOfUPluginToTarget, true);
+	Result &= SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::PathOfUPluginToTargetKey, SelfConfig->PathOfUPluginToTarget, true);
 	if (Result)
 	{
 		FPaths::NormalizeFilename(SelfConfig->EngineDir);

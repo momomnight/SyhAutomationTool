@@ -30,7 +30,7 @@ public:
 	static constexpr const TCHAR* GetCommandName()
 	{
 		static_assert(std::is_base_of<FAutoExecElements, AutomatedCommandType>::value, "This type is not derived of FAutoExecElements.");
-		return EnumTool<ECommandProtocol>::GetCString<FCommandProtocol_ConfigType<AutomatedCommandType>::Value>();
+		return EnumTool<ECommandProtocol>::ToCString<FCommandProtocol_ConfigType<AutomatedCommandType>::Value>();
 	}
 
 	template <class AutomatedCommandType>
@@ -68,8 +68,6 @@ public:
 	virtual ECommandProtocol GetType() const { return ECommandProtocol::CMD_None; };
 
 protected:
-
-	
 
 	//Config，如此命名为的是在代码提示中隐藏
 	TSharedPtr<FAutomatedConfigBase> Z_C_o_n_f_i_g;

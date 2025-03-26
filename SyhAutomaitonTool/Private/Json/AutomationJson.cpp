@@ -76,11 +76,7 @@ namespace AutomationJson
 				}
 			}
 		}
-
-	
 	}
-
-
 }
 
 

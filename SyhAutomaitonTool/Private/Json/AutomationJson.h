@@ -479,8 +479,9 @@ namespace AutomationJson
 	{
 		OutConfig.URL = InJsonObject->GetStringField(Tool<FAutomatedHTTPConfig>::URLKey);
 
-		OutConfig.VerbType = EnumTool<decltype(OutConfig.VerbType)>::GetEnumValue(
-			InJsonObject->GetStringField(EnumTool<decltype(OutConfig.VerbType)>::GetEnumNameKey()));
+		FString EnumStr = EnumTool<decltype(OutConfig.VerbType)>::GetEnumNameKey();
+
+		OutConfig.VerbType = EnumTool<decltype(OutConfig.VerbType)>::GetEnumValue(InJsonObject->GetStringField(EnumStr));
 
 		OutConfig.bSync = InJsonObject->GetBoolField(Tool<FAutomatedHTTPConfig>::Sync_BooleanKey);
 		OutConfig.bBinaries = InJsonObject->GetBoolField(Tool<FAutomatedHTTPConfig>::Binaries_BooleanKey);
@@ -498,6 +499,14 @@ namespace AutomationJson
 				FString Value = TempObject->GetStringField(TEXT("Value"));
 				OutConfig.CustomMetaData.Emplace(Key, Value);
 			}
+		}
+		FPaths::NormalizeDirectoryName(OutConfig.SavePath);
+		FPaths::RemoveDuplicateSlashes(OutConfig.SavePath);
+		if (OutConfig.bBinaries)
+		{
+			//二进制文件的情况下，ContentBody为文件路径
+			FPaths::NormalizeFilename(OutConfig.ContentBody);
+			FPaths::RemoveDuplicateSlashes(OutConfig.ContentBody);
 		}
 		
 	}

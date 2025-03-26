@@ -39,8 +39,8 @@ bool FAutomatedCode_ConditionCommand::BuildParameter()
 
 	bool Result = true;
 	Result &= Super::BuildParameter();
-	SimpleAutomationToolCommon::ParseStrings(Tool<OwnConfig>::TrueCommandListKey, SelfConfig->TrueCommandList, false);
-	SimpleAutomationToolCommon::ParseStrings(Tool<OwnConfig>::FalseCommandListKey, SelfConfig->FalseCommandList, false);
+	SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::TrueCommandListKey, SelfConfig->TrueCommandList, false);
+	SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::FalseCommandListKey, SelfConfig->FalseCommandList, false);
 	Self::InitTaskCommand();
 
 	if (Result)

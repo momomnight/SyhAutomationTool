@@ -5,6 +5,7 @@
 #include "SNCObject/ListenServerObject.h"
 #include "Element/AutoExecElementsManage.h"
 #include "Core/SimpleAutomationTool.h"
+#include "Server/AutomatedHttp_HttpServer.h"
 
 //UE_BUILD_DEBUG、UE_BUILD_DEVELOPMENT、UE_BUILD_TEST、UE_BUILD_SHIPPING
 
@@ -108,11 +109,100 @@ namespace AutomationMainFramework
 		return false;
 	}
 
+	void RunServer(double LastTime)
+	{
+		if (FAutomatedHttp_HttpServer::Get()->IsValid() || ListenServer)
+		{
+			//http服务器有自己的检查
+
+			double Now = FPlatformTime::Seconds();
+			float DeltaSeconds = Now - LastTime;
+
+			//SNC, 每帧检查链接
+			if (ListenServer)
+			{
+				ListenServer->Tick(DeltaSeconds);
+			}
+
+			//http server
+			if (FAutomatedHttp_HttpServer::Get()->IsValid())
+			{
+				FAutomatedHttp_HttpServer::Get()->Tick(DeltaSeconds);
+			}
+
+			FPlatformProcess::Sleep(0.03f);
+		}
+		else
+		{
+			FPlatformProcess::Sleep(1.f);
+		}
+	}
+
+	void RunTask()
+	{
+		FDateTime CurrentDateTime = FDateTime::Now();
+		if (TimeSlotDateTime != 0)
+		{
+			if (CurrentDateTime >= TimeSlotDateTime)
+			{
+				//向前递进一天
+				TimeSlotDateTime += ETimespan::TicksPerDay;
+
+				bool Result = false;
+
+				//初始化,以读取最新的任务
+				Result = FAutoExecElementsManage::Get()->Init();
+				if (!Result)
+				{
+					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failed to Init"));
+				}
+
+				//执行自动化任务
+				Result = FAutoExecElementsManage::Get()->HandleTask();
+				if (!Result)
+				{
+					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Handle tasks successfully"));
+				}
+
+				UE_LOG(SyhAutomaitonToolLog, Display, TEXT("The next time handling task is [%s]"), *FDateTime(TimeSlotDateTime).ToString());
+			}
+		}	
+	}
+
+	int32 RunLoop()
+	{
+		double LastTime = FPlatformTime::Seconds();
+
+		while (!IsEngineExitRequested())
+		{
+
+			RunTask();
+
+			RunServer(LastTime);		
+		}
+		return 0;
+	}
+
+	int32 Run()
+	{
+		double LastTime = FPlatformTime::Seconds();
+
+		if (FAutomatedHttp_HttpServer::Get()->IsValid() || ListenServer)
+		{
+			while (!IsEngineExitRequested())
+			{
+				RunServer(LastTime);
+			}
+		}
+		else
+		{
+			RunTask();
+		}
+		return 0;
+	}
+
 	int32 RunAutomatedBuild()
 	{
-		//SimpleAutomationTool::Init();
-
-
 		//注：FParse::Param 命令参数传入时，分析的字符串的位置不能是第一个位置
 		//	  且输入的参数前要有空格，且必须是"-xxxx" 或 "/xxxx"形式
 		//	 FParse::Value没有这个要求
@@ -173,7 +263,7 @@ namespace AutomationMainFramework
 
 				if (FParse::Param(FCommandLine::Get(), TEXT("HTTPServer")))
 				{
-
+					FAutomatedHttp_HttpServer::Get()->Init();
 				}
 
 				if (FParse::Param(FCommandLine::Get(), TEXT("WebSocketServer")))
@@ -183,74 +273,14 @@ namespace AutomationMainFramework
 
 				if (BuildTimePerDay())
 				{
-					double LastTime = FPlatformTime::Seconds();
-					while (!IsEngineExitRequested())
-					{
-						FDateTime CurrentDateTime = FDateTime::Now();
-						if (CurrentDateTime >= TimeSlotDateTime)
-						{
-							//向前递进一天
-							TimeSlotDateTime += ETimespan::TicksPerDay;
-
-							bool Result = false;
-							
-							//初始化,以读取最新的任务
-							Result = FAutoExecElementsManage::Get()->Init();
-							if (!Result)
-							{
-								UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failed to Init"));
-							}
-							
-							//执行自动化任务
-							Result = FAutoExecElementsManage::Get()->HandleTask();
-							if (!Result)
-							{
-								UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Handle tasks successfully"));
-							}
-
-							UE_LOG(SyhAutomaitonToolLog, Display, TEXT("The next time handling task is [%s]"), *FDateTime(TimeSlotDateTime).ToString());
-						}
-
-						if (ListenServer)
-						{
-							//http服务器有自己的检查
-
-							double Now = FPlatformTime::Seconds();
-							float DeltaSeconds = Now - LastTime;
-
-							//每帧检查链接
-							ListenServer->Tick(DeltaSeconds);
-
-							FPlatformProcess::Sleep(0.03f);
-						}
-						else
-						{
-							FPlatformProcess::Sleep(1.f);
-						}
-
-					}
+					return RunLoop();
 				}
 				else
 				{
-					bool Result = false;
-					//初始化,以读取最新的任务
-					Result = FAutoExecElementsManage::Get()->Init();
-					if (!Result)
-					{
-						UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failed to Init"));
-					}
-
-					//非定时,直接执行
-					Result = FAutoExecElementsManage::Get()->HandleTask();
-					if (!Result)
-					{
-						UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Handle tasks successfully"));
-					}
+					return Run();
 				}
 			}
 		}
-
-		return 0;
 	}
 
 }

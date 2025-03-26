@@ -3,6 +3,13 @@
 
 #include "SyhAutomationToolTypeFwd.h"
 
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", off)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+
 template <class EnumType, uint8 EnumMemberNameNumber>
 struct FEnumData
 {
@@ -26,7 +33,7 @@ public:
 public:
 
 	template<EnumType EnumValue>
-	constexpr const TCHAR* GetNameKey() const noexcept
+	constexpr const TCHAR* GetEnumValueNameKey() const noexcept
 	{
 		static_assert((uint8)EnumValue >= (uint8)0 && (uint8)EnumValue < (uint8)EnumMemberNameNumber, "EnumValue must be greater or equal to 0 and less to EnumMemberNameNumber.");
 		return Data.EnumMemberName[static_cast<uint8>(EnumValue)];
@@ -75,13 +82,26 @@ public:
 
 		for (int32 i = 1; i < InShortName.Len(); i++)
 		{
-			if (FChar::IsUpper(InShortName[i]) && InShortName[i - 1] == TEXT('_'))
+			//逐字符检查，除去第一个字符，如果是大写，前一个字符必须是下划线
+			TCHAR Ch = InShortName[i];
+
+			if (FChar::IsUpper(Ch))
 			{
-				continue;
+				if (InShortName[i - 1] != TEXT('_'))
+				{
+					return false;
+				}
 			}
-			else
+			else if (Ch == TEXT('_'))
 			{
-				return false;
+				if (InShortName.IsValidIndex(i + 1) && FChar::IsUpper(InShortName[i + 1]))
+				{
+					continue;
+				}
+				else
+				{
+					return false;
+				}
 			}
 		}
 		return true;
@@ -269,17 +289,17 @@ public:
 	}
 
 	template <EnumType EnumValue>
-	constexpr static const TCHAR* GetCString()
+	constexpr static const TCHAR* ToCString()
 	{
 		check(Impl && "Impl can not be nullptr.");
-		return Impl->GetNameKey<EnumValue>();
+		return Impl->GetEnumValueNameKey<EnumValue>();
 	}
 
 	template <EnumType EnumValue>
 	static FString ToString()
 	{
 		check(Impl && "Impl can not be nullptr.");
-		return GetCString<EnumValue>();
+		return Impl->GetEnumValueNameKey<EnumValue>();
 	}
 
 	constexpr static const TCHAR* GetEnumNameKeyCString()
@@ -312,3 +332,9 @@ protected:
 	constexpr static const FEnumRelatedBase<EnumType, EnumMemberNameNumber>* Impl = FEnumTrait<EnumType>::InitialValue;
 };
 
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", on)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT

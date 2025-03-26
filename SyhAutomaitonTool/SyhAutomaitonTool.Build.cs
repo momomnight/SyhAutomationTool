@@ -18,6 +18,7 @@ public class SyhAutomaitonTool : ModuleRules
 		PrivateDependencyModuleNames.Add("SimpleHTTPLIB");
 		PrivateDependencyModuleNames.Add("SimpleOSS");
 		PrivateDependencyModuleNames.Add("SimpleHTTP");
+		PrivateDependencyModuleNames.Add("SimpleConfig");
 		// to enable tracing:
 		// AppendStringToPublicDefinition("UE_TRACE_ENABLED", "1");
 

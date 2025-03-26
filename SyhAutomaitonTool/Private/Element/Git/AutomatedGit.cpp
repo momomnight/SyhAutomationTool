@@ -43,7 +43,7 @@ bool FAutomatedCode_Git::BuildParameter()
 		return false;
 	}
 
-	if(!SimpleAutomationToolCommon::ParseStrings(Tool<OwnConfig>::GitCommandsKey, SelfConfig->GitCommands, false))
+	if(!SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::GitCommandsKey, SelfConfig->GitCommands, false))
 	{
 		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
 		return false;

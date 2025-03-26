@@ -37,7 +37,7 @@ bool FAutomatedCode_CommandNesting::BuildParameter()
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	bool Result = true;
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(EnumTool<decltype(SelfConfig->ComparisionType)>::GetEnumNameKey(), SelfConfig->ComparisionType);
-	Result &= SimpleAutomationToolCommon::ParseStrings(Tool<OwnConfig>::CommandListKey, SelfConfig->CommandList, false);
+	Result &= SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::CommandListKey, SelfConfig->CommandList, false);
 	Result = InitTaskCommand();
 	SetExecuteToken(Result);
 

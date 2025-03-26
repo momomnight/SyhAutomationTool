@@ -6,7 +6,7 @@ namespace SimpleAutomationToolCommon
 	FString PackagingSaveFileName;
 
 
-	bool ParseStrings(const FString& InKey, TArray<FString>& InArray, bool bPath)
+	bool ParseCommandLineByKey(const FString& InKey, TArray<FString>& InArray, bool bPath)
 	{
 		FString NewString;
 
@@ -41,15 +41,14 @@ namespace SimpleAutomationToolCommon
 			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failure to parse %s string."), *MatchKey);
 			return false;
 		}
-
 	}
 
-	bool ParseStrings(const FString& InKey, TMap<FString, FString>& InMap, bool bPath)
+	bool ParseCommandLineByKey(const FString& InKey, TMap<FString, FString>& InMap, bool bPath)
 	{
 		bool Result = true;
 		TArray<FString> TempArray;
 		//xxx||yyy数组
-		if (!ParseStrings(InKey, TempArray, false))
+		if (!ParseCommandLineByKey(InKey, TempArray, false))
 		{
 			return false;
 		}
@@ -76,7 +75,6 @@ namespace SimpleAutomationToolCommon
 				return false;
 			}
 		}
-
 		return InMap.Num() > 0;
 	}
 

@@ -6,6 +6,7 @@
 #endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
+
 FAutomatedCode_HTTP::FAutomatedCode_HTTP()
 {
 	bHttpSuccessed = false;
@@ -40,6 +41,7 @@ FAutomatedCode_HTTP::~FAutomatedCode_HTTP()
 
 void FAutomatedCode_HTTP::Init()
 {
+	GetSelfConfig<OwnConfig>()->CustomMetaData.Empty();
 }
 
 bool FAutomatedCode_HTTP::BuildParameter(const FString& InJsonStr)
@@ -55,11 +57,23 @@ bool FAutomatedCode_HTTP::BuildParameter()
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Sync_BooleanKey, SelfConfig->bSync);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Binaries_BooleanKey, SelfConfig->bBinaries);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(EnumTool<decltype(SelfConfig->VerbType)>::GetEnumNameKey(), SelfConfig->VerbType);
-	Result &= SimpleAutomationToolCommon::ParseStrings(Tool<OwnConfig>::CustomMetaDataKey, SelfConfig->CustomMetaData, false);
+	Result &= SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::CustomMetaDataKey, SelfConfig->CustomMetaData, false);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ContentBodyKey, SelfConfig->ContentBody);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Timeout_FloatKey, SelfConfig->Timeout);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::SavePathKey, SelfConfig->SavePath);
 	
+	if (Result)
+	{
+		FPaths::NormalizeDirectoryName(SelfConfig->SavePath);
+		FPaths::RemoveDuplicateSlashes(SelfConfig->SavePath);
+		if(SelfConfig->bBinaries)
+		{
+			//二进制文件的情况下，ContentBody为文件路径
+			FPaths::NormalizeFilename(SelfConfig->ContentBody);
+			FPaths::RemoveDuplicateSlashes(SelfConfig->ContentBody);
+		}
+	}
+
 	return Result;
 }
 

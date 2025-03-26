@@ -269,6 +269,16 @@ struct FAutomatedHTTPRelated
 	static const FString SavePathKey;
 };
 
+struct FAutomatedHTTPServerRelated
+{
+	static const FString IPKey;
+	static const FString Port_IntKey;
+	static const FString bHttps_BooleanKey;
+	static const FString CertificateKey;
+	static const FString KeyKey;
+	static const FString Timeout_FloatKey;
+};
+
 //命令协议枚举
 UENUM(BlueprintType)
 enum class ECommandProtocol : uint8
@@ -301,6 +311,10 @@ enum class EComparisionType : uint8
 	COMPARISION_Sequence					UMETA(DisplayName = "Sequence"),//最后评估，全部成功视为成功
 	COMPARISION_Break						UMETA(DisplayName = "Select"),	//出现错误即中断返回
 };
+
+
+
+
 
 // FAutomatedConfigBase总的基类
 USTRUCT(BlueprintType)
@@ -720,6 +734,42 @@ struct FAutomatedHTTPConfig : public FAutomatedConfigBase
 };
 
 
+//不与Elements产生关联
+USTRUCT(BlueprintType)
+struct FAutomatedHTTPServerConfig
+{
+	GENERATED_USTRUCT_BODY()
+
+	FAutomatedHTTPServerConfig()
+	{
+		IP = TEXT("127.0.0.1");
+		Port = 15922;
+		bHttps = false;
+		Certificate = TEXT("If bHttps is true, Certificate file must be provided.");
+		Key = TEXT("If bHttps is true, Key file must be provided.");
+		Timeout = 120.f; 
+	}
+
+	UPROPERTY()
+	FString IP;
+
+	UPROPERTY()
+	int32 Port;
+
+	UPROPERTY()
+	bool bHttps;//http or https
+
+	UPROPERTY()
+	FString Certificate;//证书
+
+	UPROPERTY()
+	FString Key;
+
+	UPROPERTY()
+	float Timeout;
+};
+
+
 /// <summary>
 ///	Traits
 /// </summary>
@@ -777,7 +827,7 @@ template <> struct FRelatedTool<FAutomatedUEPluginPackagingConfig>	{ using Type 
 template <> struct FRelatedTool<FAutomatedConditionCommandConfig>	{ using Type = FAutomatedConditionCommandRelated; };
 template <> struct FRelatedTool<FAutomatedOSSConfig>				{ using Type = FAutomatedOSSRelated; };
 template <> struct FRelatedTool<FAutomatedHTTPConfig>				{ using Type = FAutomatedHTTPRelated; };
-
+template <> struct FRelatedTool<FAutomatedHTTPServerConfig>			{ using Type = FAutomatedHTTPServerRelated; };
 
 
 

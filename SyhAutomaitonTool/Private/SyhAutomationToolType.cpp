@@ -77,3 +77,10 @@ const FString FAutomatedHTTPRelated::ContentBodyKey = TEXT("ContentBody");
 const FString FAutomatedHTTPRelated::Timeout_FloatKey = TEXT("Timeout");
 const FString FAutomatedHTTPRelated::SavePathKey = TEXT("SavePath");
 
+const FString FAutomatedHTTPServerRelated::IPKey = TEXT("IP");
+const FString FAutomatedHTTPServerRelated::Port_IntKey = TEXT("Port");
+const FString FAutomatedHTTPServerRelated::bHttps_BooleanKey = TEXT("bHttps");
+const FString FAutomatedHTTPServerRelated::CertificateKey = TEXT("Certificate");
+const FString FAutomatedHTTPServerRelated::KeyKey = TEXT("Key");
+const FString FAutomatedHTTPServerRelated::Timeout_FloatKey = TEXT("Timeout");
+

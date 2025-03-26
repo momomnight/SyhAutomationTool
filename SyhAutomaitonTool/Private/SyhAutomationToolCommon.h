@@ -15,8 +15,11 @@ namespace SimpleAutomationToolCommon
 	//对于.bat文件，使用"xxx/xxx xxx/xx"就可以读取
 	//对于.sh文件
 	void AdaptCommandArgsStringWithSpace(FString& InKey);
+
 	void GetBatPathString(FString& InPath);
+
 	inline FString GetMatchKey(const FString& InKey) { return FString(TEXT("-") + InKey + TEXT("=")); }
+
 	inline bool IsMatchKey(const FString& InKey)
 	{
 		if (InKey.StartsWith(TEXT("-")) && InKey.EndsWith(TEXT("=")))
@@ -50,43 +53,13 @@ namespace SimpleAutomationToolCommon
 		return true;
 	}
 
-	template<>
-	bool GetValueFromCommandLine<EComparisionType>(const FString& InKey, EComparisionType& OutValue)
-	{
-		FString Result;
-		if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
-			!FParse::Value(FCommandLine::Get(), *Key, Result))
-		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
-			return false;
-		}
 
-		OutValue = FComparisionTypeRelated::GetEnumValue(Result);
-
-		return true;
-	}
-
-	template<>
-	bool GetValueFromCommandLine<ESimpleHTTPVerbType>(const FString& InKey, ESimpleHTTPVerbType& OutValue)
-	{
-		FString Result;
-		if (FString Key = GetMatchKey(InKey);
-			!FParse::Value(FCommandLine::Get(), *Key, Result))
-		{
-			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
-			return false;
-		}
-
-		OutValue = FHttpVerbTypeRelated::GetEnumValue(Result);
-
-		return true;
-	}
 	
 	//xxx1&&xxx2
-	bool ParseStrings(const FString& InKey, TArray<FString>& InArray, bool bPath);
+	bool ParseCommandLineByKey(const FString& InKey, TArray<FString>& InArray, bool bPath);
 
 	//xxx1||yyy1&&xxx2||yyy2
-	bool ParseStrings(const FString& InKey, TMap<FString, FString>& InArray, bool bPath);
+	bool ParseCommandLineByKey(const FString& InKey, TMap<FString, FString>& InArray, bool bPath);
 
 	bool DeleteFile(const FString& InPath);
 	bool DeleteDirectory(const FString& InPath);

@@ -5,6 +5,23 @@
 #include "SyhAutomationToolType.h"
 #include "HTTP/SimpleHTTPObject.h"
 
+
+template<>
+bool SimpleAutomationToolCommon::GetValueFromCommandLine<ESimpleHTTPVerbType>(const FString& InKey, ESimpleHTTPVerbType& OutValue)
+{
+	FString Result;
+	if (FString Key = GetMatchKey(InKey);
+		!FParse::Value(FCommandLine::Get(), *Key, Result))
+	{
+		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("%s was not found the value."), *Key);
+		return false;
+	}
+
+	OutValue = EnumTool<ESimpleHTTPVerbType>::GetEnumValue(Result);
+
+	return true;
+}
+
 //不支持A程序调用B程序
 class FAutomatedCode_HTTP : public FAutoExecElements
 {

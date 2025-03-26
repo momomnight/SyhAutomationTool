@@ -23,7 +23,7 @@ bool FAutomatedCode_Deployment_Delete::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
-	if (SimpleAutomationToolCommon::ParseStrings(Tool<OwnConfig>::FilesKey, SelfConfig->Files, true))
+	if (SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::FilesKey, SelfConfig->Files, true))
 	{
 		return true;
 	}
