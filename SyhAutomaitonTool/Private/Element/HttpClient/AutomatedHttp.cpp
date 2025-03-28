@@ -13,6 +13,15 @@ FAutomatedCode_HTTP::FAutomatedCode_HTTP()
 {
 	bHttpSuccessed = false;
 	ContentLength = 0;
+	HttpObject = nullptr;
+}
+
+FAutomatedCode_HTTP::~FAutomatedCode_HTTP()
+{
+}
+
+void FAutomatedCode_HTTP::Init()
+{
 	SimpleHTTPObject::FHTTPDelegate TempDelegate;
 	TempDelegate.SimpleCompleteDelegate.BindLambda(
 		[this](FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSuccessed)
@@ -34,15 +43,6 @@ FAutomatedCode_HTTP::FAutomatedCode_HTTP()
 	);
 
 	HttpObject = SimpleHTTPObject::FHTTP::CreateHTTPObject(TempDelegate);
-
-}
-
-FAutomatedCode_HTTP::~FAutomatedCode_HTTP()
-{
-}
-
-void FAutomatedCode_HTTP::Init()
-{
 }
 
 bool FAutomatedCode_HTTP::BuildParameter(const FString& InJsonStr)
@@ -82,6 +82,7 @@ bool FAutomatedCode_HTTP::Execute()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 
+	//设置超时
 	if (SelfConfig->Timeout <= 5.f)
 	{
 		SelfConfig->Timeout = 30.f;
@@ -89,7 +90,7 @@ bool FAutomatedCode_HTTP::Execute()
 
 	ResetTimeout();
 
-	//检测
+	//不同操作的额外检测
 	switch (SelfConfig->VerbType)
 	{
 	case ESimpleHTTPVerbType::SIMPLE_GET:
@@ -106,6 +107,7 @@ bool FAutomatedCode_HTTP::Execute()
 		break;
 	}
 
+	//发出http请求
 	FGuid HttpGuid;
 	if (SelfConfig->bBinaries)
 	{

@@ -128,31 +128,30 @@ namespace SimpleAutomationToolCommon
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	struct FOperateFileOrDirectory
+	struct FPreprocessPath_Base
 	{
-		virtual bool operator()(const FFileStatData& FileStatData, const FString& InPath) = 0;
-		virtual ~FOperateFileOrDirectory() {}
+		bool operator()(const FFileStatData& FileStatData, const FString& InPath){};
 	};
 
-	struct FOperateFileOrDirectory_Nothing : public FOperateFileOrDirectory
+	struct FPreprocessPath_Nothing : public FPreprocessPath_Base
 	{
-		virtual bool operator()(const FFileStatData& FileStatData, const FString& InPath)
+		bool operator()(const FFileStatData& FileStatData, const FString& InPath)
 		{
 			return true;
 		}
 	};
 
-	struct FOperateFileOrDirectory_DeletePath : public FOperateFileOrDirectory
+	struct FPreprocessPath_DeletePath : public FPreprocessPath_Base
 	{
-		virtual bool operator()(const FFileStatData& FileStatData, const FString& InPath)
+		bool operator()(const FFileStatData& FileStatData, const FString& InPath)
 		{
 			return DeletePath(FileStatData, InPath);
 		}
 	};
 
-	struct FOperateFileOrDirectory_PathExists : public FOperateFileOrDirectory
+	struct FPreprocessPath_PathExists : public FPreprocessPath_Base
 	{
-		virtual bool operator()(const FFileStatData& FileStatData, const FString& InPath)
+		bool operator()(const FFileStatData& FileStatData, const FString& InPath)
 		{
 			if (!FileStatData.bIsValid)
 			{
@@ -163,26 +162,29 @@ namespace SimpleAutomationToolCommon
 	};
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	struct FOperatePath
+	struct FProcessPath_Base
 	{
 		//对于原路径为文件路径的操作
-		virtual void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath) = 0;
+		void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath){}
 
 		//对于原路径为文件夹的操作
-		virtual void operator()(TMap<FString, FString>& OutContent, const FString& InPath, const FString& SourcePath, const FString& TargetPath) = 0;
-		virtual ~FOperatePath() {}
+		void operator()(TMap<FString, FString>& OutContent, const FString& InFoundPath, const FString& SourcePath, const FString& TargetPath){}
 	};
 
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	template <class FOperateSourcePath, class FOperateTargetPath, class FOperateFilePath>
-	bool PathFilter(TMap<FString, FString>& OutContent, const TMap<FString, FString>& InContent)
+	template <class FPreprocessSourcePath, class FPreprocessTargetPath, class FProcessPath>
+	bool PathFilter(TMap<FString, FString>& OutContent, const TMap<FString, FString>& InContent, bool bFindFiles = true, bool bRecursive = true)
 	{
-		FOperateSourcePath HandleSourcePath;
-		FOperateTargetPath HandleTargetPath;
-		FOperateFilePath HandleFilePath;
+		static_assert(std::is_base_of_v<FPreprocessPath_Base, FPreprocessSourcePath>, "FPreprocessSourcePath must be derived to FPreprocessPath_Base");
+		static_assert(std::is_base_of_v<FPreprocessPath_Base, FPreprocessTargetPath>, "FPreprocessTargetPath must be derived to FPreprocessPath_Base");
+		static_assert(std::is_base_of_v<FProcessPath_Base, FProcessPath>, "FProcessPath must be derived to FProcessPath_Base");
+		
+		FPreprocessSourcePath HandleSourcePath;
+		FPreprocessTargetPath HandleTargetPath;
+		FProcessPath HandleFilePath;
 		//收集所有路径
 		for (auto& TempPath : InContent)
 		{
@@ -190,8 +192,8 @@ namespace SimpleAutomationToolCommon
 			FString TargetPath = TempPath.Value;
 
 			//是否存在命令替换
-			HandleTimePath(SourcePath);
-			HandleTimePath(TargetPath);
+			/*HandleTimePath(SourcePath);
+			HandleTimePath(TargetPath);*/
 
 			FFileStatData SourceFileStatData = IFileManager::Get().GetStatData(*SourcePath);
 			FFileStatData TargetFileStatData = IFileManager::Get().GetStatData(*TargetPath);
@@ -207,18 +209,33 @@ namespace SimpleAutomationToolCommon
 				return false;
 			}
 
-			if (SourceFileStatData.bIsDirectory)
+			if(bFindFiles)
 			{
-				TArray<FString> FoundFiles;
-				IFileManager::Get().FindFilesRecursive(FoundFiles, *SourcePath, TEXT("*"), true, false);
-				for (auto& SubTemp : FoundFiles)
+				if (SourceFileStatData.bIsDirectory)
 				{
-					HandleFilePath(OutContent, SubTemp, SourcePath, TargetPath);
+					TArray<FString> FoundFiles;
+
+					if (bRecursive)
+					{
+						IFileManager::Get().FindFilesRecursive(FoundFiles, *SourcePath, TEXT("*"), true, false);
+					}
+					else
+					{
+						IFileManager::Get().FindFiles(FoundFiles, *SourcePath);
+					}
+
+					for (auto& SubTemp : FoundFiles)
+					{
+						HandleFilePath(OutContent, SubTemp, SourcePath, TargetPath);
+					}
+				}
+				else
+				{
+					HandleFilePath(OutContent, SourcePath, TargetPath);
 				}
 			}
 			else
 			{
-				OutContent.Add(SourcePath, TargetPath);
 				HandleFilePath(OutContent, SourcePath, TargetPath);
 			}
 		}

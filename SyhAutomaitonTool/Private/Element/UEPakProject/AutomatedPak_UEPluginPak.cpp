@@ -9,7 +9,7 @@
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
 
-struct FOperatePath_UEPluginPackaging : public SimpleAutomationToolCommon::FOperatePath
+struct FProcessPath_UEPluginPackaging : public SimpleAutomationToolCommon::FProcessPath_Base
 {
 	virtual void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath)
 	{
@@ -79,9 +79,9 @@ bool FAutomatedCode_UE_Plugin_Packaging::Execute()
 
 
 	TMap<FString, FString> ExecuteContent;
-	if (!SimpleAutomationToolCommon::PathFilter<SimpleAutomationToolCommon::FOperateFileOrDirectory_PathExists,
-		SimpleAutomationToolCommon::FOperateFileOrDirectory_PathExists,
-		FOperatePath_UEPluginPackaging>
+	if (!SimpleAutomationToolCommon::PathFilter<SimpleAutomationToolCommon::FPreprocessPath_PathExists,
+		SimpleAutomationToolCommon::FPreprocessPath_PathExists,
+		FProcessPath_UEPluginPackaging>
 		(ExecuteContent, SelfConfig->PathOfUPluginToTarget))
 	{
 		SyhLogError(TEXT("Fail to filter path."));

@@ -22,15 +22,16 @@ namespace AutomationJson
 {
 	//用于配置枚举字段
 	template<class EnumType>
-	void ConfigureEnum(TSharedPtr<FJsonObject> InJsonObject, EnumType InProtocol)
+	void ConfigureEnum(TSharedPtr<FJsonObject> InJsonObject, EnumType InEnumValue)
 	{
 		static_assert(std::is_enum_v<EnumType>, "EnumType must be enum type.");
-		InJsonObject->SetStringField(EnumTool<EnumType>::GetEnumNameKey(), EnumTool<EnumType>::GetShortName(InProtocol));
+		InJsonObject->SetStringField(EnumTool<EnumType>::GetEnumNameKey(), EnumTool<EnumType>::GetShortName(InEnumValue));
 	}
-	template void ConfigureEnum<ECommandProtocol>(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InProtocol);
-	template void ConfigureEnum<ESimpleOSSCommand>(TSharedPtr<FJsonObject> InJsonObject, ESimpleOSSCommand InProtocol);
-	template void ConfigureEnum<ESimpleHTTPVerbType>(TSharedPtr<FJsonObject> InJsonObject, ESimpleHTTPVerbType InProtocol);
-	template void ConfigureEnum<EComparisionType>(TSharedPtr<FJsonObject> InJsonObject, EComparisionType InProtocol);
+	template void ConfigureEnum<ECommandProtocol>(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InEnumValue);
+	template void ConfigureEnum<ESimpleOSSCommand>(TSharedPtr<FJsonObject> InJsonObject, ESimpleOSSCommand InEnumValue);
+	template void ConfigureEnum<ESimpleHTTPVerbType>(TSharedPtr<FJsonObject> InJsonObject, ESimpleHTTPVerbType InEnumValue);
+	template void ConfigureEnum<EComparisionType>(TSharedPtr<FJsonObject> InJsonObject, EComparisionType InEnumValue);
+	template void ConfigureEnum<ECompressType>(TSharedPtr<FJsonObject> InJsonObject, ECompressType InEnumValue);
 
 	template<class EnumType>
 	EnumType GetEnum(TSharedPtr<FJsonObject> InJsonObject)
@@ -42,12 +43,10 @@ namespace AutomationJson
 	template ESimpleOSSCommand GetEnum<ESimpleOSSCommand>(TSharedPtr<FJsonObject> InJsonObject);
 	template ESimpleHTTPVerbType GetEnum<ESimpleHTTPVerbType>(TSharedPtr<FJsonObject> InJsonObject);
 	template EComparisionType GetEnum<EComparisionType>(TSharedPtr<FJsonObject> InJsonObject);
-
+	template ECompressType GetEnum<ECompressType>(TSharedPtr<FJsonObject> InJsonObject);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	template <class AutomatedConfigType>
-	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray);
 
 	/// <summary>
 	/// 增加模块时，只需特化AutomatedConfigToJsonObject
@@ -253,27 +252,11 @@ namespace AutomationJson
 		OutJsonObject->SetStringField(Tool<FAutomatedHTTPConfig>::ContentBodyKey, InConfig.ContentBody);
 	}
 
-
-
-
-	template<class AutomatedConfigType>
-	TSharedPtr<FJsonObject> AutomatedConfigToJsonObject(const AutomatedConfigType& InConfig)
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedCompressConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedCompressConfig& InConfig)
 	{
-		if constexpr (FCommandProtocol_ConfigType<AutomatedConfigType>::Value != ECommandProtocol::CMD_None)
-		{
-			TSharedPtr<FJsonObject> RootObject = MakeShareable<FJsonObject>(new FJsonObject);
-			ConfigureEnum<ECommandProtocol>(RootObject, FCommandProtocol_ConfigType<AutomatedConfigType>::Value);
-			AutomatedConfigToJsonObject<AutomatedConfigType>(RootObject, InConfig, Transfer{});
-			return RootObject;
-		}
-		else
-		{
-			return nullptr;
-		}
+
 	}
-
-	
-
 
 
 	/// <summary>
@@ -511,6 +494,29 @@ namespace AutomationJson
 		
 	}
 
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedCompressConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCompressConfig& OutConfig)
+	{
+
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	template<class AutomatedConfigType>
+	TSharedPtr<FJsonObject> AutomatedConfigToJsonObject(const AutomatedConfigType& InConfig)
+	{
+		if constexpr (FCommandProtocol_ConfigType<AutomatedConfigType>::Value != ECommandProtocol::CMD_None)
+		{
+			TSharedPtr<FJsonObject> RootObject = MakeShareable<FJsonObject>(new FJsonObject);
+			ConfigureEnum<ECommandProtocol>(RootObject, FCommandProtocol_ConfigType<AutomatedConfigType>::Value);
+			AutomatedConfigToJsonObject<AutomatedConfigType>(RootObject, InConfig, Transfer{});
+			return RootObject;
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
 
 	template <class AutomatedConfigType>
 	bool JsonStringToAutomatedConfig(const FString& InString, AutomatedConfigType& OutConfig)
@@ -525,7 +531,7 @@ namespace AutomationJson
 		return false;
 	}
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//用于序列化
 	void SerializeAllCommand(FString& OutString);

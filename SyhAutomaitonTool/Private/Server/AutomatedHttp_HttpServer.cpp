@@ -23,8 +23,10 @@ void FAutomatedHttp_HttpServer::Init()
 		if (!SubResult)
 		{
 			SyhLogError(TEXT("If bHttps is enabled, Certificate and Key must be provided."));
+			return;
 		}
 	}
+
 	bool Result = true;
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine<FString>(Tool<FAutomatedHTTPServerConfig>::IPKey, Config.IP);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine<int32>(Tool<FAutomatedHTTPServerConfig>::Port_IntKey, Config.Port);

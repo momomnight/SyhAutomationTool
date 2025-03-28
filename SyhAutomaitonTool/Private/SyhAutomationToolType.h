@@ -7,166 +7,270 @@
 // 需要修改SyhAutomationToolType.h和SyhAutomationToolType.cpp文件
 // 需要修改AutomationJson.h和AutomationJson.cpp文件
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-constexpr const TCHAR* CommandProtocolName[] =
-{
-TEXT("None"),					//0
-TEXT("Call"),					//1
-TEXT("Call_Custom_Content"),	//2
-TEXT("Ue_Project_Refresh"),		//3
-TEXT("Command_Nesting"),		//4
-TEXT("Deployment_Copy"),		//5
-TEXT("Deployment_Delete"),		//6
-TEXT("Vs_Compile"),				//7
-TEXT("Git"),					//8
-TEXT("Ue_Packaging"),			//9
-TEXT("Ue_Plugin_Packaging"),	//10
-TEXT("Condition_Command"),		//11
-TEXT("Oss"),					//12
-TEXT("Http"),					//13
-TEXT("Http_Server"),			//14
-TEXT("Web_Socket"),				//15
+//枚举相关字符串及操作，如添加自定义枚举需要实现
 
-
-TEXT("Max")
-};
-
-constexpr uint32 CommandProtocolNameLength = UE_ARRAY_COUNT(CommandProtocolName);
-
-constexpr static FEnumData<ECommandProtocol, CommandProtocolNameLength> CommandProtocolData = {
-	TEXT("ECommandProtocol::CMD_"),
-	UE_ARRAY_COUNT(TEXT("EComparisionType::COMPARISION_")),
-	TEXT("Command"),
-	CommandProtocolName
-};
-
-constexpr static FEnumRelatedBase<ECommandProtocol, CommandProtocolNameLength> CommandProtocolBase(CommandProtocolData);
-
-//必须放在struct FCommandProtocolRelated : public FEnumRelated<ECommandProtocol, CommandProtocolNameLength>之前
-//静态变量初始化要用到FEnumTrait<EnumType>
 template <>
-struct FEnumTrait<ECommandProtocol>
+struct FEnumInitialValueImpl<ECommandProtocol>
 {
-	constexpr static auto InitialValue = &CommandProtocolBase;
-};
+private:
+	static constexpr const TCHAR* EnumMemberName[] =
+	{
+	TEXT("None"),					//0
+	TEXT("Call"),					//1
+	TEXT("Call_Custom_Content"),	//2
+	TEXT("Ue_Project_Refresh"),		//3
+	TEXT("Command_Nesting"),		//4
+	TEXT("Deployment_Copy"),		//5
+	TEXT("Deployment_Delete"),		//6
+	TEXT("Vs_Compile"),				//7
+	TEXT("Git"),					//8
+	TEXT("Ue_Packaging"),			//9
+	TEXT("Ue_Plugin_Packaging"),	//10
+	TEXT("Condition_Command"),		//11
+	TEXT("Oss"),					//12
+	TEXT("Http"),					//13
+	TEXT("Compress"),				//14
+	TEXT("Web_Socket"),				//15
 
-struct FCommandProtocolRelated : public FEnumRelated<ECommandProtocol, CommandProtocolNameLength>
-{
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-constexpr const TCHAR* ComparisionTypeName[] =
-{
-	TEXT("None"),
-	TEXT("Sequence"),
-	TEXT("Break"),
 
 	TEXT("Max")
-};
-constexpr uint32 ComparisionTypeNameLength = UE_ARRAY_COUNT(ComparisionTypeName);
+	};
 
-constexpr static FEnumData<EComparisionType, ComparisionTypeNameLength> ComparisionTypeData = {
-	TEXT("EComparisionType::COMPARISION_"),
-	UE_ARRAY_COUNT(TEXT("EComparisionType::COMPARISION_")),
-	TEXT("ComparisionType"),
-	ComparisionTypeName
-};
+	constexpr static uint32 EnumMemberNumber = UE_ARRAY_COUNT(EnumMemberName);
+	constexpr static FEnumData<ECommandProtocol, EnumMemberNumber> EnumData = {
+		TEXT("ECommandProtocol::CMD_"),
+		UE_ARRAY_COUNT(TEXT("ECommandProtocol::CMD_")),
+		TEXT("Command"),
+		EnumMemberName
+	};
+	constexpr static FEnumRelatedBase<ECommandProtocol, EnumMemberNumber> InitialValue{ EnumData };
+public:
+	consteval static uint32 GetMemberName()
+	{
+		return EnumMemberNumber;
+	}
 
-constexpr static FEnumRelatedBase<EComparisionType, ComparisionTypeNameLength> ComparisionTypeBase(ComparisionTypeData);
+	consteval static const FEnumRelatedBase<ECommandProtocol, EnumMemberNumber>* GetInitialValue()
+	{
+		return &InitialValue;
+	}
+};
 
 template <>
-struct FEnumTrait<EComparisionType>
+struct FEnumInitialValueImpl<EComparisionType>
 {
-	constexpr static auto InitialValue = &ComparisionTypeBase;
+private:
+	static constexpr const TCHAR* EnumMemberName[] =
+	{
+		TEXT("None"),
+		TEXT("Sequence"),
+		TEXT("Break"),
+
+		TEXT("Max")
+	};
+
+	constexpr static uint32 EnumMemberNumber = UE_ARRAY_COUNT(EnumMemberName);
+
+	constexpr static FEnumData<EComparisionType, EnumMemberNumber> EnumData = {
+		TEXT("EComparisionType::COMPARISION_"),
+		UE_ARRAY_COUNT(TEXT("EComparisionType::COMPARISION_")),
+		TEXT("ComparisionType"),
+		EnumMemberName
+	};
+	constexpr static FEnumRelatedBase<EComparisionType, EnumMemberNumber> InitialValue{ EnumData };
+
+public:
+	consteval static uint32 GetMemberName()
+	{
+		return EnumMemberNumber;
+	}
+
+	consteval static const FEnumRelatedBase<EComparisionType, EnumMemberNumber>* GetInitialValue()
+	{
+		return &InitialValue;
+	}
 };
 
-struct FComparisionTypeRelated : public FEnumRelated<EComparisionType, ComparisionTypeNameLength>
+template <>
+struct FEnumInitialValueImpl<ESimpleHTTPVerbType>
 {
+private:
+	static constexpr const TCHAR* EnumMemberName[] =
+	{
+		TEXT("Post"),
+		TEXT("Put"),
+		TEXT("Get"),
+		TEXT("Delete"),
+
+		TEXT("Max")
+	};
+
+	constexpr static uint32 EnumMemberNumber = UE_ARRAY_COUNT(EnumMemberName);
+
+	constexpr static FEnumData<ESimpleHTTPVerbType, EnumMemberNumber> EnumData = {
+		TEXT("ESimpleHTTPVerbType::SIMPLE_"),
+		UE_ARRAY_COUNT(TEXT("ESimpleHTTPVerbType::SIMPLE_")),
+		TEXT("HTTPVerbType"),
+		EnumMemberName
+	};
+	constexpr static FEnumRelatedBase<ESimpleHTTPVerbType, EnumMemberNumber> InitialValue{ EnumData };
+
+public:
+	consteval static uint32 GetMemberName()
+	{
+		return EnumMemberNumber;
+	}
+
+	consteval static const FEnumRelatedBase<ESimpleHTTPVerbType, EnumMemberNumber>* GetInitialValue()
+	{
+		return &InitialValue;
+	}
+};
+
+template <>
+struct FEnumInitialValueImpl<ESimpleOSSCommand>
+{
+private:
+	static constexpr const TCHAR* EnumMemberName[] =
+	{
+		TEXT("Init"),
+		TEXT("Bucket_Exist"),
+		TEXT("Object_Exist"),
+		TEXT("Copy_Object"),
+		TEXT("Delete_Object"),
+		TEXT("Get_Object"),
+		TEXT("Resumable_Download_Object"),
+		TEXT("Put_Object"),
+		TEXT("Resumable_Upload_Object"),
+		TEXT("Upload_Part"),
+		TEXT("Max")
+	};
+	constexpr static uint32 EnumMemberNumber = UE_ARRAY_COUNT(EnumMemberName);
+
+	constexpr static FEnumData<ESimpleOSSCommand, EnumMemberNumber> EnumData = {
+		TEXT("ESimpleOSSCommand::OSS_"),
+		UE_ARRAY_COUNT(TEXT("ESimpleOSSCommand::OSS_")),
+		TEXT("OSSCommandType"),
+		EnumMemberName
+	};
+	constexpr static FEnumRelatedBase<ESimpleOSSCommand, EnumMemberNumber> InitialValue{ EnumData };
+
+public:
+	consteval static uint32 GetMemberName()
+	{
+		return EnumMemberNumber;
+	}
+
+	consteval static const FEnumRelatedBase<ESimpleOSSCommand, EnumMemberNumber>* GetInitialValue()
+	{
+		return &InitialValue;
+	}
+};
+
+template <>
+struct FEnumInitialValueImpl<ECompressType>
+{
+private:
+	static constexpr const TCHAR* EnumMemberName[] =
+	{
+		TEXT("None"),
+		TEXT("Zip"),
+		TEXT("Rz"),
+	};
+	constexpr static uint32 EnumMemberNumber = UE_ARRAY_COUNT(EnumMemberName);
+
+	constexpr static FEnumData<ECompressType, EnumMemberNumber> EnumData = {
+		TEXT("ECompressType::COMPRESS_"),
+		UE_ARRAY_COUNT(TEXT("ECompressType::COMPRESS_")),
+		TEXT("CompressType"),
+		EnumMemberName
+	};
+	constexpr static FEnumRelatedBase<ECompressType, EnumMemberNumber> InitialValue{ EnumData };
+
+public:
+	consteval static uint32 GetMemberName()
+	{
+		return EnumMemberNumber;
+	}
+
+	consteval static const FEnumRelatedBase<ECompressType, EnumMemberNumber>* GetInitialValue()
+	{
+		return &InitialValue;
+	}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//同上
 
-constexpr const TCHAR* HttpVerbTypeName[] =
+struct FCommandProtocolRelated : public FEnumRelated<ECommandProtocol>
 {
-	TEXT("Post"),
-	TEXT("Put"),
-	TEXT("Get"),
-	TEXT("Delete"),
-
-	TEXT("Max")
-};
-constexpr uint32 HttpVerbTypeLength = UE_ARRAY_COUNT(HttpVerbTypeName);
-
-constexpr static FEnumData<ESimpleHTTPVerbType, HttpVerbTypeLength> HttpVerbTypeData = {
-	TEXT("ESimpleHTTPVerbType::SIMPLE_"),
-	UE_ARRAY_COUNT(TEXT("ESimpleHTTPVerbType::SIMPLE_")),
-	TEXT("HTTPVerbType"),
-	HttpVerbTypeName
 };
 
-constexpr static FEnumRelatedBase<ESimpleHTTPVerbType, HttpVerbTypeLength> HttpVerbTypeBase(HttpVerbTypeData);
-
-template <>
-struct FEnumTrait<ESimpleHTTPVerbType>
+struct FComparisionTypeRelated : public FEnumRelated<EComparisionType>
 {
-	constexpr static auto InitialValue = &HttpVerbTypeBase;
 };
 
-struct FHttpVerbTypeRelated : public FEnumRelated<ESimpleHTTPVerbType, HttpVerbTypeLength, 
-	FEnumFunctionObjectRelated::InvalidEnumValueOperator_Error<ESimpleHTTPVerbType>>
+struct FHttpVerbTypeRelated : public FEnumRelated<ESimpleHTTPVerbType, FEnumFunctionObjectRelated::InvalidEnumValueOperator_Error<ESimpleHTTPVerbType>>
 {
 	//ESimpleHTTPVerbType没有None值，所以需要一个错误处理
 };
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-constexpr const TCHAR* OSSCommandTypeName[] =
-{
-	TEXT("Init"),
-	TEXT("Bucket_Exist"),
-	TEXT("Object_Exist"),
-	TEXT("Copy_Object"),
-	TEXT("Delete_Object"),
-	TEXT("Get_Object"),
-	TEXT("Resumable_Download_Object"),
-	TEXT("Put_Object"),
-	TEXT("Resumable_Upload_Object"),
-	TEXT("Upload_Part"),
-	TEXT("Max")
-};
-
-constexpr uint32 OSSCommandTypeLength = UE_ARRAY_COUNT(OSSCommandTypeName);
-
-constexpr static FEnumData<ESimpleOSSCommand, OSSCommandTypeLength> OSSCommandTypeData = {
-	TEXT("ESimpleOSSCommand::OSS_"),
-	UE_ARRAY_COUNT(TEXT("ESimpleOSSCommand::OSS_")),
-	TEXT("OSSCommandType"),
-	OSSCommandTypeName
-};
-
-constexpr static FEnumRelatedBase<ESimpleOSSCommand, OSSCommandTypeLength> OSSCommandTypeBase(OSSCommandTypeData);
-
-template <>
-struct FEnumTrait<ESimpleOSSCommand>
-{
-	constexpr static auto InitialValue = &OSSCommandTypeBase;
-};
-
-struct FOSSCommandTypeRelated : public FEnumRelated<ESimpleOSSCommand, OSSCommandTypeLength,
-	FEnumFunctionObjectRelated::InvalidEnumValueOperator_Error<ESimpleOSSCommand>>
+struct FOSSCommandTypeRelated : public FEnumRelated<ESimpleOSSCommand, FEnumFunctionObjectRelated::InvalidEnumValueOperator_Error<ESimpleOSSCommand>>
 {
 	//ESimpleHTTPVerbType没有None值，所以需要一个错误处理
 };
 
+struct FCompressTypeRelated : public FEnumRelated<ECompressType>
+{
+};
+
+//命令协议枚举
+UENUM(BlueprintType)
+enum class ECommandProtocol : uint8
+{
+	CMD_None = 0					UMETA(DisplayName = "None"),
+	CMD_Call						UMETA(DisplayName = "Call"),	//用于呼叫某些程序
+	CMD_Call_Custom_Content			UMETA(DisplayName = "Call Custom Content"),
+	CMD_UE_Project_Refresh			UMETA(DisplayName = "UE Project Refresh"),
+	CMD_Command_Nesting				UMETA(DisplayName = "Command Nesting"),
+	CMD_Deployment_Copy				UMETA(DisplayName = "Deployment Copy"),
+	CMD_Deployment_Delete			UMETA(DisplayName = "Deployment Delete"),
+	CMD_VS_Compile					UMETA(DisplayName = "VS Compile"),
+	CMD_Git							UMETA(DisplayName = "Git"),
+	CMD_UE_Packaging				UMETA(DisplayName = "UE Packaging"),
+	CMD_UE_Plugin_Packaging			UMETA(DisplayName = "UE Plugin Packaging"),
+	CMD_Condition_Command			UMETA(DisplayName = "Condition Command"),
+	CMD_OSS							UMETA(DisplayName = "OSS"),
+	CMD_HTTP						UMETA(DisplayName = "HTTP"),
+	CMD_Compress					UMETA(DisplayName = "Compress"),
+	//CMD_HTTP_Server				UMETA(DisplayName = "HTTP Server"),
+	//CMD_Web_Socket				UMETA(DisplayName = "Web Socket"),
+
+
+	CMD_Max						UMETA(DisplayName = "Max"),
+};
+
+UENUM(BlueprintType)
+enum class EComparisionType : uint8
+{
+	COMPARISION_None = 0					UMETA(DisplayName = "Sequence"),//最后评估，全部成功视为成功
+	COMPARISION_Sequence					UMETA(DisplayName = "Sequence"),//最后评估，全部成功视为成功
+	COMPARISION_Break						UMETA(DisplayName = "Select"),	//出现错误即中断返回
+};
+
+
+UENUM(BlueprintType)
+enum class ECompressType : uint8
+{
+	COMPRESS_None = 0				UMETA(DisplayName = "None"),
+	COMPRESS_Zip					UMETA(DisplayName = "Zip"),
+	COMPRESS_RZ						UMETA(DisplayName = "Custom Format RZ"),
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//配置相关属性序列化时的关键字名，可以不实现，只需要在Json相关操作中不使用即可
 struct FAutomatedCallRelated
 {
 	static const FString CallTypeKey;
@@ -279,42 +383,13 @@ struct FAutomatedHTTPServerRelated
 	static const FString Timeout_FloatKey;
 };
 
-//命令协议枚举
-UENUM(BlueprintType)
-enum class ECommandProtocol : uint8
+struct FAutomatedCompressRelated
 {
-	CMD_None = 0				UMETA(DisplayName = "None"),
-	CMD_Call					UMETA(DisplayName = "Call"),	//用于呼叫某些程序
-	CMD_Call_Custom_Content		UMETA(DisplayName = "Call Custom Content"),
-	CMD_UE_Project_Refresh		UMETA(DisplayName = "UE Project Refresh"),
-	CMD_Command_Nesting			UMETA(DisplayName = "Command Nesting"),
-	CMD_Deployment_Copy			UMETA(DisplayName = "Deployment Copy"),
-	CMD_Deployment_Delete		UMETA(DisplayName = "Deployment Delete"),
-	CMD_VS_Compile				UMETA(DisplayName = "VS Compile"),
-	CMD_Git						UMETA(DisplayName = "Git"),
-	CMD_UE_Packaging			UMETA(DisplayName = "UE Packaging"),
-	CMD_UE_Plugin_Packaging		UMETA(DisplayName = "UE Plugin Packaging"),
-	CMD_Condition_Command		UMETA(DisplayName = "Condition Command"),
-	CMD_OSS						UMETA(DisplayName = "OSS"),
-	CMD_HTTP					UMETA(DisplayName = "HTTP"),
-	//CMD_HTTP_Server				UMETA(DisplayName = "HTTP Server"),
-	//CMD_Web_Socket				UMETA(DisplayName = "Web Socket"),
 
-
-	CMD_Max						UMETA(DisplayName = "Max"),
 };
 
-UENUM(BlueprintType)
-enum class EComparisionType : uint8
-{
-	COMPARISION_None = 0					UMETA(DisplayName = "Sequence"),//最后评估，全部成功视为成功
-	COMPARISION_Sequence					UMETA(DisplayName = "Sequence"),//最后评估，全部成功视为成功
-	COMPARISION_Break						UMETA(DisplayName = "Select"),	//出现错误即中断返回
-};
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//若要添加自定义的自动化元素，必须实现
 
 // FAutomatedConfigBase总的基类
 USTRUCT(BlueprintType)
@@ -733,8 +808,43 @@ struct FAutomatedHTTPConfig : public FAutomatedConfigBase
 	FString SavePath;//For get;
 };
 
+//
+USTRUCT(BlueprintType)
+struct FAutomatedCompressConfig : public FAutomatedConfigBase
+{
+	GENERATED_USTRUCT_BODY()
 
-//不与Elements产生关联
+	typedef FAutomatedConfigBase Super;
+
+	FAutomatedCompressConfig()
+	{
+		bCompress = true;
+		Method = ECompressType::COMPRESS_Zip;
+		bCompressEachFileUnderPath = true;
+		PathOfSourceToTarget.Emplace(TEXT("source_file1"), TEXT("target1.zip"));
+		PathOfSourceToTarget.Emplace(TEXT("source_file2"), TEXT("target2.rz"));
+		PathOfSourceToTarget.Emplace(TEXT("source_file3"), TEXT("a key-value represent a compression operation."));
+	}
+	UPROPERTY()
+	bool bCompress;//是否是压缩
+
+	UPROPERTY()
+	ECompressType Method;
+
+	UPROPERTY()
+	bool bCompressEachFileUnderPath;//是否对路径下的每个文件进行压缩，需要文件夹路径
+
+	UPROPERTY()
+	FString Password;
+
+	UPROPERTY()
+	TMap<FString, FString> PathOfSourceToTarget;//每一个键值对对应一次压缩或解压缩
+
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//不与Elements产生关联，不使用Json，从命令行参数传入解析
 USTRUCT(BlueprintType)
 struct FAutomatedHTTPServerConfig : public FAutomatedConfigBase	
 {
@@ -770,10 +880,9 @@ struct FAutomatedHTTPServerConfig : public FAutomatedConfigBase
 };
 
 
-/// <summary>
-///	Traits
-/// </summary>
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//在Json操作中及自动化元素基类方法中使用，必须实现
 //如果有配置类型，我们能拿到什么
 template <class ConfigType> struct FCommandProtocol_ConfigType	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_None; };
 template <> struct FCommandProtocol_ConfigType<FAutomatedCallConfig>				{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Call; };
@@ -789,6 +898,7 @@ template <> struct FCommandProtocol_ConfigType<FAutomatedUEPluginPackagingConfig
 template <> struct FCommandProtocol_ConfigType<FAutomatedConditionCommandConfig>	{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Condition_Command; };
 template <> struct FCommandProtocol_ConfigType<FAutomatedOSSConfig>					{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_OSS; };
 template <> struct FCommandProtocol_ConfigType<FAutomatedHTTPConfig>				{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_HTTP; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedCompressConfig>			{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Compress; };
 
 
 //如果有枚举号，我们能拿到什么
@@ -806,14 +916,17 @@ template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_UE_Plugin_Pac
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Condition_Command>	{ using ConfigType = FAutomatedConditionCommandConfig;};
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_OSS>					{ using ConfigType = FAutomatedOSSConfig; };
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_HTTP>				{ using ConfigType = FAutomatedHTTPConfig; };
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Compress>			{ using ConfigType = FAutomatedCompressConfig; };
 
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//大量使用，但可以不实现
 template <class RelatedType> struct FRelatedTool{ using Type = void; };
 template <> struct FRelatedTool<ECommandProtocol>					{ using Type = FCommandProtocolRelated; };
 template <> struct FRelatedTool<EComparisionType>					{ using Type = FComparisionTypeRelated; };
 template <> struct FRelatedTool<ESimpleHTTPVerbType>				{ using Type = FHttpVerbTypeRelated; };
 template <> struct FRelatedTool<ESimpleOSSCommand>					{ using Type = FOSSCommandTypeRelated; };
+template <> struct FRelatedTool<ECompressType>						{ using Type = FCompressTypeRelated; };
 template <> struct FRelatedTool<FAutomatedCallConfig>				{ using Type = FAutomatedCallRelated; };
 template <> struct FRelatedTool<FAutomatedCallCustomContentConfig>	{ using Type = FAutomatedCallCustomContentRelated; };
 template <> struct FRelatedTool<FAutomatedUEProjectRefreshConfig>	{ using Type = FAutomatedUEProjectRefreshRelated; };
@@ -828,7 +941,7 @@ template <> struct FRelatedTool<FAutomatedConditionCommandConfig>	{ using Type =
 template <> struct FRelatedTool<FAutomatedOSSConfig>				{ using Type = FAutomatedOSSRelated; };
 template <> struct FRelatedTool<FAutomatedHTTPConfig>				{ using Type = FAutomatedHTTPRelated; };
 template <> struct FRelatedTool<FAutomatedHTTPServerConfig>			{ using Type = FAutomatedHTTPServerRelated; };
-
+template <> struct FRelatedTool<FAutomatedCompressConfig>			{ using Type = FAutomatedCompressRelated; };
 
 
 template <class AutomatedConfig, class = std::enable_if_t<std::is_base_of_v<FAutomatedConfigBase, AutomatedConfig>>>

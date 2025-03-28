@@ -10,7 +10,7 @@
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
 
-struct FOperatePath_DeploymentCopy : public SimpleAutomationToolCommon::FOperatePath
+struct FOperatePath_DeploymentCopy : public SimpleAutomationToolCommon::FProcessPath_Base
 {
 	virtual void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath)
 	{
@@ -111,8 +111,8 @@ bool FAutomatedCode_Deployment_Copy::Execute()
 
 	TMap<FString, FString> Content;
 	SimpleAutomationToolCommon::PathFilter<
-		SimpleAutomationToolCommon::FOperateFileOrDirectory_PathExists, 
-		SimpleAutomationToolCommon::FOperateFileOrDirectory_DeletePath,
+		SimpleAutomationToolCommon::FPreprocessPath_PathExists, 
+		SimpleAutomationToolCommon::FPreprocessPath_DeletePath,
 		FOperatePath_DeploymentCopy
 		>(Content, SelfConfig->Files);
 
