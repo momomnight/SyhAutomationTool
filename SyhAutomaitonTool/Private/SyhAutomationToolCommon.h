@@ -4,6 +4,12 @@
 #include "SyhAutomationToolType.h"
 #include "Misc/Parse.h"
 
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", off)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+
 namespace SimpleAutomationToolCommon
 {
 	//打包的文件路径，以时间为名
@@ -38,6 +44,7 @@ namespace SimpleAutomationToolCommon
 			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value. Use default value."), *Key);
 			return false;
 		}
+
 		return true;
 	}
 
@@ -221,7 +228,11 @@ namespace SimpleAutomationToolCommon
 					}
 					else
 					{
-						IFileManager::Get().FindFiles(FoundFiles, *SourcePath);
+						IFileManager::Get().FindFiles(FoundFiles, *(SourcePath / TEXT("*")), true, true);
+						for (auto& FoundFile : FoundFiles)
+						{
+							FoundFile = SourcePath / FoundFile;
+						}
 					}
 
 					for (auto& SubTemp : FoundFiles)
@@ -242,7 +253,9 @@ namespace SimpleAutomationToolCommon
 		return true;
 	}
 
-
-
-	
 }
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", on)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT

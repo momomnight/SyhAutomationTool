@@ -45,7 +45,7 @@ public:
 	virtual bool Execute() override;
 
 private:
-	FString GetCompressFileExtension(ECompressType InCompressType);
+	void SetCompressFileExtension(ECompressType InCompressType);
 	bool Execute(const FString& InSource, const FString& InTarget);
 
 

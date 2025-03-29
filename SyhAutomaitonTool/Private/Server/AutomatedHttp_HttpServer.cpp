@@ -13,7 +13,7 @@ DEFINE_GLOBAL_SINGLETON_CPP(AutomatedHttp_HttpServer);
 void FAutomatedHttp_HttpServer::Init()
 {
 
-	SimpleAutomationToolCommon::GetValueFromCommandLine<bool>(Tool<FAutomatedHTTPServerConfig>::bHttps_BooleanKey, Config.bHttps);
+	SimpleAutomationToolCommon::GetValueFromCommandLine<bool>(Tool<FAutomatedHTTPServerConfig>::Https_BooleanKey, Config.bHttps);
 	
 	if(Config.bHttps)
 	{

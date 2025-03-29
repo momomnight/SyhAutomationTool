@@ -10,6 +10,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //枚举相关字符串及操作，如添加自定义枚举需要实现
 
+struct FEnumTrait
+{
+	consteval bool HasEnumTool()
+	{
+		return true;
+	}
+};
+
 template <>
 struct FEnumInitialValueImpl<ECommandProtocol>
 {
@@ -46,7 +54,7 @@ private:
 	};
 	constexpr static FEnumRelatedBase<ECommandProtocol, EnumMemberNumber> InitialValue{ EnumData };
 public:
-	consteval static uint32 GetMemberName()
+	consteval static uint32 GetMemberNumber()
 	{
 		return EnumMemberNumber;
 	}
@@ -81,7 +89,7 @@ private:
 	constexpr static FEnumRelatedBase<EComparisionType, EnumMemberNumber> InitialValue{ EnumData };
 
 public:
-	consteval static uint32 GetMemberName()
+	consteval static uint32 GetMemberNumber()
 	{
 		return EnumMemberNumber;
 	}
@@ -117,7 +125,7 @@ private:
 	constexpr static FEnumRelatedBase<ESimpleHTTPVerbType, EnumMemberNumber> InitialValue{ EnumData };
 
 public:
-	consteval static uint32 GetMemberName()
+	consteval static uint32 GetMemberNumber()
 	{
 		return EnumMemberNumber;
 	}
@@ -157,7 +165,7 @@ private:
 	constexpr static FEnumRelatedBase<ESimpleOSSCommand, EnumMemberNumber> InitialValue{ EnumData };
 
 public:
-	consteval static uint32 GetMemberName()
+	consteval static uint32 GetMemberNumber()
 	{
 		return EnumMemberNumber;
 	}
@@ -189,12 +197,44 @@ private:
 	constexpr static FEnumRelatedBase<ECompressType, EnumMemberNumber> InitialValue{ EnumData };
 
 public:
-	consteval static uint32 GetMemberName()
+	consteval static uint32 GetMemberNumber()
 	{
 		return EnumMemberNumber;
 	}
 
 	consteval static const FEnumRelatedBase<ECompressType, EnumMemberNumber>* GetInitialValue()
+	{
+		return &InitialValue;
+	}
+};
+
+template <>
+struct FEnumInitialValueImpl<EMysqlMethodType>
+{
+private:
+	static constexpr const TCHAR* EnumMemberName[] =
+	{
+		TEXT("None"),
+		TEXT("Get"),
+		TEXT("Post"),
+	};
+	constexpr static uint32 EnumMemberNumber = UE_ARRAY_COUNT(EnumMemberName);
+
+	constexpr static FEnumData<EMysqlMethodType, EnumMemberNumber> EnumData = {
+		TEXT("EMysqlMethodType::MYSQLMETHOD_"),
+		UE_ARRAY_COUNT(TEXT("EMysqlMethodType::MYSQLMETHOD_")),
+		TEXT("MysqlMethodType"),
+		EnumMemberName
+	};
+	constexpr static FEnumRelatedBase<EMysqlMethodType, EnumMemberNumber> InitialValue{ EnumData };
+
+public:
+	consteval static uint32 GetMemberNumber()
+	{
+		return EnumMemberNumber;
+	}
+
+	consteval static const FEnumRelatedBase<EMysqlMethodType, EnumMemberNumber>* GetInitialValue()
 	{
 		return &InitialValue;
 	}
@@ -225,6 +265,10 @@ struct FCompressTypeRelated : public FEnumRelated<ECompressType>
 {
 };
 
+struct FMysqlMethodTypeRelated : public FEnumRelated<EMysqlMethodType>
+{
+};
+
 //命令协议枚举
 UENUM(BlueprintType)
 enum class ECommandProtocol : uint8
@@ -244,6 +288,7 @@ enum class ECommandProtocol : uint8
 	CMD_OSS							UMETA(DisplayName = "OSS"),
 	CMD_HTTP						UMETA(DisplayName = "HTTP"),
 	CMD_Compress					UMETA(DisplayName = "Compress"),
+	CMD_Mysql						UMETA(DisplayName = "Mysql"),
 	//CMD_HTTP_Server				UMETA(DisplayName = "HTTP Server"),
 	//CMD_Web_Socket				UMETA(DisplayName = "Web Socket"),
 
@@ -268,6 +313,13 @@ enum class ECompressType : uint8
 	COMPRESS_RZ						UMETA(DisplayName = "Custom Format RZ"),
 };
 
+UENUM(BlueprintType)
+enum class EMysqlMethodType : uint8
+{
+	MYSQLMETHOD_None = 0				UMETA(DisplayName = "None"),
+	MYSQLMETHOD_Get						UMETA(DisplayName = "Get"),
+	MYSQLMETHOD_Post					UMETA(DisplayName = "Post"),
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //配置相关属性序列化时的关键字名，可以不实现，只需要在Json相关操作中不使用即可
@@ -377,7 +429,7 @@ struct FAutomatedHTTPServerRelated
 {
 	static const FString IPKey;
 	static const FString Port_IntKey;
-	static const FString bHttps_BooleanKey;
+	static const FString Https_BooleanKey;
 	static const FString CertificateKey;
 	static const FString KeyKey;
 	static const FString Timeout_FloatKey;
@@ -385,8 +437,26 @@ struct FAutomatedHTTPServerRelated
 
 struct FAutomatedCompressRelated
 {
-
+	static const FString Compress_BooleanKey;
+	static const FString CompressMethodKey;
+	static const FString CompressEachFileUnderPath_BooleanKey;
+	static const FString PasswordKey;
+	static const FString PathOfSourceToTargetKey;
+	static const FString SourceKey;
+	static const FString TargetKey;
 };
+
+struct FAutomatedMysqlRelated
+{
+	static const FString UserKey;
+	static const FString HostKey;
+	static const FString Port_IntKey;
+	static const FString PasswordKey;
+	static const FString DataBaseKey;
+	static const FString MethodKey;
+	static const FString SavePathKey;
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //若要添加自定义的自动化元素，必须实现
@@ -819,7 +889,7 @@ struct FAutomatedCompressConfig : public FAutomatedConfigBase
 	FAutomatedCompressConfig()
 	{
 		bCompress = true;
-		Method = ECompressType::COMPRESS_Zip;
+		CompressMethod = ECompressType::COMPRESS_Zip;
 		bCompressEachFileUnderPath = true;
 		PathOfSourceToTarget.Emplace(TEXT("source_file1"), TEXT("target1.zip"));
 		PathOfSourceToTarget.Emplace(TEXT("source_file2"), TEXT("target2.rz"));
@@ -829,7 +899,7 @@ struct FAutomatedCompressConfig : public FAutomatedConfigBase
 	bool bCompress;//是否是压缩
 
 	UPROPERTY()
-	ECompressType Method;
+	ECompressType CompressMethod;
 
 	UPROPERTY()
 	bool bCompressEachFileUnderPath;//是否对路径下的每个文件进行压缩，需要文件夹路径
@@ -842,6 +912,39 @@ struct FAutomatedCompressConfig : public FAutomatedConfigBase
 
 };
 
+//
+USTRUCT(BlueprintType)
+struct FAutomatedMysqlConfig : public FAutomatedConfigBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	typedef FAutomatedConfigBase Super;
+
+	FAutomatedMysqlConfig()
+	{
+
+	}
+	UPROPERTY()
+	FString User;
+
+	UPROPERTY()
+	FString Host;
+
+	UPROPERTY()
+	int32 Port;
+
+	UPROPERTY()
+	FString Password;
+
+	UPROPERTY()
+	FString DataBase;
+
+	UPROPERTY()
+	EMysqlMethodType Method;
+
+	UPROPERTY()
+	FString SavePath;
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //不与Elements产生关联，不使用Json，从命令行参数传入解析
@@ -899,6 +1002,7 @@ template <> struct FCommandProtocol_ConfigType<FAutomatedConditionCommandConfig>
 template <> struct FCommandProtocol_ConfigType<FAutomatedOSSConfig>					{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_OSS; };
 template <> struct FCommandProtocol_ConfigType<FAutomatedHTTPConfig>				{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_HTTP; };
 template <> struct FCommandProtocol_ConfigType<FAutomatedCompressConfig>			{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Compress; };
+template <> struct FCommandProtocol_ConfigType<FAutomatedMysqlConfig>				{ constexpr static ECommandProtocol Value = ECommandProtocol::CMD_Mysql; };
 
 
 //如果有枚举号，我们能拿到什么
@@ -917,6 +1021,7 @@ template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Condition_Com
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_OSS>					{ using ConfigType = FAutomatedOSSConfig; };
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_HTTP>				{ using ConfigType = FAutomatedHTTPConfig; };
 template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Compress>			{ using ConfigType = FAutomatedCompressConfig; };
+template <> struct FCommandProtocol_EnumType<ECommandProtocol::CMD_Mysql>				{ using ConfigType = FAutomatedMysqlConfig; };
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -927,6 +1032,7 @@ template <> struct FRelatedTool<EComparisionType>					{ using Type = FComparisio
 template <> struct FRelatedTool<ESimpleHTTPVerbType>				{ using Type = FHttpVerbTypeRelated; };
 template <> struct FRelatedTool<ESimpleOSSCommand>					{ using Type = FOSSCommandTypeRelated; };
 template <> struct FRelatedTool<ECompressType>						{ using Type = FCompressTypeRelated; };
+template <> struct FRelatedTool<EMysqlMethodType>					{ using Type = FMysqlMethodTypeRelated; };
 template <> struct FRelatedTool<FAutomatedCallConfig>				{ using Type = FAutomatedCallRelated; };
 template <> struct FRelatedTool<FAutomatedCallCustomContentConfig>	{ using Type = FAutomatedCallCustomContentRelated; };
 template <> struct FRelatedTool<FAutomatedUEProjectRefreshConfig>	{ using Type = FAutomatedUEProjectRefreshRelated; };
@@ -942,9 +1048,16 @@ template <> struct FRelatedTool<FAutomatedOSSConfig>				{ using Type = FAutomate
 template <> struct FRelatedTool<FAutomatedHTTPConfig>				{ using Type = FAutomatedHTTPRelated; };
 template <> struct FRelatedTool<FAutomatedHTTPServerConfig>			{ using Type = FAutomatedHTTPServerRelated; };
 template <> struct FRelatedTool<FAutomatedCompressConfig>			{ using Type = FAutomatedCompressRelated; };
-
+template <> struct FRelatedTool<FAutomatedMysqlConfig>				{ using Type = FAutomatedMysqlRelated; };
 
 template <class AutomatedConfig, class = std::enable_if_t<std::is_base_of_v<FAutomatedConfigBase, AutomatedConfig>>>
 using Tool = typename FRelatedTool<AutomatedConfig>::Type;
-template <class EnumType, class = std::enable_if_t<std::is_enum_v<EnumType>, void>>
+
+template <class EnumType>
+struct HasEnumTool
+{
+	constexpr static bool Value = std::is_enum_v<EnumType> && (FEnumInitialValueImpl<EnumType>::GetInitialValue() != nullptr);
+};
+
+template <class EnumType, class = std::enable_if_t<HasEnumTool<EnumType>::Value, void>>
 using EnumTool = typename FRelatedTool<EnumType>::Type;

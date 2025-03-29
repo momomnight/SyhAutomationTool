@@ -14,6 +14,7 @@
 #include "Element/OSS/AutomatedOss.h"
 #include "Element/HttpClient/AutomatedHttp.h"
 #include "Element/Compress/AutomatedCompress.h"
+#include "Element/Mysql/AutomatedMysql.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -62,6 +63,8 @@ TSharedPtr<FAutoExecElements> FAutoExecElementsFactory::CreateAutomatedTask(ECom
 		return CreateAutomatedTask<FAutomatedCode_HTTP>(InJson);
 	case ECommandProtocol::CMD_Compress:
 		return CreateAutomatedTask<FAutomatedCode_Compress>(InJson);
+	case ECommandProtocol::CMD_Mysql:
+		return CreateAutomatedTask<FAutomatedCode_Mysql>(InJson);
 	case ECommandProtocol::CMD_None:
 	default:
 		UE_LOG(SyhAutomaitonToolLog, Log, TEXT("No automated elements were created."));

@@ -10,7 +10,7 @@
 
 static constexpr const TCHAR* ZipStr = TEXT(".zip");
 static constexpr const TCHAR* RzStr = TEXT(".rz");
-TCHAR* CompressStr = nullptr;
+const TCHAR* CompressStr = nullptr;
 
 bool CheckExtension(const FString& InExtension)
 {
@@ -19,7 +19,11 @@ bool CheckExtension(const FString& InExtension)
 	{
 		Temp.RemoveFromStart(TEXT("."));
 	}
-	return EnumTool<EComparisionType>::IsValid(Temp);
+	return EnumTool<ECompressType>::IsValid(Temp);
+}
+bool IsUseZip()
+{
+	return CompressStr == ZipStr;
 }
 
 struct FProcessPath_CompressUnderPath : public SimpleAutomationToolCommon::FProcessPath_Base
@@ -39,11 +43,23 @@ struct FProcessPath_CompressUnderPath : public SimpleAutomationToolCommon::FProc
 		FFileStatData FileStatData = IFileManager::Get().GetStatData(*InFoundPath);
 		FString Temp = FPaths::GetCleanFilename(InFoundPath);
 			
-		if (!FileStatData.bIsDirectory)
+		if (FileStatData.bIsDirectory)
 		{
-			Temp.RemoveFromEnd(FPaths::GetExtension(InFoundPath, true));
+			OutContent.Add(InFoundPath, TargetPath / Temp + CompressStr);
 		}
-		OutContent.Add(InFoundPath, TargetPath / Temp + ZipStr);
+		else
+		{
+			if (IsUseZip())
+			{
+				Temp.RemoveFromEnd(FPaths::GetExtension(InFoundPath, true));
+				OutContent.Add(InFoundPath, TargetPath / Temp + CompressStr);
+			}
+			else
+			{
+				//rz压缩算法，不支持单独文件压缩
+				return;
+			}
+		}
 	}
 };
 
@@ -52,7 +68,22 @@ struct FProcessPath_Compress : public SimpleAutomationToolCommon::FProcessPath_B
 	//文件
 	virtual void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath)
 	{
-		OutContent.Add(SourcePath, TargetPath);
+		FString Extension = FPaths::GetExtension(TargetPath, true);
+
+		if (CheckExtension(Extension))
+		{
+			//提供了合法的拓展名，可根据拓展名使用具体压缩算法
+			OutContent.Add(SourcePath, TargetPath);
+		}
+		else
+		{
+			//未提供合法拓展名, 则去除拓展名，拼接上提供的拓展名
+			FString Temp = FPaths::GetCleanFilename(SourcePath);
+			Temp.RemoveFromEnd(Extension);
+			OutContent.Add(SourcePath, TargetPath / Temp + CompressStr);
+		}
+
+
 	}
 	//文件夹
 	virtual void operator()(TMap<FString, FString>& OutContent, const FString& InFoundPath, const FString& SourcePath, const FString& TargetPath)
@@ -62,26 +93,18 @@ struct FProcessPath_Compress : public SimpleAutomationToolCommon::FProcessPath_B
 };
 
 //用于bCompressEachFileUnderPath == false的情况，需要检查提供的目标路径是否正确，删除存在的目标路径
-struct FPreprocessPath_CheckAndDeleteTarget : SimpleAutomationToolCommon::FPreprocessPath_Base
+struct FPreprocessPath_CheckSource : SimpleAutomationToolCommon::FPreprocessPath_Base
 {
 	bool operator()(const FFileStatData& FileStatData, const FString& InPath)
 	{
-		FString Extension = FPaths::GetExtension(InPath);
-		bool CheckResult = CheckExtension(Extension);
-		if (CheckResult)
+		if(FileStatData.bIsValid && !FileStatData.bIsDirectory)
 		{
-			//目前程序可用的拓展名
-			//检查完成后，查看目标路径是否存在，存在则删除
-			return SimpleAutomationToolCommon::FPreprocessPath_DeletePath{}(FileStatData, InPath);
-
+			FString Extension = FPaths::GetExtension(InPath);
+			return CheckExtension(Extension);
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 };
-
 
 struct FProcessPath_DecompressUnderPath : public SimpleAutomationToolCommon::FProcessPath_Base
 {
@@ -96,7 +119,7 @@ struct FProcessPath_DecompressUnderPath : public SimpleAutomationToolCommon::FPr
 	{
 		//对于文件，要获取最终路径，需要去除SourcePath，去除尾部拓展名，再拼接TargetPath和ZipStr
 
-		FString Extension = FPaths::GetExtension(InFoundPath);
+		FString Extension = FPaths::GetExtension(InFoundPath, true);
 
 		if (!CheckExtension(Extension))
 		{
@@ -105,30 +128,20 @@ struct FProcessPath_DecompressUnderPath : public SimpleAutomationToolCommon::FPr
 			return;
 		}
 
-		FString Temp = FPaths::GetCleanFilename(InFoundPath);
-		Temp.RemoveFromEnd(TEXT(".") + Extension);
-		OutContent.Add(InFoundPath, TargetPath / Temp);
-	}
-};
-
-struct FPreprocessPath_ConditionalDeleteTarget : SimpleAutomationToolCommon::FPreprocessPath_Base
-{
-	bool operator()(const FFileStatData& FileStatData, const FString& InPath)
-	{
-		if (FileStatData.bIsValid)
+		if (Extension.Equals(ZipStr, ESearchCase::IgnoreCase))
 		{
-			if (FileStatData.bIsDirectory)
-			{
-				//目录无需删除
-				return true;
-			}
-			else
-			{
-				//文件需要删除
-				return SimpleAutomationToolCommon::FPreprocessPath_DeletePath{}(FileStatData, InPath);
-			}
+			//zip解压缩会在提供的目录路径下解压缩
+			FString Temp = FPaths::GetCleanFilename(InFoundPath);
+			Temp.RemoveFromEnd(Extension);
+			OutContent.Add(InFoundPath, TargetPath / Temp);
 		}
-		return true;
+		else
+		{
+			//rz只能压缩文件夹，故文件无法解压缩，文件解压缩会自动生成文件夹，故无需拼接额外文件夹
+			OutContent.Add(InFoundPath, TargetPath);
+		}
+
+
 	}
 };
 
@@ -160,29 +173,41 @@ void FAutomatedCode_Compress::Init()
 
 bool FAutomatedCode_Compress::BuildParameter(const FString& InJsonStr)
 {
-	return false;
+	return AutomationJson::JsonStringToAutomatedConfig(InJsonStr, *GetSelfConfig<OwnConfig>());
 }
 
 bool FAutomatedCode_Compress::BuildParameter()
 {
-	return false;
+	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
+	bool Result = true;
+	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine<bool>(Tool<OwnConfig>::Compress_BooleanKey, SelfConfig->bCompress);
+	SimpleAutomationToolCommon::GetValueFromCommandLine<bool>(Tool<OwnConfig>::CompressEachFileUnderPath_BooleanKey, SelfConfig->bCompressEachFileUnderPath);
+	SimpleAutomationToolCommon::GetValueFromCommandLine<ECompressType>(Tool<OwnConfig>::CompressMethodKey, SelfConfig->CompressMethod);
+	if(SelfConfig->CompressMethod == ECompressType::COMPRESS_Zip)
+	{
+		SimpleAutomationToolCommon::GetValueFromCommandLine<FString>(Tool<OwnConfig>::PasswordKey, SelfConfig->Password);
+	}
+	Result &= SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::PathOfSourceToTargetKey, SelfConfig->PathOfSourceToTarget, true);
+	return Result;
 }
 
 bool FAutomatedCode_Compress::Execute()
 {
-	SyhLogDisplay(TEXT("the command of UE_Plugin_Packaging is executing"));
+	SyhLogDisplay(TEXT("the command of Compress is executing"));
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
 	check(!SelfConfig->PathOfSourceToTarget.IsEmpty());
 
 	TMap<FString, FString> ExecuteContent;
-
+	
+	//通知函数对象使用的算法, 可能不使用，会根据文件拓展名使用具体算法
+	SetCompressFileExtension(SelfConfig->CompressMethod);
 	if (SelfConfig->bCompress)
 	{
 		if (SelfConfig->bCompressEachFileUnderPath)
 		{
-			//提供的路径为文件夹路径，并且压缩文件夹下的每一个文件或文件夹，不进行递归
-			//如果提供了非文件夹路径，不会做任何事
-
+			//key = SourceDirectory
+			//value = TargetDirectory
+			//会移除所有扩展名，需要CompressMethod, 默认使用zip
 			if (!SimpleAutomationToolCommon::PathFilter<
 					SimpleAutomationToolCommon::FPreprocessPath_PathExists,
 					SimpleAutomationToolCommon::FPreprocessPath_Nothing,
@@ -190,15 +215,16 @@ bool FAutomatedCode_Compress::Execute()
 				(ExecuteContent, SelfConfig->PathOfSourceToTarget, true, false))
 			{
 				SyhLogError(TEXT("Fail to filter path."));
-			}
+			}		
 		}
 		else
 		{
-			//直接对提供的路径进行筛选
-			//对于存在的目标路径直接删除
+			//key = SourcePath
+			//value = TargetPath
+			//根据提供的拓展名，无拓展名使用默认的zip
 			if (!SimpleAutomationToolCommon::PathFilter<
 					SimpleAutomationToolCommon::FPreprocessPath_PathExists,
-					FPreprocessPath_CheckAndDeleteTarget,
+					SimpleAutomationToolCommon::FPreprocessPath_Nothing,
 					FProcessPath_Compress>
 				(ExecuteContent, SelfConfig->PathOfSourceToTarget, false, false))
 			{
@@ -224,10 +250,11 @@ bool FAutomatedCode_Compress::Execute()
 		}
 		else
 		{
+			//需要检查提供的解压缩文件是否符合程序合法拓展名
 			if (!SimpleAutomationToolCommon::PathFilter<
-					SimpleAutomationToolCommon::FPreprocessPath_PathExists,
-					FPreprocessPath_ConditionalDeleteTarget,
-					FProcessPath_Compress>
+					FPreprocessPath_CheckSource,
+					SimpleAutomationToolCommon::FPreprocessPath_Nothing,
+					FProcessPath_Decompress>
 				(ExecuteContent, SelfConfig->PathOfSourceToTarget, false, false))
 			{
 				SyhLogError(TEXT("Fail to filter path."));
@@ -235,7 +262,8 @@ bool FAutomatedCode_Compress::Execute()
 		}
 	}
 
-	const TCHAR* PrintStr = SelfConfig->bCompress ? TEXT("compress") : TEXT("decompress");
+	//使用这种方式会崩溃？
+	//const TCHAR* PrintStr = SelfConfig->bCompress ? TEXT("compressed") : TEXT("decompressed");
 
 	//筛选后的路径，每一压缩成一个文件
 
@@ -254,11 +282,11 @@ bool FAutomatedCode_Compress::Execute()
 	{
 		if (Temp.Value)
 		{
-			SyhLogDisplay(TEXT("[%s] is successful to %s."), *Temp.Key, *PrintStr);
+			SyhLogDisplay(TEXT("[%s] is successful to %s."), *Temp.Key, SelfConfig->bCompress ? TEXT("compressed") : TEXT("decompressed"));
 		}
 		else
 		{
-			SyhLogError(TEXT("[%s] is failure to %s."), *Temp.Key, *PrintStr);
+			SyhLogError(TEXT("[%s] is failure to %s."), *Temp.Key, SelfConfig->bCompress ? TEXT("compressed") : TEXT("decompressed"));
 		}
 	}
 
@@ -281,22 +309,28 @@ bool FAutomatedCode_Compress::Execute(const FString& InSource, const FString& In
 
 	if (SelfConfig->bCompress)
 	{
-		switch (SelfConfig->Method)
+		FString Extension = FPaths::GetExtension(InTarget);
+		//根据拓展名使用压缩算法
+		switch (EnumTool<ECompressType>::GetEnumValue(Extension))
 		{
+		case ECompressType::COMPRESS_None://None代表无拓展名，使用Zip
 		case ECompressType::COMPRESS_Zip:
 		{
 			return USimpleZIPFunctionLibrary::ZipByLoacl(InSource, InTarget, SelfConfig->Password);
 		}
 		case ECompressType::COMPRESS_RZ:
 		{
+			//不支持压缩文件
 			return USimpleZIPFunctionLibrary::CompressToLocalToLocal(InSource, InTarget);
 		}
 		}
 	}
 	else
 	{
-		switch (SelfConfig->Method)
+		FString Extension = FPaths::GetExtension(InSource);
+		switch (EnumTool<ECompressType>::GetEnumValue(Extension))
 		{
+		case ECompressType::COMPRESS_None://None代表无拓展名，尝试使用zip
 		case ECompressType::COMPRESS_Zip:
 		{
 			return USimpleZIPFunctionLibrary::UnzipByLoacl(InSource, InTarget, SelfConfig->Password);
@@ -310,9 +344,20 @@ bool FAutomatedCode_Compress::Execute(const FString& InSource, const FString& In
 	return false;
 }
 
-FString FAutomatedCode_Compress::GetCompressFileExtension(ECompressType InCompressType)
+void FAutomatedCode_Compress::SetCompressFileExtension(ECompressType InCompressType)
 {
-	return TEXT(".") + EnumTool<ECompressType>::GetShortName(InCompressType).ToLower();
+	switch (InCompressType)
+	{
+	case ECompressType::COMPRESS_Zip:
+		CompressStr = ZipStr;
+		break;
+	case ECompressType::COMPRESS_RZ:
+		CompressStr = RzStr;
+		break;
+	case ECompressType::COMPRESS_None:
+	default:
+		break;
+	}
 }
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT

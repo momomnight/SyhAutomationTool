@@ -142,33 +142,23 @@ namespace AutomationMainFramework
 
 	void RunTask()
 	{
-		FDateTime CurrentDateTime = FDateTime::Now();
-		if (TimeSlotDateTime != 0)
+		bool Result = false;
+
+		//初始化,以读取最新的任务
+		Result = FAutoExecElementsManage::Get()->Init();
+		if (!Result)
 		{
-			if (CurrentDateTime >= TimeSlotDateTime)
-			{
-				//向前递进一天
-				TimeSlotDateTime += ETimespan::TicksPerDay;
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failed to Init"));
+		}
 
-				bool Result = false;
+		//执行自动化任务
+		Result = FAutoExecElementsManage::Get()->HandleTask();
+		if (!Result)
+		{
+			UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Handle tasks successfully"));
+		}
 
-				//初始化,以读取最新的任务
-				Result = FAutoExecElementsManage::Get()->Init();
-				if (!Result)
-				{
-					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Failed to Init"));
-				}
-
-				//执行自动化任务
-				Result = FAutoExecElementsManage::Get()->HandleTask();
-				if (!Result)
-				{
-					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Handle tasks successfully"));
-				}
-
-				UE_LOG(SyhAutomaitonToolLog, Display, TEXT("The next time handling task is [%s]"), *FDateTime(TimeSlotDateTime).ToString());
-			}
-		}	
+		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("The next time handling task is [%s]"), *FDateTime(TimeSlotDateTime).ToString());
 	}
 
 	int32 RunLoop()
@@ -178,8 +168,17 @@ namespace AutomationMainFramework
 		while (!IsEngineExitRequested())
 		{
 
-			RunTask();
+			FDateTime CurrentDateTime = FDateTime::Now();
+			if (TimeSlotDateTime != 0)
+			{
+				if (CurrentDateTime >= TimeSlotDateTime)
+				{
+					//向前递进一天
+					TimeSlotDateTime += ETimespan::TicksPerDay;
 
+					RunTask();
+				}
+			}
 			RunServer(LastTime);		
 		}
 		return 0;

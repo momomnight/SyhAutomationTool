@@ -255,8 +255,29 @@ namespace AutomationJson
 	template<>
 	void AutomatedConfigToJsonObject<FAutomatedCompressConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedCompressConfig& InConfig)
 	{
+		OutJsonObject->SetBoolField(Tool<FAutomatedCompressConfig>::Compress_BooleanKey, InConfig.bCompress);
+		OutJsonObject->SetBoolField(Tool<FAutomatedCompressConfig>::CompressEachFileUnderPath_BooleanKey, InConfig.bCompressEachFileUnderPath);
+		OutJsonObject->SetStringField(Tool<FAutomatedCompressConfig>::CompressMethodKey, EnumTool<decltype(InConfig.CompressMethod)>::GetShortName(InConfig.CompressMethod));
+		OutJsonObject->SetStringField(Tool<FAutomatedCompressConfig>::PasswordKey, InConfig.Password);
+
+		TArray<TSharedPtr<FJsonValue>> Array;
+
+		for (auto& Temp : InConfig.PathOfSourceToTarget)
+		{
+			TSharedPtr<FJsonObject> TempObject = MakeShareable(new FJsonObject);
+			TempObject->SetStringField(Tool<FAutomatedCompressConfig>::SourceKey, Temp.Key);
+			TempObject->SetStringField(Tool<FAutomatedCompressConfig>::TargetKey, Temp.Value);
+			Array.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(TempObject)));
+		}
+		OutJsonObject->SetArrayField(Tool<FAutomatedCompressConfig>::PathOfSourceToTargetKey, Array);
+	}
+
+	template<>
+	void AutomatedConfigToJsonObject<FAutomatedMysqlConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedMysqlConfig& InConfig)
+	{
 
 	}
+
 
 
 	/// <summary>
@@ -497,7 +518,32 @@ namespace AutomationJson
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedCompressConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCompressConfig& OutConfig)
 	{
+		OutConfig.bCompress = InJsonObject->GetBoolField(Tool<FAutomatedCompressConfig>::Compress_BooleanKey);
+		OutConfig.bCompressEachFileUnderPath = InJsonObject->GetBoolField(Tool<FAutomatedCompressConfig>::CompressEachFileUnderPath_BooleanKey);
+		OutConfig.CompressMethod = EnumTool<decltype(OutConfig.CompressMethod)>::GetEnumValue(InJsonObject->GetStringField(Tool<FAutomatedCompressConfig>::CompressMethodKey));
+		OutConfig.Password = InJsonObject->GetStringField(Tool<FAutomatedCompressConfig>::PasswordKey);
+		
+		OutConfig.PathOfSourceToTarget.Empty();
+		const TArray<TSharedPtr<FJsonValue>>& Array = InJsonObject->GetArrayField(Tool<FAutomatedCompressConfig>::PathOfSourceToTargetKey);
+		for (auto Temp : Array)
+		{
+			if (TSharedPtr<FJsonObject> TempObject = Temp->AsObject())
+			{
+				FString Source = TempObject->GetStringField(Tool<FAutomatedCompressConfig>::SourceKey);
+				FString Target = TempObject->GetStringField(Tool<FAutomatedCompressConfig>::TargetKey);
 
+				FPaths::NormalizeDirectoryName(Source);
+				FPaths::RemoveDuplicateSlashes(Source);
+				FPaths::NormalizeDirectoryName(Target);
+				FPaths::RemoveDuplicateSlashes(Target);
+				OutConfig.PathOfSourceToTarget.Emplace(Source, Target);
+			}
+		}
+	}
+
+	template<>
+	void JsonObjectToAutomatedConfig<FAutomatedMysqlConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedMysqlConfig& OutConfig)
+	{
 
 	}
 

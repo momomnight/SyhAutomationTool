@@ -206,14 +206,14 @@ private:
 	};
 	constexpr static FEnumRelatedBase<EnumType, EnumMemberNumber> InitialValue{ EnumData };
 public:
-	consteval static uint32 GetMemberName()
+	consteval static uint32 GetMemberNumber()
 	{
-		return EnumMemberNumber;
+		return 0;
 	}
 
 	consteval static const FEnumRelatedBase<EnumType, EnumMemberNumber>* GetInitialValue()
 	{
-		return &InitialValue;
+		return nullptr;
 	}
 };
 
@@ -241,7 +241,7 @@ struct FEnumFunctionObjectRelated
 template <class EnumType, class InvalidEnumValueOperator = FEnumFunctionObjectRelated::DefaultInvalidEnumValueOperator<EnumType>>
 struct FEnumRelated
 {
-	static_assert(FEnumInitialValueImpl<EnumType>::GetMemberName() > 0, "EnumMemberNameNumber must be greater to 0.");
+	static_assert(FEnumInitialValueImpl<EnumType>::GetMemberNumber() > 0, "EnumMemberNameNumber must be greater to 0.");
 	static_assert(std::is_enum_v<EnumType>, "EnumType must be enum type.");
 	static_assert(std::is_same_v<InvalidEnumValueOperator, FEnumFunctionObjectRelated::DefaultInvalidEnumValueOperator<EnumType>> || 
 		std::is_base_of_v<FEnumFunctionObjectRelated::DefaultInvalidEnumValueOperator<EnumType>, InvalidEnumValueOperator>, 
@@ -361,7 +361,7 @@ public:
 	}
 
 protected:
-	constexpr static const FEnumRelatedBase<EnumType, FEnumInitialValueImpl<EnumType>::GetMemberName()>* Impl = FEnumInitialValueImpl<EnumType>::GetInitialValue();
+	constexpr static const FEnumRelatedBase<EnumType, FEnumInitialValueImpl<EnumType>::GetMemberNumber()>* Impl = FEnumInitialValueImpl<EnumType>::GetInitialValue();
 };
 
 

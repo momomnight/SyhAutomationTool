@@ -79,8 +79,23 @@ const FString FAutomatedHTTPRelated::SavePathKey = TEXT("SavePath");
 
 const FString FAutomatedHTTPServerRelated::IPKey = TEXT("IP");
 const FString FAutomatedHTTPServerRelated::Port_IntKey = TEXT("Port");
-const FString FAutomatedHTTPServerRelated::bHttps_BooleanKey = TEXT("bHttps");
+const FString FAutomatedHTTPServerRelated::Https_BooleanKey = TEXT("bHttps");
 const FString FAutomatedHTTPServerRelated::CertificateKey = TEXT("Certificate");
 const FString FAutomatedHTTPServerRelated::KeyKey = TEXT("Key");
 const FString FAutomatedHTTPServerRelated::Timeout_FloatKey = TEXT("Timeout");
 
+const FString FAutomatedCompressRelated::Compress_BooleanKey = TEXT("bCompress");
+const FString FAutomatedCompressRelated::CompressMethodKey = TEXT("CompressMethod");
+const FString FAutomatedCompressRelated::CompressEachFileUnderPath_BooleanKey = TEXT("bCompressEachFileUnderPath");
+const FString FAutomatedCompressRelated::PasswordKey = TEXT("Password");
+const FString FAutomatedCompressRelated::PathOfSourceToTargetKey = TEXT("PathOfSourceToTarget");
+const FString FAutomatedCompressRelated::SourceKey = TEXT("Source");
+const FString FAutomatedCompressRelated::TargetKey = TEXT("Target");
+
+const FString FAutomatedMysqlRelated::UserKey = TEXT("User");
+const FString FAutomatedMysqlRelated::HostKey = TEXT("Host");
+const FString FAutomatedMysqlRelated::Port_IntKey = TEXT("Port");
+const FString FAutomatedMysqlRelated::PasswordKey= TEXT("Password");
+const FString FAutomatedMysqlRelated::DataBaseKey= TEXT("DataBase");
+const FString FAutomatedMysqlRelated::MethodKey = TEXT("Method");
+const FString FAutomatedMysqlRelated::SavePathKey = TEXT("SavePath");
