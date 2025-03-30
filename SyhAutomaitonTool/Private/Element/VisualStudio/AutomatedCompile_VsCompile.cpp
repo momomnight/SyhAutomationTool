@@ -36,11 +36,13 @@ bool FAutomatedCode_VS_Compile::BuildParameter()
 		FPaths::RemoveDuplicateSlashes(SelfConfig->CallPath);
 		FPaths::NormalizeFilename(SelfConfig->SlnProjectPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->SlnProjectPath);
+		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->CallPath);
+		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->SlnProjectPath);
 		return true;
 	}
 	else
 	{
-		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 		return false;
 	}
 }

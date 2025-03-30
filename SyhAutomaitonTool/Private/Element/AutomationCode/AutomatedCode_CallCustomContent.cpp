@@ -33,7 +33,7 @@ bool FAutomatedCode_CallCustomContent::BuildParameter()
 	}
 	else
 	{
-		SyhLogError(TEXT("build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 		return false;
 	}
 }

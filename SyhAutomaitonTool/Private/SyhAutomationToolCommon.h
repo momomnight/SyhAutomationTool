@@ -86,7 +86,13 @@ namespace SimpleAutomationToolCommon
 	bool DeletePath(const FString& InPath);
 
 
-	void HandleTimePath(FString& InPath);
+	//是否存在路径替换
+	// %~ProjectPath/xxx.txt
+	// C:\\MyProgram\\UnrealEngine-5.3.2-release\\SyhAutomaitonTool\\xxx.txt
+	//FAutomatedCode_Xxxx::BuildParameter(const FString& InJsonStr)
+	//FAutomatedCode_Xxxx::BuildParameter()
+	//在以上两种成员种控制替换的路径
+	void RecognizePathSyntax(FString& InPath);
 
 	bool PathExists(const FString& InPath, bool bFolder)
 	{
@@ -197,10 +203,6 @@ namespace SimpleAutomationToolCommon
 		{
 			FString SourcePath = TempPath.Key;
 			FString TargetPath = TempPath.Value;
-
-			//是否存在命令替换
-			/*HandleTimePath(SourcePath);
-			HandleTimePath(TargetPath);*/
 
 			FFileStatData SourceFileStatData = IFileManager::Get().GetStatData(*SourcePath);
 			FFileStatData TargetFileStatData = IFileManager::Get().GetStatData(*TargetPath);

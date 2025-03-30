@@ -34,16 +34,19 @@ bool FAutomatedCode_UE_Packaging::BuildParameter()
 	if (Result)
 	{
 		FPaths::NormalizeDirectoryName(SelfConfig->EngineDir);
-		FPaths::NormalizeFilename(SelfConfig->UProjectPath);
+		FPaths::NormalizeDirectoryName(SelfConfig->UProjectPath);
 		FPaths::NormalizeDirectoryName(SelfConfig->ArchiveDirectory);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->EngineDir);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->UProjectPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->ArchiveDirectory);
+		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->EngineDir);
+		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->UProjectPath);
+		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->ArchiveDirectory);
 		return true;
 	}
 	else
 	{
-		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 		return false;
 	}
 }
@@ -58,8 +61,6 @@ bool FAutomatedCode_UE_Packaging::Execute()
 	check(!SelfConfig->Platform.IsEmpty());
 	check(!SelfConfig->BuildState.IsEmpty());
 	check(!SelfConfig->ArchiveDirectory.IsEmpty());
-
-	SimpleAutomationToolCommon::HandleTimePath(SelfConfig->ArchiveDirectory);
 
 	FString RunUATPath = FString::Printf(TEXT("%s/Build/BatchFiles/RunUAT.bat"), *SelfConfig->EngineDir);
 	SimpleAutomationToolCommon::GetBatPathString(RunUATPath);

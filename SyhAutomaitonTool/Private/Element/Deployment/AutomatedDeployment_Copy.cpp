@@ -41,7 +41,6 @@ struct FMoveToFileCopyProgress : public FCopyProgress
 
 void FAutomatedCode_Deployment_Copy::Init()
 {
-	GetSelfConfig<OwnConfig>()->Files.Empty();
 }
 
 bool FAutomatedCode_Deployment_Copy::BuildParameter(const FString& InJsonStr)
@@ -52,43 +51,41 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter(const FString& InJsonStr)
 bool FAutomatedCode_Deployment_Copy::BuildParameter()
 {
 	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-
-	bool Result = true;
+	SelfConfig->Files.Empty();
+	
 	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::DeleteMovedFiles_BooleanKey, SelfConfig->bDeleteMovedFiles);
 
-	if (!Result)
-	{
-		SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
-		return false;
-	}
-
 	TArray<FString> Source;
-	TArray<FString> Destination;
+	TArray<FString> Target;
 
 	if (!SimpleAutomationToolCommon::ParseCommandLineByKey(TEXT("-Source="), Source, true) || 
-		!SimpleAutomationToolCommon::ParseCommandLineByKey(TEXT("-Destination="), Destination, true))
+		!SimpleAutomationToolCommon::ParseCommandLineByKey(TEXT("-Target="), Target, true))
 	{
-		SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 		return false;
 	}
 	else
 	{
-		if (Source.Num() == Destination.Num())
+		if (Source.Num() == Target.Num())
 		{
 			for (int32 i = 0; i < Source.Num(); i++)
 			{
-				FPaths::NormalizeFilename(Source[i]);
-				FPaths::RemoveDuplicateSlashes(Source[i]);
-				FPaths::NormalizeFilename(Destination[i]);
-				FPaths::RemoveDuplicateSlashes(Destination[i]);
-				SelfConfig->Files.Add(Source[i], Destination[i]);
+				FString& SourceTemp = Source[i];
+				FString& TargetTemp = Target[i];
+				FPaths::NormalizeDirectoryName(SourceTemp);
+				FPaths::RemoveDuplicateSlashes(SourceTemp);
+				FPaths::NormalizeDirectoryName(TargetTemp);
+				FPaths::RemoveDuplicateSlashes(TargetTemp);
+				SimpleAutomationToolCommon::RecognizePathSyntax(SourceTemp);
+				SimpleAutomationToolCommon::RecognizePathSyntax(TargetTemp);
+				SelfConfig->Files.Add(SourceTemp, TargetTemp);
 			}
 			return true;
 		}
 		else
 		{
-			SyhLogError(TEXT("The number of the source path is not equal to the number of the destination path."));
-			SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
+			SyhLogError(TEXT("The number of the source path is not equal to the number of the target path."));
+			SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 			return false;
 		}
 	}

@@ -20,7 +20,6 @@ FAutomatedCode_Git::~FAutomatedCode_Git()
 
 void FAutomatedCode_Git::Init()
 {
-	GetSelfConfig<OwnConfig>()->GitCommands.Empty();
 }
 
 bool FAutomatedCode_Git::BuildParameter(const FString& InJsonStr)
@@ -36,22 +35,29 @@ bool FAutomatedCode_Git::BuildParameter()
 	{
 		FPaths::NormalizeFilename(SelfConfig->ProjectPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->ProjectPath);
+		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->ProjectPath);
 	}
 	else
 	{
-		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 		return false;
 	}
 
 	if(!SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::GitCommandsKey, SelfConfig->GitCommands, false))
 	{
-		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 		return false;
 	}
 
-	check(SelfConfig->GitCommands.Num() > 0);
-
-	return true;
+	if (SelfConfig->GitCommands.Num() > 0)
+	{
+		return true;
+	}
+	else
+	{
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
+		return false;
+	}
 }
 
 bool FAutomatedCode_Git::Execute()

@@ -36,11 +36,13 @@ bool FAutomatedCode_UEProjectRefresh::BuildParameter()
 		FPaths::RemoveDuplicateSlashes(SelfConfig->UnrealBuildToolPath);
 		FPaths::NormalizeFilename(SelfConfig->ProjectUProjectPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->ProjectUProjectPath);
+		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->UnrealBuildToolPath);
+		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->ProjectUProjectPath);
 		return true;
 	}
 	else
 	{
-		SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 		return false;
 	}
 }

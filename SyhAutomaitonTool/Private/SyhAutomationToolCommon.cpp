@@ -1,5 +1,6 @@
 #include "SyhAutomationToolCommon.h"
 #include "SyhAutomationToolLog.h"
+#include "Misc/AutomatedExecutionPath.h"
 
 namespace SimpleAutomationToolCommon
 {
@@ -33,6 +34,7 @@ namespace SimpleAutomationToolCommon
 				{
 					FPaths::NormalizeDirectoryName(Temp);
 					FPaths::RemoveDuplicateSlashes(Temp);
+					RecognizePathSyntax(Temp);
 				}
 			}
 			return true;
@@ -68,6 +70,8 @@ namespace SimpleAutomationToolCommon
 					FPaths::RemoveDuplicateSlashes(Key);
 					FPaths::NormalizeDirectoryName(Value);
 					FPaths::RemoveDuplicateSlashes(Value);
+					RecognizePathSyntax(Key);
+					RecognizePathSyntax(Value);
 				}
 				OutMap.Add(Key, Value);
 			}
@@ -181,12 +185,48 @@ namespace SimpleAutomationToolCommon
 
 	}
 
-	void HandleTimePath(FString& InPath)
+	void RecognizePathSyntax(FString& InPath)
 	{
 		if (InPath.Contains(TEXT("%~Time")))
 		{
 			InPath.ReplaceInline(TEXT("%~Time"), *PackagingSaveFileName);
 		}
+
+		if (InPath.Contains(TEXT("%~AutoPath")))
+		{
+			InPath.ReplaceInline(TEXT("%~AutoPath"), *AutomatedExecutionPath::GetAutomatedPath());
+		}
+
+		if (InPath.Contains(TEXT("%~ProjectPath")))
+		{
+			InPath.ReplaceInline(TEXT("%~ProjectPath"), *AutomatedExecutionPath::GetProjectPath());
+		}
+
+		if (InPath.Contains(TEXT("%~ProjectSavePath")))
+		{
+			InPath.ReplaceInline(TEXT("%~ProjectSavePath"), *AutomatedExecutionPath::GetProjectSavePath());
+		}
+
+		if (InPath.Contains(TEXT("%~ProjectConfigPath")))
+		{
+			InPath.ReplaceInline(TEXT("%~ProjectConfigPath"), *AutomatedExecutionPath::GetProjectConfigPath());
+		}
+
+		if (InPath.Contains(TEXT("%~ProjectBinariesPath")))
+		{
+			InPath.ReplaceInline(TEXT("%~ProjectBinariesPath"), *AutomatedExecutionPath::GetProjectBinariesPath());
+		}
+
+		if (InPath.Contains(TEXT("%~EnginePath")))
+		{
+			InPath.ReplaceInline(TEXT("%~EnginePath"), *AutomatedExecutionPath::GetEnginePath());
+		}
+		if (InPath.Contains(TEXT("%~EngineBinariesPath")))
+		{
+			InPath.ReplaceInline(TEXT("%~EngineBinariesPath"), *AutomatedExecutionPath::GetEngineBinariesPath());
+		}
+
+
 	}
 
 }

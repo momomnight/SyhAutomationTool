@@ -19,18 +19,14 @@ FAutomatedCode_ConditionCommand::~FAutomatedCode_ConditionCommand()
 
 void FAutomatedCode_ConditionCommand::Init()
 {
-	GetSelfConfig<OwnConfig>()->FalseCommandList.Empty();
-	GetSelfConfig<OwnConfig>()->TrueCommandList.Empty();
+	Super::InitTaskCommand();
+	Self::InitTaskCommand();
+	SetExecuteToken(true);
 }
 
 bool FAutomatedCode_ConditionCommand::BuildParameter(const FString& InJsonStr)
 {
-	AutomationJson::JsonStringToAutomatedConfig<OwnConfig>(InJsonStr, *GetSelfConfig<OwnConfig>());
-	bool Result = true;
-	Result &= Super::InitTaskCommand();
-	Self::InitTaskCommand();
-	SetExecuteToken(Result);
-	return Result;
+	return AutomationJson::JsonStringToAutomatedConfig<OwnConfig>(InJsonStr, *GetSelfConfig<OwnConfig>());
 }
 
 bool FAutomatedCode_ConditionCommand::BuildParameter()
@@ -49,7 +45,7 @@ bool FAutomatedCode_ConditionCommand::BuildParameter()
 	}
 	else
 	{
-		SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 		return false;
 	}
 }

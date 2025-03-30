@@ -188,6 +188,12 @@ bool FAutomatedCode_Compress::BuildParameter()
 		SimpleAutomationToolCommon::GetValueFromCommandLine<FString>(Tool<OwnConfig>::PasswordKey, SelfConfig->Password);
 	}
 	Result &= SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::PathOfSourceToTargetKey, SelfConfig->PathOfSourceToTarget, true);
+	
+	if (!Result)
+	{
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
+	}
+
 	return Result;
 }
 
@@ -270,7 +276,6 @@ bool FAutomatedCode_Compress::Execute()
 	TMultiMap<FString, bool> TaskResult;
 	for (auto& Temp : ExecuteContent)
 	{
-		SimpleAutomationToolCommon::HandleTimePath(Temp.Value);
 		TaskResult.Add(Temp.Key, Execute(Temp.Key, Temp.Value));
 	}
 

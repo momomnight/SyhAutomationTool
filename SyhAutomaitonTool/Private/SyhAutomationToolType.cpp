@@ -99,3 +99,4 @@ const FString FAutomatedMysqlRelated::PasswordKey= TEXT("Password");
 const FString FAutomatedMysqlRelated::DataBaseKey= TEXT("DataBase");
 const FString FAutomatedMysqlRelated::MethodKey = TEXT("Method");
 const FString FAutomatedMysqlRelated::SavePathKey = TEXT("SavePath");
+const FString FAutomatedMysqlRelated::SqlKey = TEXT("Sql");

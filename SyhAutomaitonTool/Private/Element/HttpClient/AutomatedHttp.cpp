@@ -67,15 +67,21 @@ bool FAutomatedCode_HTTP::BuildParameter()
 	{
 		FPaths::NormalizeDirectoryName(SelfConfig->SavePath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->SavePath);
+		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->SavePath);
 		if(SelfConfig->bBinaries)
 		{
 			//二进制文件的情况下，ContentBody为文件路径
 			FPaths::NormalizeFilename(SelfConfig->ContentBody);
 			FPaths::RemoveDuplicateSlashes(SelfConfig->ContentBody);
+			SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->ContentBody);
 		}
+		return true;
 	}
-
-	return Result;
+	else
+	{
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
+		return false;
+	}
 }
 
 bool FAutomatedCode_HTTP::Execute()

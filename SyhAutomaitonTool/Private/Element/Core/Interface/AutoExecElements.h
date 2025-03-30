@@ -34,13 +34,12 @@ public:
 	}
 
 	template <class AutomatedCommandType>
-	static void Init(TSharedPtr<FAutoExecElements> SelfPtr)
+	static void CreateAutoExecElement(TSharedPtr<FAutoExecElements> SelfPtr)
 	{
 		static_assert(std::is_base_of<FAutoExecElements, AutomatedCommandType>::value, "This type is not derived of FAutoExecElements.");
 		if (!SelfPtr->Z_C_o_n_f_i_g.IsValid())
 		{
 			SelfPtr->Z_C_o_n_f_i_g = MakeShareable<typename AutomatedCommandType::OwnConfig>(new typename AutomatedCommandType::OwnConfig);
-			SelfPtr->Init();
 		}
 	}
 

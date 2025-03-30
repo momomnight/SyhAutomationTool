@@ -42,7 +42,7 @@ bool FAutomatedCode_CommandNesting::BuildParameter()
 
 	if (!Result)
 	{
-		SyhLogError(TEXT("%s is failure to build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 	}
 	return Result;
 }

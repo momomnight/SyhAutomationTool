@@ -31,17 +31,18 @@ bool FAutomatedCode_Call::BuildParameter()
 	bool Result = true;
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::CallTypeKey, SelfConfig->CallType);
 	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::CallPathKey, SelfConfig->CallPath);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ParametersKey, SelfConfig->Parameters);
+	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ParametersKey, SelfConfig->Parameters);
 
 	if (Result)
 	{
 		FPaths::NormalizeFilename(SelfConfig->CallPath);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->CallPath);
+		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->CallPath);
 		return true;
 	}
 	else
 	{
-		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 		return false;
 	}
 

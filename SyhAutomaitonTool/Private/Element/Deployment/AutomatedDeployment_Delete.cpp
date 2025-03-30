@@ -11,7 +11,6 @@
 
 void FAutomatedCode_Deployment_Delete::Init()
 {
-	GetSelfConfig<OwnConfig>()->Files.Empty();
 }
 
 bool FAutomatedCode_Deployment_Delete::BuildParameter(const FString& InJsonStr)
@@ -29,7 +28,7 @@ bool FAutomatedCode_Deployment_Delete::BuildParameter()
 	}
 	else
 	{
-		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 		return false;
 	}
 }
@@ -41,7 +40,6 @@ bool FAutomatedCode_Deployment_Delete::Execute()
 
 	for (auto& Temp : SelfConfig->Files)
 	{
-		SimpleAutomationToolCommon::HandleTimePath(Temp);
 		SimpleAutomationToolCommon::DeletePath(Temp);
 	}
 	return true;

@@ -13,4 +13,12 @@ namespace AutomatedExecutionPath
 
 	//.bat Windows批处理文件路径
 	FString GetBatPath();
+
+	FString GetAutomatedPath();
+	FString GetProjectPath();
+	FString GetEnginePath();
+	FString GetProjectSavePath();
+	FString GetProjectConfigPath();
+	FString GetEngineBinariesPath();
+	FString GetProjectBinariesPath();
 }

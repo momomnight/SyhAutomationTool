@@ -39,7 +39,7 @@ private:
 	TEXT("Oss"),					//12
 	TEXT("Http"),					//13
 	TEXT("Compress"),				//14
-	TEXT("Web_Socket"),				//15
+	TEXT("Mysql"),				//15
 
 
 	TEXT("Max")
@@ -455,6 +455,7 @@ struct FAutomatedMysqlRelated
 	static const FString DataBaseKey;
 	static const FString MethodKey;
 	static const FString SavePathKey;
+	static const FString SqlKey;
 };
 
 
@@ -922,7 +923,9 @@ struct FAutomatedMysqlConfig : public FAutomatedConfigBase
 
 	FAutomatedMysqlConfig()
 	{
-
+		Method = EMysqlMethodType::MYSQLMETHOD_None;
+		SavePath = TEXT("If has the result of GET, please provide a save path.");
+		Port = 3306;
 	}
 	UPROPERTY()
 	FString User;
@@ -941,6 +944,9 @@ struct FAutomatedMysqlConfig : public FAutomatedConfigBase
 
 	UPROPERTY()
 	EMysqlMethodType Method;
+
+	UPROPERTY()
+	FString Sql;//自定义语句
 
 	UPROPERTY()
 	FString SavePath;

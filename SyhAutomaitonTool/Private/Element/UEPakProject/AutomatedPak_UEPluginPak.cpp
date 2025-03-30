@@ -54,11 +54,12 @@ bool FAutomatedCode_UE_Plugin_Packaging::BuildParameter()
 	{
 		FPaths::NormalizeFilename(SelfConfig->EngineDir);
 		FPaths::RemoveDuplicateSlashes(SelfConfig->EngineDir);
+		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->EngineDir);
 		return true;
 	}
 	else
 	{
-		SyhLogError(TEXT("the command of %s is failure to build parameter"), GetCommandName<Self>());
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 		return false;
 	}
 }
@@ -90,7 +91,6 @@ bool FAutomatedCode_UE_Plugin_Packaging::Execute()
 	TMultiMap<FString, bool> TaskResult;
 	for (auto& Temp : ExecuteContent)
 	{
-		SimpleAutomationToolCommon::HandleTimePath(Temp.Value);
 		TaskResult.Add(Temp.Key, Execute(Temp.Key, Temp.Value));
 	}
 

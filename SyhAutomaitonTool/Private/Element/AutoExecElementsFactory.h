@@ -26,7 +26,7 @@ public:
 		SyhLogLog(FAutoExecElementsFactory::Msg, CommandName);
 
 		TSharedPtr<FAutoExecElements> Temp = MakeShareable<AutomatedElementType>(new AutomatedElementType);
-		FAutoExecElements::Init<AutomatedElementType>(Temp);
+		FAutoExecElements::CreateAutoExecElement<AutomatedElementType>(Temp);
 		bool Result = true;
 		if (InJson.IsEmpty())
 		{
@@ -36,6 +36,8 @@ public:
 		{
 			Result = Temp->BuildParameter(InJson);
 		}
+
+		Temp->Init();
 
 		if (Result)
 		{
