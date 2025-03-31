@@ -10,7 +10,8 @@ public class OSSThirdParty : ModuleRules
     {
         get
         {
-            return Path.GetFullPath(
+			//C:\MyProgram\UnrealEngine-5.3.2-release\Engine\Source\Programs\SyhAutomationToolRefPlugins\SimpleOSS\Source\ThirdParty\OSSThirdParty
+			return Path.GetFullPath(
                   Path.Combine(ModuleDirectory, "../../../../../")
             );
         }
@@ -19,7 +20,7 @@ public class OSSThirdParty : ModuleRules
     private void CopyOSSDllAndLibToProjectBinaries(string Filepath, ReadOnlyTargetRules Target)
     {
 		string BinariesDirectory = Path.Combine(
-			  bTreatAsEngineModule ? EngineDirectory : OSSProjectDirectory, "Binaries", Target.Platform.ToString());
+			   bTreatAsEngineModule ? EngineDirectory : OSSProjectDirectory, "Binaries", Target.Platform.ToString());
 
 		string Filename = Path.GetFileName(Filepath);
 

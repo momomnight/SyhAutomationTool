@@ -51,7 +51,7 @@ public class SimpleMySQL : ModuleRules
     {
 		PublicIncludePaths.AddRange(new string[]
 		{
-			"Public/MySQL"
+			//"Public/MySQL"
 		});
 
 		// bUsePrecompiled = true;
@@ -66,7 +66,7 @@ public class SimpleMySQL : ModuleRules
 
 			string SQLLibDirectory = "";
 
-			string MysqlVerison = "8.3";
+			string MysqlVerison = "5.7";
 			if (MysqlVerison == "8.3")
 			{
 				SQLLibDirectory = Path.Combine(PluginsDirectory, "MySQL/8.3"); //MySQL路径		

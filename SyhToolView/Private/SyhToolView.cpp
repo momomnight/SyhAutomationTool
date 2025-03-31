@@ -1,18 +1,24 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "SyhToolView.h"
-
-#include "RequiredProgramMainCPPInclude.h"
-
+#include "StandaloneRenderer.h"
 #include "SyhToolViewLog.h"
+#include "ISourceCodeAccessModule.h"
+#include "Styling/StarshipCoreStyle.h"
 
 IMPLEMENT_APPLICATION(SyhToolView, "SyhToolView");
 
-INT32_MAIN_INT32_ARGC_TCHAR_ARGV()
+#define LOCTEXT_NAMESPACE  "SyhViewToolMain"
+
+int32 RunSyhToolView(const TCHAR* CommandLine)
 {
 	FTaskTagScope Scope(ETaskTag::EGameThread);
 	ON_SCOPE_EXIT
 	{ 
+
+		FCoreDelegates::OnExit.Broadcast();
+		FSlateApplication::Shutdown();
+		FModuleManager::Get().UnloadModulesAtShutdown();
 		LLM(FLowLevelMemTracker::Get().UpdateStatsPerFrame());
 		RequestEngineExit(TEXT("Exiting"));
 		FEngineLoop::AppPreExit();
@@ -20,31 +26,99 @@ INT32_MAIN_INT32_ARGC_TCHAR_ARGV()
 		FEngineLoop::AppExit();
 	};
 
-	if (int32 Ret = GEngineLoop.PreInit(ArgC, ArgV))
+	if (int32 Ret = GEngineLoop.PreInit(CommandLine))
 	{
 		return Ret;
 	}
 
-	// to run automation tests in BlankProgram:
-	// * set `bForceCompileDevelopmentAutomationTests` to `true` in `BlankProgramTarget` constructor in "BlankProgram.Target.cs"
-	// add `FAutomationTestFramework::Get().StartTestByName(TEXT("The name of the test class passed to IMPLEMENT_SIMPLE_AUTOMATION_TEST or TEST_CASE_NAMED"), 0);` right here
+	//处理注册的反射信息，将所有的类、结构体、枚举的类型信息初始化
+	ProcessNewlyLoadedUObjects();
 
-	// to link with "CoreUObject" module:
-	// * uncomment `PrivateDependencyModuleNames.Add("CoreUObject");` in `BlankProgram` constructor in "BlankProgram.Build.cs"
-	// * set `bCompileAgainstCoreUObject` to `true` in `BlankProgramTarget` constructor in "BlankProgram.Target.cs"
+	//通知模块管理器，当我们加载新的C++模块时，可以处理当前加载的UObject
+	FModuleManager::Get().StartProcessingNewlyLoadedObjects();
 
-	// to enable tracing:
-	// * uncomment `AppendStringToPublicDefinition("UE_TRACE_ENABLED", "1");` in `BlankProgram` constructor in "BlankProgram.Build.cs"
-	// * uncomment `GlobalDefinitions.Add("UE_TRACE_ENABLED=1");` in `BlankProgramTarget` constructor in "BlankProgram.Target.cs"
-	// you may need to enable compilation of a particular trace channel, e.g. for "task" traces:
-	// * add `GlobalDefinitions.Add("UE_TASK_TRACE_ENABLED=1");` in `BlankProgramTarget` constructor in "BlankProgram.Target.cs"
-	// you'll still need to enable this trace channel on cmd-line like `-trace=task,default`
+	//
+	FSlateApplication::InitializeAsStandaloneApplication(GetStandardStandaloneRenderer());
 
-	// to enable LLM tracing, uncomment the following in `BlankProgram` constructor in "BlankProgram.Build.cs":
-	// GlobalDefinitions.Add("LLM_ENABLED_IN_CONFIG=1");
-	// GlobalDefinitions.Add("UE_MEMORY_TAGS_TRACE_ENABLED=1");
+	//
+	FSlateApplication::InitHighDPI(true);
 
-	UE_LOG(SyhToolViewLog, Display, TEXT("Hello World"));
+	//
+	ISourceCodeAccessModule& SourceCodeAccessModule = FModuleManager::LoadModuleChecked<ISourceCodeAccessModule>("SourceCodeAccess");
+
+	//
+#if PLATFORM_MAC
+	IModuleInterface& XCodeSourceCodeAccessModule = FModuleManager::LoadModuleChecked<IModuleInterface>("XCodeSourceCodeAccess");
+	SourceCodeAccessModule.SetAccessor(FName("XCodeSourceCodeAccess"));
+#elif PLATFORM_WINDOWS
+	IModuleInterface& VisualStudioSourceCodeAccessModule = FModuleManager::LoadModuleChecked<IModuleInterface>("VisualStudioSourceCodeAccess");
+	SourceCodeAccessModule.SetAccessor(FName("VisualStudioSourceCodeAccess"));
+#endif
+
+	//设置布局
+	{
+		FGlobalTabmanager::Get()->SetApplicationTitle(LOCTEXT("AppTile", "Syh Tool Viewer"));
+		FAppStyle::SetAppStyleSetName(FStarshipCoreStyle::GetCoreStyle().GetStyleSetName());
+	
+		auto SpawnGallery = [](const FSpawnTabArgs&)->TSharedRef<SDockTab>
+			{
+				return SNew(SDockTab).TabRole(ETabRole::NomadTab)
+					[
+						SNew(SImage)
+					];
+			};
+
+		FGlobalTabmanager::Get()->RegisterNomadTabSpawner("A", FOnSpawnTab::CreateLambda(SpawnGallery));
+		FGlobalTabmanager::Get()->RegisterNomadTabSpawner("B", FOnSpawnTab::CreateLambda(SpawnGallery));
+
+		TSharedRef<FTabManager::FLayout> Layout = FTabManager::NewLayout("Syh_View_Layout")
+			->AddArea(
+					FTabManager::NewArea(1280, 920)
+					->Split
+					(
+						FTabManager::NewStack()
+						->AddTab("A", ETabState::OpenedTab)
+						->AddTab("B", ETabState::OpenedTab)
+						->SetForegroundTab(FName("A"))
+					)
+				);
+		FGlobalTabmanager::Get()->RestoreFrom(Layout, nullptr);
+	}
+
+
+
+	while (!IsEngineExitRequested())
+	{
+		BeginExitIfRequested();
+
+		//线程间同步必须做的
+		{
+			FTaskGraphInterface::Get().ProcessThreadUntilIdle(ENamedThreads::GameThread);
+
+			//统计帧
+			FStats::AdvanceFrame(false);
+
+			//线程安全的定时器
+			FTSTicker::GetCoreTicker().Tick(FApp::GetDeltaTime());
+		}
+
+		//当存在模态窗口或帧内调试会话时，推送操作系统消息
+		FSlateApplication::Get().PumpMessages();
+
+		//
+		FSlateApplication::Get().Tick();
+
+		//
+		FPlatformProcess::Sleep(0.01);
+
+		//
+		GFrameCounter++;
+
+	}
+
 
 	return 0;
 }
+
+
+#undef LOCTEXT_NAMESPACE

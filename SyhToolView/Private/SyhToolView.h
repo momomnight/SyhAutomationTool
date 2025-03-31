@@ -3,4 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RequiredProgramMainCPPInclude.h"
 
+extern int32 RunSyhToolView(const TCHAR* CommandLine);

@@ -8,10 +8,31 @@ public class SyhToolView : ModuleRules
 	{
 		PublicIncludePathModuleNames.Add("Launch");
 		PrivateDependencyModuleNames.Add("Core");
+
+		PrivateDependencyModuleNames.Add("CoreUObject");
+		PrivateDependencyModuleNames.Add("ApplicationCore");
+
+		PrivateDependencyModuleNames.Add("StandaloneRenderer");
+		PrivateDependencyModuleNames.Add("Slate");
+		PrivateDependencyModuleNames.Add("SlateCore");
+
+		PrivateDependencyModuleNames.Add("SourceCodeAccess");
+
 		PrivateDependencyModuleNames.Add("Projects");
 
+		if(Target.Platform == UnrealTargetPlatform.Mac)
+		{
+			PrivateDependencyModuleNames.Add("XCodeSourceCodeAccess");
+			AddEngineThirdPartyPrivateStaticDependencies(Target, "CEF3");
+		}
+		else if (Target.Platform == UnrealTargetPlatform.Win64)
+		{
+			PrivateDependencyModuleNames.Add("VisualStudioSourceCodeAccess");
+		}
+
+
 		// to link with CoreUObject module:
-		// PrivateDependencyModuleNames.Add("CoreUObject");
+
 
 		// to enable tracing:
 		// AppendStringToPublicDefinition("UE_TRACE_ENABLED", "1");

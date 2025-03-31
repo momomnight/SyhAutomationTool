@@ -13,8 +13,14 @@ public class SyhToolViewTarget : TargetRules
 		LinkType = TargetLinkType.Monolithic;
 		LaunchModuleName = "SyhToolView";
 
+		if(bCompileAgainstEditor)
+		{
+			/// List of additional modules to be compiled into the target.
+			ExtraModuleNames.Add("EditorStyle");
+		}
+
 		// Lean and mean
-		bBuildDeveloperTools = false;
+		bBuildDeveloperTools = true;
 
 		// Editor-only is enabled for desktop platforms to run unit tests that depend on editor-only data
 		// It's disabled in test and shipping configs to make profiling similar to the game
@@ -23,10 +29,11 @@ public class SyhToolViewTarget : TargetRules
 
 		// Currently this app is not linking against the engine, so we'll compile out references from Core to the rest of the engine
 		bCompileAgainstEngine = false;
-		bCompileAgainstCoreUObject = false;
-		bCompileAgainstApplicationCore = false;
+		bCompileAgainstCoreUObject = true;
+		bCompileAgainstApplicationCore = true;
 		bCompileICU = false;
 
+		bHasExports = false;
 		// to build with automation tests:
 		// bForceCompileDevelopmentAutomationTests = true;
 
@@ -34,6 +41,6 @@ public class SyhToolViewTarget : TargetRules
 		// GlobalDefinitions.Add("UE_TRACE_ENABLED=1");
 
 		// This app is a console application, not a Windows app (sets entry point to main(), instead of WinMain())
-		bIsBuildingConsoleApplication = true;
+		bIsBuildingConsoleApplication = false;
 	}
 }

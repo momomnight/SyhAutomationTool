@@ -96,7 +96,7 @@ namespace SimpleOSSCommand
 				}
 
 				FString CopyObjectNam;
-				if (!GetValue(InCommand.Param, TEXT("CopyObjectNam"), CopyObjectNam))
+				if (!GetValue(InCommand.Param, TEXT("CopyObjectName"), CopyObjectNam))
 				{
 					return false;
 				}
