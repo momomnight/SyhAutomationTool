@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Framework/Commands/Commands.h"
 #include "SimpleAutomatedToolViewStyle.h"
+#include "SimpleAutomatedToolViewType.h"
 
 class FSimpleAutomatedToolViewCommands : public TCommands<FSimpleAutomatedToolViewCommands>
 {
@@ -19,5 +20,12 @@ public:
 	virtual void RegisterCommands() override;
 
 public:
+	TSharedPtr<FUICommandInfo>& CreateCommandInfo(const FText& InKey, int32 InType);
+
+public:
 	TSharedPtr< FUICommandInfo > OpenPluginWindow;
+	//FText--下拉菜单 int32--菜单Button索引 FUICommandInfo--Action
+	//FName无法本地化
+	TMap<FText, TMap<int32, TSharedPtr<FUICommandInfo>>> CommandInfoList;
+
 };

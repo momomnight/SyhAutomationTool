@@ -7,12 +7,13 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Text/STextBlock.h"
 #include "ToolMenus.h"
-
+#include "SimpleAutomatedToolViewEditorID.h"
+#include "Widget/SToolBarView.h"
+#include "Widget/SToolViewMainFrame.h"
+#include "Widgets/SBoxPanel.h"
 #if WITH_EDITOR
 #include "LevelEditor.h"
 #endif
-
-static const FName SimpleAutomatedToolViewTabName("SimpleAutomatedToolView");
 
 #define LOCTEXT_NAMESPACE "FSimpleAutomatedToolViewModule"
 
@@ -34,7 +35,7 @@ void FSimpleAutomatedToolViewModule::StartupModule()
 
 	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FSimpleAutomatedToolViewModule::RegisterMenus));
 	
-	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(SimpleAutomatedToolViewTabName, FOnSpawnTab::CreateRaw(this, &FSimpleAutomatedToolViewModule::OnSpawnPluginTab))
+	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(FSimpleAutomatedToolViewEditorID::TabName, FOnSpawnTab::CreateRaw(this, &FSimpleAutomatedToolViewModule::OnSpawnPluginTab))
 		.SetDisplayName(LOCTEXT("FSimpleAutomatedToolViewTabTitle", "SimpleAutomatedToolView"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
 }
@@ -52,34 +53,31 @@ void FSimpleAutomatedToolViewModule::ShutdownModule()
 
 	FSimpleAutomatedToolViewCommands::Unregister();
 
-	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(SimpleAutomatedToolViewTabName);
+	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(FSimpleAutomatedToolViewEditorID::TabName);
 }
 
 TSharedRef<SDockTab> FSimpleAutomatedToolViewModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
 {
-	FText WidgetText = FText::Format(
-		LOCTEXT("WindowWidgetText", "Add code to {0} in {1} to override this window's contents"),
-		FText::FromString(TEXT("FSimpleAutomatedToolViewModule::OnSpawnPluginTab")),
-		FText::FromString(TEXT("SimpleAutomatedToolView.cpp"))
-		);
-
 	return SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
-			// Put your tab content here!
-			SNew(SBox)
-			.HAlign(HAlign_Center)
-			.VAlign(VAlign_Center)
-			[
-				SNew(STextBlock)
-				.Text(WidgetText)
-			]
+			SNew(SVerticalBox)
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				[
+					SNew(SToolBarView).CommandList(PluginCommands)
+				]
+				+ SVerticalBox::Slot()
+				.FillHeight(1.f)
+				[
+					SNew(SToolViewMainFrame)
+				]
 		];
 }
 
 void FSimpleAutomatedToolViewModule::PluginButtonClicked()
 {
-	FGlobalTabmanager::Get()->TryInvokeTab(SimpleAutomatedToolViewTabName);
+	FGlobalTabmanager::Get()->TryInvokeTab(FSimpleAutomatedToolViewEditorID::TabName);
 }
 
 void FSimpleAutomatedToolViewModule::RegisterMenus()

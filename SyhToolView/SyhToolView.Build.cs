@@ -30,7 +30,7 @@ public class SyhToolView : ModuleRules
 			PrivateDependencyModuleNames.Add("VisualStudioSourceCodeAccess");
 		}
 
-
+		PrivateDependencyModuleNames.Add("SimpleAutomatedToolView");
 		// to link with CoreUObject module:
 
 
