@@ -4,11 +4,11 @@
 #include "Widgets/SCompoundWidget.h"
 
 
-class SToolBarView : public SCompoundWidget
+class SAutomatedToolMenuBarView : public SCompoundWidget
 {
 
 public:
-	SLATE_BEGIN_ARGS(SToolBarView) {}
+	SLATE_BEGIN_ARGS(SAutomatedToolMenuBarView) {}
 
 	SLATE_ARGUMENT(TSharedPtr<FUICommandList>, CommandList)
 
@@ -16,7 +16,7 @@ public:
 
 
 public:
-	SToolBarView();
+	SAutomatedToolMenuBarView();
 
 	void Construct(const FArguments& InArgs);
 

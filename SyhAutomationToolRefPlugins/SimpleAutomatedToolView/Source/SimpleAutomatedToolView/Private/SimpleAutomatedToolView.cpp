@@ -8,8 +8,8 @@
 #include "Widgets/Text/STextBlock.h"
 #include "ToolMenus.h"
 #include "SimpleAutomatedToolViewEditorID.h"
-#include "Widget/SToolBarView.h"
-#include "Widget/SToolViewMainFrame.h"
+#include "Widget/SAutomatedToolMenuBarView.h"
+#include "Widget/SAutomatedToolViewMainFrame.h"
 #include "Widgets/SBoxPanel.h"
 #if WITH_EDITOR
 #include "LevelEditor.h"
@@ -65,12 +65,12 @@ TSharedRef<SDockTab> FSimpleAutomatedToolViewModule::OnSpawnPluginTab(const FSpa
 				+ SVerticalBox::Slot()
 				.AutoHeight()
 				[
-					SNew(SToolBarView).CommandList(PluginCommands)
+					SNew(SAutomatedToolMenuBarView).CommandList(PluginCommands)
 				]
 				+ SVerticalBox::Slot()
 				.FillHeight(1.f)
 				[
-					SNew(SToolViewMainFrame)
+					SNew(SAutomatedToolViewMainFrame)
 				]
 		];
 }

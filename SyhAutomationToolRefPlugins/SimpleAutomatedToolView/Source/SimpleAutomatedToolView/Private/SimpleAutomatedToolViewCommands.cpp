@@ -6,9 +6,10 @@
 
 #define LOCTEXT_NAMESPACE "FSimpleAutomatedToolViewModule"
 
-GenerateToolBarTextStruct(ToolBar_File, "AutomatedToolViewToolBar", "ToolBar_File", "File");
-GenerateToolBarTextStruct(ToolBar_Windows, "AutomatedToolViewToolBar", "ToolBar_Windows", "Windows");
-GenerateToolBarTextStruct(ToolBar_Editor, "AutomatedToolViewToolBar", "ToolBar_Windows", "Windows");
+GenerateToolMenuTextStruct(MenuBar_File, "AutomatedToolViewMenuBar", "MenuBar_File", "File");
+GenerateToolMenuTextStruct(MenuBar_Windows, "AutomatedToolViewMenuBar", "MenuBar_Windows", "Windows");
+GenerateToolMenuTextStruct(MenuBar_Editor, "AutomatedToolViewMenuBar", "MenuBar_Editor", "Editor");
+GenerateToolMenuTextStruct(MenuBar_Help, "AutomatedToolViewMenuBar", "MenuBar_Help", "Help");
 
 void FSimpleAutomatedToolViewCommands::RegisterCommands()
 {
@@ -18,19 +19,24 @@ void FSimpleAutomatedToolViewCommands::RegisterCommands()
 	//下拉菜单以CommandName区分，菜单中以索引区分
 	//File
 	{
-		CreateCommand(ToolBar_File, 0, TEXT("ToolBar_File_0"), TEXT("ToolBar_File_Description_0"), EUserInterfaceActionType::Button, FInputChord());
-		CreateCommand(ToolBar_File, 1, TEXT("ToolBar_File_1"), TEXT("ToolBar_File_Description_1"), EUserInterfaceActionType::Button, FInputChord());
-		CreateCommand(ToolBar_File, 2, TEXT("ToolBar_File_2"), TEXT("ToolBar_File_Description_2"), EUserInterfaceActionType::Button, FInputChord());
+		CreateUICommand(MenuBar_File, 0, TEXT("MenuBar_File_0"), TEXT("MenuBar_File_Description_0"), EUserInterfaceActionType::Button, FInputChord());
+		CreateUICommand(MenuBar_File, 1, TEXT("MenuBar_File_1"), TEXT("MenuBar_File_Description_1"), EUserInterfaceActionType::Button, FInputChord());
+		CreateUICommand(MenuBar_File, 2, TEXT("MenuBar_File_2"), TEXT("MenuBar_File_Description_2"), EUserInterfaceActionType::Button, FInputChord());
 	}
 
 	//Windows
 	{
-		CreateCommand(ToolBar_Windows, 0, TEXT("ToolBar_Windows_0"), TEXT("ToolBar_Windows_Description_0"), EUserInterfaceActionType::Button, FInputChord());
+		CreateUICommand(MenuBar_Windows, 0, TEXT("MenuBar_Windows_0"), TEXT("MenuBar_Windows_Description_0"), EUserInterfaceActionType::Button, FInputChord());
 	}
 
 	//Editor
 	{
-		CreateCommand(ToolBar_Editor, 0, TEXT("ToolBar_Editor_0"), TEXT("ToolBar_Editor_Description_0"), EUserInterfaceActionType::Button, FInputChord());
+		CreateUICommand(MenuBar_Editor, 0, TEXT("MenuBar_Editor_0"), TEXT("MenuBar_Editor_Description_0"), EUserInterfaceActionType::Button, FInputChord());
+	}
+
+	//Help
+	{
+		CreateUICommand(MenuBar_Help, 0, TEXT("MenuBar_Help_0"), TEXT("MenuBar_Help_Description_0"), EUserInterfaceActionType::Button, FInputChord());
 	}
 }
 

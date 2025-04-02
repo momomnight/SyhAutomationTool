@@ -3,14 +3,13 @@
 #include "CoreMinimal.h"
 #include "HAL/PreprocessorHelpers.h"
 
-
 #define PREPROCESSOR_TO_COMMAND_NAME_ANSI(InCommandName, InSequenceIndex)\
 PREPROCESSOR_TO_STRING(PREPROCESSOR_JOIN(InCommandName, PREPROCESSOR_JOIN(_, InSequenceIndex)))
 
 #define PREPROCESSOR_TO_COMMAND_NAME_TCHAR(InCommandName, InSequenceIndex)\
 TEXT(PREPROCESSOR_TO_COMMAND_NAME_ANSI(InCommandName, InSequenceIndex))
 
-#define GenerateToolBarTextStruct(InCommandName, InNamespace, InKey, InTextLiteral)\
+#define GenerateToolMenuTextStruct(InCommandName, InNamespace, InKey, InTextLiteral)\
 struct F##InCommandName\
 {\
 	constexpr static const TCHAR* Namespace = TEXT(InNamespace);\
@@ -23,7 +22,7 @@ struct F##InCommandName\
 };\
 static F##InCommandName InCommandName;
 
-#define CreateCommand(InCommandName, InSequenceIndex, FriendlyName, InDescription, CommandType, InDefaultChord)\
+#define CreateUICommand(InCommandName, InSequenceIndex, FriendlyName, InDescription, CommandType, InDefaultChord)\
 TSharedPtr<FUICommandInfo>& InCommandName##_Command_##InSequenceIndex = CreateCommandInfo(FText(InCommandName), InSequenceIndex);\
 MakeUICommand_InternalUseOnly(\
 this,\
