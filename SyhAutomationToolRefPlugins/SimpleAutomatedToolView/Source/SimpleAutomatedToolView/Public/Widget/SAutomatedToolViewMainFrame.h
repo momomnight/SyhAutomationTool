@@ -19,17 +19,24 @@ public:
 	SAutomatedToolViewMainFrame();
 
 	void Construct(const FArguments& InArgs);
-
+	void ConstructChild();
+	void Initialize();
 public:
 	class FReply OnSearch() const;
+
+	//ComboBox
 	TSharedRef<SWidget> MakeComboBoxItemWidget(TSharedPtr<FString> InItem);
 	void OnSelectionChanged(TSharedPtr<FString> InItem, ESelectInfo::Type InType);
 	FText GetSelectedModeText() const;
+	void OnModeMenuOpening();	//点开模式菜单调用
+	
+	FReply OnClicked(int32 InWidgetIndex, enum class EToolViewModePages InPageType);
+	void CallButtonAction(TFunction<bool (TSharedPtr<class SButton>)> InMethod);
 
-	//点开模式菜单调用
-	void OnModeMenuOpening();
+
+public:
+	void RefreshModePageButtonBar();
 	void RefreshText();
-
 	void SetCurrentMode(TSharedPtr<FString> InStr);
 
 protected:
@@ -42,5 +49,7 @@ protected:
 	TArray<TSharedPtr<FString>> Modes;
 	TSharedPtr<FString> CurrentMode;
 
-
+	//WrapBox
+	TSharedPtr<class SWrapBox> WrapBox;
+	TArray<TSharedPtr<class SButton>> Buttons;
 };
