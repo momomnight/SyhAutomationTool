@@ -1,4 +1,5 @@
 #include "Element/Git/AutomatedGit.h"
+#include "SyhAutomationToolCommon.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -14,8 +15,8 @@ FAutomatedCode_Git::FAutomatedCode_Git() : Super()
 
 FAutomatedCode_Git::~FAutomatedCode_Git()
 {
-	SimpleAutomationToolCommon::DeleteFile(ShPath);
-	SimpleAutomationToolCommon::DeleteFile(BatPath);
+	SyhAutomationToolCommon::DeleteFile(ShPath);
+	SyhAutomationToolCommon::DeleteFile(BatPath);
 }
 
 void FAutomatedCode_Git::Init()
@@ -29,35 +30,12 @@ bool FAutomatedCode_Git::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_Git::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-
-	if (SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ProjectPathKey, SelfConfig->ProjectPath))
-	{
-		FPaths::NormalizeFilename(SelfConfig->ProjectPath);
-		FPaths::RemoveDuplicateSlashes(SelfConfig->ProjectPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->ProjectPath);
-	}
-	else
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
 	}
-
-	if(!SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::GitCommandsKey, SelfConfig->GitCommands, false))
-	{
-		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
-	}
-
-	if (SelfConfig->GitCommands.Num() > 0)
-	{
-		return true;
-	}
-	else
-	{
-		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
-	}
+	return Result;
 }
 
 bool FAutomatedCode_Git::Execute()
@@ -67,12 +45,12 @@ bool FAutomatedCode_Git::Execute()
 	if (SelfConfig->GitCommands.Num() > 0 && !SelfConfig->ProjectPath.IsEmpty())
 	{
 		//对于路径可以在双引号内加空格
-		SimpleAutomationToolCommon::GetBatPathString(SelfConfig->ProjectPath);
+		AutomationToolCommonMethod::GetBatPathString(SelfConfig->ProjectPath);
 
 		//对于git命令中的字符串空格，如git commit -m "first commit"，无能为力，转义字符都试过没用，故使用"String(xxx)"方式替代
 		for (auto& Temp : SelfConfig->GitCommands)
 		{
-			SimpleAutomationToolCommon::AdaptCommandArgsStringWithSpace(Temp);
+			AutomationToolCommonMethod::AdaptCommandArgsStringWithSpace(Temp);
 		}
 
 		BuildExecutableFile(SelfConfig->ProjectPath, SelfConfig->GitCommands);

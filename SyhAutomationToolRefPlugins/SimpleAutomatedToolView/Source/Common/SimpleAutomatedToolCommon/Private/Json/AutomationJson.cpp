@@ -1,5 +1,5 @@
+
 #include "Json/AutomationJson.h"
-#include "SyhAutomationToolCommon.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -9,6 +9,22 @@
 
 namespace AutomationJson
 {
+	template bool JsonStringToAutomatedConfig<FAutomatedCallConfig>(const FString& InString, FAutomatedCallConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedCallCustomContentConfig>(const FString& InString, FAutomatedCallCustomContentConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedUEProjectRefreshConfig>(const FString& InString, FAutomatedUEProjectRefreshConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedCommandNestingConfig>(const FString& InString, FAutomatedCommandNestingConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedDeploymentCopyConfig>(const FString& InString, FAutomatedDeploymentCopyConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedDeploymentDeleteConfig>(const FString& InString, FAutomatedDeploymentDeleteConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedVSCompileConfig>(const FString& InString, FAutomatedVSCompileConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedGitConfig>(const FString& InString, FAutomatedGitConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedUEPackagingConfig>(const FString& InString, FAutomatedUEPackagingConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedUEPluginPackagingConfig>(const FString& InString, FAutomatedUEPluginPackagingConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedConditionCommandConfig>(const FString& InString, FAutomatedConditionCommandConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedOSSConfig>(const FString& InString, FAutomatedOSSConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedHTTPConfig>(const FString& InString, FAutomatedHTTPConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedCompressConfig>(const FString& InString, FAutomatedCompressConfig& OutConfig);
+	template bool JsonStringToAutomatedConfig<FAutomatedMysqlConfig>(const FString& InString, FAutomatedMysqlConfig& OutConfig);
+
 	//将Config转换为JsonObject填充JsonValueObject
 	template <class AutomatedConfigType>
 	void FillJsonValue(TArray<TSharedPtr<FJsonValue>>& InCommandArray)

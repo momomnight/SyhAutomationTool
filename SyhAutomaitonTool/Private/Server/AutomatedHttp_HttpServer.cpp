@@ -1,5 +1,7 @@
 #include "Server/AutomatedHttp_HttpServer.h"
 #include "SyhAutomationToolCommon.h"
+#include "DllExports/AutomationCommandLine.h"
+
 
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
@@ -12,34 +14,21 @@ DEFINE_GLOBAL_SINGLETON_CPP(AutomatedHttp_HttpServer);
 
 void FAutomatedHttp_HttpServer::Init()
 {
-
-	SimpleAutomationToolCommon::GetValueFromCommandLine<bool>(Tool<FAutomatedHTTPServerConfig>::Https_BooleanKey, Config.bHttps);
-	
-	if(Config.bHttps)
+	TSharedPtr<FAutomatedHTTPServerConfig> SelfConfig = MakeShareable(new FAutomatedHTTPServerConfig(Config));
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<FAutomatedHTTPServerConfig>(SelfConfig);
+	if (!Result)
 	{
-		bool SubResult = true;
-		SubResult &= SimpleAutomationToolCommon::GetValueFromCommandLine<FString>(Tool<FAutomatedHTTPServerConfig>::CertificateKey, Config.Certificate);
-		SubResult &= SimpleAutomationToolCommon::GetValueFromCommandLine<FString>(Tool<FAutomatedHTTPServerConfig>::KeyKey, Config.Key);
-		if (!SubResult)
-		{
-			SyhLogError(TEXT("If bHttps is enabled, Certificate and Key must be provided."));
-			return;
-		}
+		SyhLogError(TEXT("Command line argument to config failed."));
+		return;
 	}
+	Config = *SelfConfig;
 
-	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine<FString>(Tool<FAutomatedHTTPServerConfig>::IPKey, Config.IP);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine<int32>(Tool<FAutomatedHTTPServerConfig>::Port_IntKey, Config.Port);
-	SimpleAutomationToolCommon::GetValueFromCommandLine<float>(Tool<FAutomatedHTTPServerConfig>::Timeout_FloatKey, Config.Timeout);
 	if (Result)
 	{
 		SyhLogDisplay(TEXT("HttpServer IP: %s."), *Config.IP);
 		SyhLogDisplay(TEXT("HttpServer Port: %d."), Config.Port);
 		if (Config.bHttps)
 		{
-			FPaths::NormalizeFilename(Config.Certificate);
-			FPaths::NormalizeFilename(Config.Key);
-
 			SyhLogDisplay(TEXT("HttpServer Use https."));
 			SyhLogDisplay(TEXT("HttpServer Certificate: %s."), *Config.Certificate);
 			SyhLogDisplay(TEXT("HttpServer Key: %s."), *Config.Key);

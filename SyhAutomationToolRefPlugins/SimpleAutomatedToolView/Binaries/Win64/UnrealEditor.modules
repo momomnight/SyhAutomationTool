@@ -1,7 +1,8 @@
 {
-	"BuildId": "a0dc898e-25bd-4543-9cde-2d730d79c4a3",
+	"BuildId": "77af8bd6-ad73-45e2-840a-7de92cf3651f",
 	"Modules": 
 	{
+		"SimpleAutomatedToolCommon": "UnrealEditor-SimpleAutomatedToolCommon.dll",
 		"SimpleAutomatedToolView": "UnrealEditor-SimpleAutomatedToolView.dll"
 	}
 }

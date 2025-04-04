@@ -26,26 +26,12 @@ bool FAutomatedCode_Call::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_Call::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	
-	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::CallTypeKey, SelfConfig->CallType);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::CallPathKey, SelfConfig->CallPath);
-	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ParametersKey, SelfConfig->Parameters);
-
-	if (Result)
-	{
-		FPaths::NormalizeFilename(SelfConfig->CallPath);
-		FPaths::RemoveDuplicateSlashes(SelfConfig->CallPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->CallPath);
-		return true;
-	}
-	else
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
 	}
-
+	return Result;
 }
 
 bool FAutomatedCode_Call::Execute()

@@ -1,7 +1,24 @@
 #pragma once
 #include "Json/AutomationJsonTemplate.h"
-#include "SyhAutomationToolCommon.h"
+#include "Misc/AutomationToolCommonMethod.h"
 
+
+
+//FAutomatedCallConfig
+//FAutomatedCallCustomContentConfig
+//FAutomatedUEProjectRefreshConfig
+//FAutomatedCommandNestingConfig
+//FAutomatedDeploymentCopyConfig
+//FAutomatedDeploymentDeleteConfig
+//FAutomatedVSCompileConfig
+//FAutomatedGitConfig
+//FAutomatedUEPackagingConfig
+//FAutomatedUEPluginPackagingConfig
+//FAutomatedConditionCommandConfig
+//FAutomatedOSSConfig
+//FAutomatedHTTPConfig
+//FAutomatedCompressConfig
+//FAutomatedMysqlConfig
 //	Example:
 //	[
 //		{
@@ -112,7 +129,7 @@ namespace AutomationJson
 		{
 			TSharedPtr<FJsonObject> TempJsonObject = MakeShareable<FJsonObject>(new FJsonObject);
 			TempJsonObject->SetStringField(Tool<FAutomatedDeploymentCopyConfig>::SourceKey, Temp.Key);
-			TempJsonObject->SetStringField(Tool<FAutomatedDeploymentCopyConfig>::DestinationKey, Temp.Value);
+			TempJsonObject->SetStringField(Tool<FAutomatedDeploymentCopyConfig>::TargetKey, Temp.Value);
 			JsonArray.Add(MakeShareable<FJsonValueObject>(new FJsonValueObject(TempJsonObject)));
 		}
 
@@ -304,7 +321,7 @@ namespace AutomationJson
 		//从Json字符中读取的路径格式可能不对
 		FPaths::NormalizeFilename(OutConfig.CallPath);
 		FPaths::RemoveDuplicateSlashes(OutConfig.CallPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.CallPath);
+		AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.CallPath);
 	}
 
 	template<>
@@ -326,8 +343,8 @@ namespace AutomationJson
 		FPaths::NormalizeDirectoryName(OutConfig.ProjectUProjectPath);
 		FPaths::RemoveDuplicateSlashes(OutConfig.UnrealBuildToolPath);
 		FPaths::RemoveDuplicateSlashes(OutConfig.ProjectUProjectPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.UnrealBuildToolPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.ProjectUProjectPath);
+		AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.UnrealBuildToolPath);
+		AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.ProjectUProjectPath);
 	}
 
 	template<>
@@ -354,13 +371,13 @@ namespace AutomationJson
 			if (TSharedPtr<FJsonObject> TempObject = Temp->AsObject())
 			{
 				FString Source = TempObject->GetStringField(Tool<FAutomatedDeploymentCopyConfig>::SourceKey);
-				FString Destination = TempObject->GetStringField(Tool<FAutomatedDeploymentCopyConfig>::DestinationKey);
+				FString Destination = TempObject->GetStringField(Tool<FAutomatedDeploymentCopyConfig>::TargetKey);
 				FPaths::NormalizeDirectoryName(Source);
 				FPaths::NormalizeDirectoryName(Destination);
 				FPaths::RemoveDuplicateSlashes(Source);
 				FPaths::RemoveDuplicateSlashes(Destination);
-				SimpleAutomationToolCommon::RecognizePathSyntax(Source);
-				SimpleAutomationToolCommon::RecognizePathSyntax(Destination);
+				AutomationToolCommonMethod::RecognizePathSyntax(Source);
+				AutomationToolCommonMethod::RecognizePathSyntax(Destination);
 				OutConfig.Files.Emplace(Source, Destination);
 			}
 		}
@@ -377,7 +394,7 @@ namespace AutomationJson
 			FString Str = Temp->AsString();
 			FPaths::NormalizeDirectoryName(Str);
 			FPaths::RemoveDuplicateSlashes(Str);
-			SimpleAutomationToolCommon::RecognizePathSyntax(Str);
+			AutomationToolCommonMethod::RecognizePathSyntax(Str);
 			OutConfig.Files.Add(Str);
 		}
 	}
@@ -390,7 +407,7 @@ namespace AutomationJson
 		OutConfig.Project = InJsonObject->GetStringField(Tool<FAutomatedVSCompileConfig>::ProjectKey);
 		FPaths::NormalizeFilename(OutConfig.SlnProjectPath);
 		FPaths::RemoveDuplicateSlashes(OutConfig.SlnProjectPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.SlnProjectPath);
+		AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.SlnProjectPath);
 	}
 
 	template<>
@@ -399,7 +416,7 @@ namespace AutomationJson
 		OutConfig.ProjectPath = InJsonObject->GetStringField(Tool<FAutomatedGitConfig>::ProjectPathKey);
 		FPaths::NormalizeFilename(OutConfig.ProjectPath);
 		FPaths::RemoveDuplicateSlashes(OutConfig.ProjectPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.ProjectPath);
+		AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.ProjectPath);
 		const TArray<TSharedPtr<FJsonValue>>& Array = InJsonObject->GetArrayField(Tool<FAutomatedGitConfig>::GitCommandsKey);
 		OutConfig.GitCommands.Empty();
 		for (auto& Temp : Array)
@@ -423,9 +440,9 @@ namespace AutomationJson
 		FPaths::RemoveDuplicateSlashes(OutConfig.EngineDir);
 		FPaths::RemoveDuplicateSlashes(OutConfig.UProjectPath);
 		FPaths::RemoveDuplicateSlashes(OutConfig.ArchiveDirectory);
-		SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.EngineDir);
-		SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.UProjectPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.ArchiveDirectory);
+		AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.EngineDir);
+		AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.UProjectPath);
+		AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.ArchiveDirectory);
 	}
 	
 	template<>
@@ -434,7 +451,7 @@ namespace AutomationJson
 		OutConfig.EngineDir = InJsonObject->GetStringField(Tool<FAutomatedUEPluginPackagingConfig>::EngineDirKey);
 		FPaths::NormalizeDirectoryName(OutConfig.EngineDir);
 		FPaths::RemoveDuplicateSlashes(OutConfig.EngineDir);
-		SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.EngineDir);
+		AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.EngineDir);
 		OutConfig.PathOfUPluginToTarget.Empty();
 		const TArray<TSharedPtr<FJsonValue>>& Array = InJsonObject->GetArrayField(Tool<FAutomatedUEPluginPackagingConfig>::PathOfUPluginToTargetKey);
 	
@@ -447,8 +464,8 @@ namespace AutomationJson
 			FPaths::RemoveDuplicateSlashes(Source);
 			FPaths::NormalizeDirectoryName(Target);
 			FPaths::RemoveDuplicateSlashes(Target);
-			SimpleAutomationToolCommon::RecognizePathSyntax(Source);
-			SimpleAutomationToolCommon::RecognizePathSyntax(Target);
+			AutomationToolCommonMethod::RecognizePathSyntax(Source);
+			AutomationToolCommonMethod::RecognizePathSyntax(Target);
 			OutConfig.PathOfUPluginToTarget.Add(Source, Target);
 		}
 	}
@@ -526,7 +543,7 @@ namespace AutomationJson
 		{
 			FPaths::NormalizeDirectoryName(OutConfig.SavePath);
 			FPaths::RemoveDuplicateSlashes(OutConfig.SavePath);
-			SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.SavePath);
+			AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.SavePath);
 		}
 
 		if (OutConfig.bBinaries && !OutConfig.ContentBody.IsEmpty())
@@ -534,7 +551,7 @@ namespace AutomationJson
 			//二进制文件的情况下，ContentBody为文件路径
 			FPaths::NormalizeDirectoryName(OutConfig.ContentBody);
 			FPaths::RemoveDuplicateSlashes(OutConfig.ContentBody);
-			SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.ContentBody);
+			AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.ContentBody);
 		}
 		
 	}
@@ -560,8 +577,8 @@ namespace AutomationJson
 				FPaths::RemoveDuplicateSlashes(Source);
 				FPaths::NormalizeDirectoryName(Target);
 				FPaths::RemoveDuplicateSlashes(Target);
-				SimpleAutomationToolCommon::RecognizePathSyntax(Source);
-				SimpleAutomationToolCommon::RecognizePathSyntax(Target);
+				AutomationToolCommonMethod::RecognizePathSyntax(Source);
+				AutomationToolCommonMethod::RecognizePathSyntax(Target);
 				OutConfig.PathOfSourceToTarget.Emplace(Source, Target);
 			}
 		}
@@ -582,7 +599,7 @@ namespace AutomationJson
 		{
 			FPaths::NormalizeDirectoryName(OutConfig.SavePath);
 			FPaths::RemoveDuplicateSlashes(OutConfig.SavePath);
-			SimpleAutomationToolCommon::RecognizePathSyntax(OutConfig.SavePath);
+			AutomationToolCommonMethod::RecognizePathSyntax(OutConfig.SavePath);
 		}
 
 	}
@@ -616,13 +633,5 @@ namespace AutomationJson
 
 		return false;
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	//用于序列化
-	void SerializeAllCommand(FString& OutString);
-
-	//用于反序列化
-	void DeserializeAllCommand(const FString& InString, TMultiMap<ECommandProtocol, FString>& OutCommand);
 
 }

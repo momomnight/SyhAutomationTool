@@ -1,23 +1,8 @@
 #pragma once
 
 #include "Element/Core/Interface/AutoExecElements.h"
-#include "SyhAutomationToolType.h"
 
-template<>
-bool SimpleAutomationToolCommon::GetValueFromCommandLine<EComparisionType>(const FString& InKey, EComparisionType& OutValue)
-{
-	FString Result;
-	if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
-		!FParse::Value(FCommandLine::Get(), *Key, Result))
-	{
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value. Use default value."), *Key);
-		return false;
-	}
 
-	OutValue = EnumTool<EComparisionType>::GetEnumValue(Result);
-
-	return true;
-}
 
 //实现命令堆叠, 不支持外部传入参数
 class FAutomatedCode_CommandNesting : public FAutoExecElements

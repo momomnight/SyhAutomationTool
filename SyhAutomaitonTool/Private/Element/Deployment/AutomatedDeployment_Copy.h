@@ -1,6 +1,4 @@
 #pragma once
-
-#include "CoreMinimal.h"
 #include "Element/Core/Interface/AutoExecElements.h"
 
 
@@ -23,7 +21,6 @@ public:
 	virtual bool BuildParameter();
 
 	virtual bool Execute();
-	bool Execute(TMap<FString, FString>& OutContent, const TMap<FString, FString>& InContent, bool);
 	virtual ECommandProtocol GetType() const override { return ECommandProtocol::CMD_Deployment_Copy; }
 
 };

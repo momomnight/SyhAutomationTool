@@ -1,7 +1,7 @@
 #include "Element/Deployment/AutomatedDeployment_Copy.h"
-#include "SyhAutomationToolLog.h"
 #include "Containers\Map.h"
 #include "GenericPlatform\GenericPlatformFile.h"
+#include "SyhAutomationToolCommon.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -10,7 +10,7 @@
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
 
-struct FOperatePath_DeploymentCopy : public SimpleAutomationToolCommon::FProcessPath_Base
+struct FOperatePath_DeploymentCopy : public SyhAutomationToolCommon::FProcessPath_Base
 {
 	virtual void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath)
 	{
@@ -48,47 +48,16 @@ bool FAutomatedCode_Deployment_Copy::BuildParameter(const FString& InJsonStr)
 	return AutomationJson::JsonStringToAutomatedConfig(InJsonStr, *GetSelfConfig<OwnConfig>());
 }
 
+
+
 bool FAutomatedCode_Deployment_Copy::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	SelfConfig->Files.Empty();
-	
-	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::DeleteMovedFiles_BooleanKey, SelfConfig->bDeleteMovedFiles);
-
-	TArray<FString> Source;
-	TArray<FString> Target;
-
-	if (!SimpleAutomationToolCommon::ParseCommandLineByKey(TEXT("-Source="), Source, true) || 
-		!SimpleAutomationToolCommon::ParseCommandLineByKey(TEXT("-Target="), Target, true))
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
 	}
-	else
-	{
-		if (Source.Num() == Target.Num())
-		{
-			for (int32 i = 0; i < Source.Num(); i++)
-			{
-				FString& SourceTemp = Source[i];
-				FString& TargetTemp = Target[i];
-				FPaths::NormalizeDirectoryName(SourceTemp);
-				FPaths::RemoveDuplicateSlashes(SourceTemp);
-				FPaths::NormalizeDirectoryName(TargetTemp);
-				FPaths::RemoveDuplicateSlashes(TargetTemp);
-				SimpleAutomationToolCommon::RecognizePathSyntax(SourceTemp);
-				SimpleAutomationToolCommon::RecognizePathSyntax(TargetTemp);
-				SelfConfig->Files.Add(SourceTemp, TargetTemp);
-			}
-			return true;
-		}
-		else
-		{
-			SyhLogError(TEXT("The number of the source path is not equal to the number of the target path."));
-			SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-			return false;
-		}
-	}
+	return Result;
 }
 
 
@@ -107,9 +76,9 @@ bool FAutomatedCode_Deployment_Copy::Execute()
 	}
 
 	TMap<FString, FString> Content;
-	SimpleAutomationToolCommon::PathFilter<
-		SimpleAutomationToolCommon::FPreprocessPath_PathExists, 
-		SimpleAutomationToolCommon::FPreprocessPath_DeletePath,
+	SyhAutomationToolCommon::PathFilter<
+		SyhAutomationToolCommon::FPreprocessPath_PathExists,
+		SyhAutomationToolCommon::FPreprocessPath_DeletePath,
 		FOperatePath_DeploymentCopy
 		>(Content, SelfConfig->Files);
 

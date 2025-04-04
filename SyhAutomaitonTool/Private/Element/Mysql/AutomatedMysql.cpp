@@ -59,31 +59,12 @@ bool FAutomatedCode_Mysql::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_Mysql::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::UserKey, SelfConfig->User);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::HostKey, SelfConfig->Host);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Port_IntKey, SelfConfig->Port);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::DataBaseKey, SelfConfig->DataBase);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::SqlKey, SelfConfig->Sql);
-	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::PasswordKey, SelfConfig->Password);
-	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::MethodKey, SelfConfig->Method);
-
-	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::SavePathKey, SelfConfig->SavePath);
-	
-	if (Result)
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
 	{
-		if (!SelfConfig->SavePath.IsEmpty())
-		{
-			FPaths::NormalizeDirectoryName(SelfConfig->SavePath);
-			FPaths::RemoveDuplicateSlashes(SelfConfig->SavePath);
-			SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->SavePath);
-		}
-		return true;
+		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 	}
-
-	SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-	return false;
+	return Result;
 }
 
 bool FAutomatedCode_Mysql::Execute()

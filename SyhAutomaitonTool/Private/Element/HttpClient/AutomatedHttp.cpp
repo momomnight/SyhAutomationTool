@@ -52,36 +52,12 @@ bool FAutomatedCode_HTTP::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_HTTP::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::URLKey, SelfConfig->URL);
-	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Sync_BooleanKey, SelfConfig->bSync);
-	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Binaries_BooleanKey, SelfConfig->bBinaries);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(EnumTool<decltype(SelfConfig->VerbType)>::GetEnumNameKey(), SelfConfig->VerbType);
-	SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::CustomMetaDataKey, SelfConfig->CustomMetaData, false);
-	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ContentBodyKey, SelfConfig->ContentBody);
-	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::Timeout_FloatKey, SelfConfig->Timeout);
-	SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::SavePathKey, SelfConfig->SavePath);
-	
-	if (Result)
-	{
-		FPaths::NormalizeDirectoryName(SelfConfig->SavePath);
-		FPaths::RemoveDuplicateSlashes(SelfConfig->SavePath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->SavePath);
-		if(SelfConfig->bBinaries)
-		{
-			//二进制文件的情况下，ContentBody为文件路径
-			FPaths::NormalizeFilename(SelfConfig->ContentBody);
-			FPaths::RemoveDuplicateSlashes(SelfConfig->ContentBody);
-			SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->ContentBody);
-		}
-		return true;
-	}
-	else
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
 	}
+	return Result;
 }
 
 bool FAutomatedCode_HTTP::Execute()

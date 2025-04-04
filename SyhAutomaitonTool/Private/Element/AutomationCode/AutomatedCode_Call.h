@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Element/Core/Interface/AutoExecElements.h"
-#include "SyhAutomationToolType.h"
-
 
 
 class FAutomatedCode_Call : public FAutoExecElements

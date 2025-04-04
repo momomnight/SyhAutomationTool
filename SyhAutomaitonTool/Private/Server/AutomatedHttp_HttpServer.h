@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "SimpleConfigMacro.h"
 #include "SimpleHttplibManage.h"
-#include "SyhAutomationToolType.h"
+#include "SimpleAutomatedToolType.h"
 
 DEFINE_GLOBAL_SINGLETON_H(, AutomatedHttp_HttpServer,
 	void Init();

@@ -1,10 +1,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Templates/SharedPointer.h"
-#include "Json/AutomationJson.h"
-#include "Misc/AutomatedExecutionPath.h"
-#include "SyhAutomationToolCommon.h"
+#include "SimpleAutomatedToolTypeRelated.h"
+#include "DllExports/AutomationJson.h"
+#include "DllExports/AutomationCommandLine.h"
+#include "DllExports/AutomatedExecutionPath.h"
+#include "DllExports/AutomationToolCommonMethod.h"
+#include "SyhAutomationToolLog.h"
 
 
 // 所有自动化元素的基类

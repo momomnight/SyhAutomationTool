@@ -1,9 +1,5 @@
 #pragma once
-
-#include "CoreMinimal.h"
 #include "Element/AutomationCode/AutomatedCode_Call.h"
-#include "SyhAutomationToolType.h"
-
 //不支持A程序调用B程序
 class FAutomatedCode_UEProjectRefresh : public FAutomatedCode_Call
 {

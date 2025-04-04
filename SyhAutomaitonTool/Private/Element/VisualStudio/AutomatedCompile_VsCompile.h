@@ -1,8 +1,5 @@
 #pragma once
-
-#include "CoreMinimal.h"
 #include "Element/AutomationCode/AutomatedCode_Call.h"
-#include "SyhAutomationToolType.h"
 
 //针对UE独立程序
 class FAutomatedCode_VS_Compile : public FAutomatedCode_Call

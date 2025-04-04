@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SyhAutomationToolType.h"
+#include "SimpleAutomatedToolTypeRelated.h"
 #include "Json.h"
 #include <type_traits>
 

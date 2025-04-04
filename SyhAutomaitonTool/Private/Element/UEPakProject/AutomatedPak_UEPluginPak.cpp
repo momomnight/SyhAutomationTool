@@ -9,7 +9,7 @@
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
 
-struct FProcessPath_UEPluginPackaging : public SimpleAutomationToolCommon::FProcessPath_Base
+struct FProcessPath_UEPluginPackaging : public SyhAutomationToolCommon::FProcessPath_Base
 {
 	virtual void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath)
 	{
@@ -46,22 +46,12 @@ bool FAutomatedCode_UE_Plugin_Packaging::BuildParameter(const FString& InJsonStr
 
 bool FAutomatedCode_UE_Plugin_Packaging::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::EngineDirKey, SelfConfig->EngineDir);
-	Result &= SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::PathOfUPluginToTargetKey, SelfConfig->PathOfUPluginToTarget, true);
-	if (Result)
-	{
-		FPaths::NormalizeFilename(SelfConfig->EngineDir);
-		FPaths::RemoveDuplicateSlashes(SelfConfig->EngineDir);
-		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->EngineDir);
-		return true;
-	}
-	else
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
 	}
+	return Result;
 }
 
 bool FAutomatedCode_UE_Plugin_Packaging::Execute()
@@ -73,15 +63,15 @@ bool FAutomatedCode_UE_Plugin_Packaging::Execute()
 
 	RunUATPath = FString::Printf(TEXT("%s/Engine/Build/BatchFiles/RunUAT.bat"), *SelfConfig->EngineDir);
 
-	if (!SimpleAutomationToolCommon::PathExists(RunUATPath, false))
+	if (!SyhAutomationToolCommon::PathExists(RunUATPath, false))
 	{
 		UE_LOG(SyhAutomaitonToolLog, Error, TEXT("RunUAT.bat no exist."));
 	}
 
 
 	TMap<FString, FString> ExecuteContent;
-	if (!SimpleAutomationToolCommon::PathFilter<SimpleAutomationToolCommon::FPreprocessPath_PathExists,
-		SimpleAutomationToolCommon::FPreprocessPath_PathExists,
+	if (!SyhAutomationToolCommon::PathFilter<SyhAutomationToolCommon::FPreprocessPath_PathExists,
+		SyhAutomationToolCommon::FPreprocessPath_PathExists,
 		FProcessPath_UEPluginPackaging>
 		(ExecuteContent, SelfConfig->PathOfUPluginToTarget))
 	{

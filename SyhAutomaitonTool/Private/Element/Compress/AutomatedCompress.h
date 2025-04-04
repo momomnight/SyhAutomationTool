@@ -1,24 +1,7 @@
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Element/AutomationCode/AutomatedCode_Call.h"
-#include "SyhAutomationToolType.h"
 
-template<>
-bool SimpleAutomationToolCommon::GetValueFromCommandLine<ECompressType>(const FString& InKey, ECompressType& OutValue)
-{
-	FString Result;
-	if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
-		!FParse::Value(FCommandLine::Get(), *Key, Result))
-	{
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value. Use default value."), *Key);
-		return false;
-	}
-
-	OutValue = EnumTool<ECompressType>::GetEnumValue(Result);
-
-	return true;
-}
 
 //不支持A程序调用B程序
 class FAutomatedCode_Compress : public FAutomatedCode_Call

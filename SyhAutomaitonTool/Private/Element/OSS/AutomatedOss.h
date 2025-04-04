@@ -1,8 +1,5 @@
 #pragma once
-
-#include "CoreMinimal.h"
 #include "Element/Core/Interface/AutoExecElements.h"
-#include "SyhAutomationToolType.h"
 
 //不支持A程序调用B程序
 class FAutomatedCode_OSS : public FAutoExecElements

@@ -22,33 +22,12 @@ bool FAutomatedCode_UE_Packaging::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_UE_Packaging::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::EngineDirKey, SelfConfig->EngineDir);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::UProjectPathKey, SelfConfig->UProjectPath);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::PlatformKey, SelfConfig->Platform);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::BuildStateKey, SelfConfig->BuildState);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::BuildTargetKey, SelfConfig->BuildTarget);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ArchiveDirectoryKey, SelfConfig->ArchiveDirectory);
-	
-	if (Result)
-	{
-		FPaths::NormalizeDirectoryName(SelfConfig->EngineDir);
-		FPaths::NormalizeDirectoryName(SelfConfig->UProjectPath);
-		FPaths::NormalizeDirectoryName(SelfConfig->ArchiveDirectory);
-		FPaths::RemoveDuplicateSlashes(SelfConfig->EngineDir);
-		FPaths::RemoveDuplicateSlashes(SelfConfig->UProjectPath);
-		FPaths::RemoveDuplicateSlashes(SelfConfig->ArchiveDirectory);
-		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->EngineDir);
-		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->UProjectPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->ArchiveDirectory);
-		return true;
-	}
-	else
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
 	}
+	return Result;
 }
 
 bool FAutomatedCode_UE_Packaging::Execute()
@@ -63,7 +42,7 @@ bool FAutomatedCode_UE_Packaging::Execute()
 	check(!SelfConfig->ArchiveDirectory.IsEmpty());
 
 	FString RunUATPath = FString::Printf(TEXT("%s/Build/BatchFiles/RunUAT.bat"), *SelfConfig->EngineDir);
-	SimpleAutomationToolCommon::GetBatPathString(RunUATPath);
+	AutomationToolCommonMethod::GetBatPathString(RunUATPath);
 
 	FString HeadName = FPaths::GetCleanFilename(SelfConfig->UProjectPath);
 	HeadName.RemoveFromEnd(FPaths::GetExtension(HeadName, true));
@@ -76,8 +55,8 @@ bool FAutomatedCode_UE_Packaging::Execute()
 	);
 	FPaths::RemoveDuplicateSlashes(BuildBatPath);
 
-	SimpleAutomationToolCommon::GetBatPathString(SelfConfig->UProjectPath);
-	SimpleAutomationToolCommon::GetBatPathString(SelfConfig->ArchiveDirectory);
+	AutomationToolCommonMethod::GetBatPathString(SelfConfig->UProjectPath);
+	AutomationToolCommonMethod::GetBatPathString(SelfConfig->ArchiveDirectory);
 
 	FString Content;
 	if (SelfConfig->BuildTarget.Equals("Server"))

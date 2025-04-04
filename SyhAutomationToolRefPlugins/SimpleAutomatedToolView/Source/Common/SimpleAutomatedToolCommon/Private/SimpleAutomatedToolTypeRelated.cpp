@@ -1,4 +1,4 @@
-#include "SyhAutomationToolType.h"
+#include "SimpleAutomatedToolTypeRelated.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -41,7 +41,7 @@ const FString  FAutomatedDeploymentRelated::FilesKey = TEXT("Files");
 
 const FString  FAutomatedDeploymentCopyRelated::SourceKey = TEXT("Source");
 const FString  FAutomatedDeploymentCopyRelated::DeleteMovedFiles_BooleanKey = TEXT("bDeleteMovedFiles");
-const FString  FAutomatedDeploymentCopyRelated::DestinationKey = TEXT("Destination");
+const FString  FAutomatedDeploymentCopyRelated::TargetKey = TEXT("Target");
 
 const FString FAutomatedVSCompileRelated::BuildStateKey = TEXT("BuildState");
 const FString FAutomatedVSCompileRelated::SlnProjectPathKey = TEXT("SlnProjectPath");

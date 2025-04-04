@@ -31,23 +31,15 @@ bool FAutomatedCode_ConditionCommand::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_ConditionCommand::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-
 	bool Result = true;
 	Result &= Super::BuildParameter();
-	SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::TrueCommandListKey, SelfConfig->TrueCommandList, false);
-	SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::FalseCommandListKey, SelfConfig->FalseCommandList, false);
+	AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
 	Self::InitTaskCommand();
-
-	if (Result)
-	{
-		return true;
-	}
-	else
+	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
 	}
+	return Result;
 }
 
 bool FAutomatedCode_ConditionCommand::Execute()

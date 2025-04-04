@@ -20,12 +20,12 @@ namespace SimpleAutomationTool
 		{
 			if (Temp.Value)
 			{
-				SyhLogDisplay(TEXT("%s is successful to execute."), *SimpleAutomationToolCommon::ToString<EvaluationType>(Temp.Key));
+				SyhLogDisplay(TEXT("%s is successful to execute."), *SyhAutomationToolCommon::ToString<EvaluationType>(Temp.Key));
 			}
 			else
 			{
 				Result = false;
-				SyhLogError(TEXT("%s is failure to execute."), *SimpleAutomationToolCommon::ToString<EvaluationType>(Temp.Key));
+				SyhLogError(TEXT("%s is failure to execute."), *SyhAutomationToolCommon::ToString<EvaluationType>(Temp.Key));
 			}
 		}
 

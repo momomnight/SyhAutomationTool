@@ -1,26 +1,8 @@
 #pragma once
-
-#include "CoreMinimal.h"
 #include "Element/Core/Interface/AutoExecElements.h"
-#include "SyhAutomationToolType.h"
 
 
 
-template<>
-bool SimpleAutomationToolCommon::GetValueFromCommandLine<EMysqlMethodType>(const FString& InKey, EMysqlMethodType& OutValue)
-{
-	FString Result;
-	if (FString Key = SimpleAutomationToolCommon::GetMatchKey(InKey);
-		!FParse::Value(FCommandLine::Get(), *Key, Result))
-	{
-		UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value. Use default value."), *Key);
-		return false;
-	}
-
-	OutValue = EnumTool<EMysqlMethodType>::GetEnumValue(Result);
-
-	return true;
-}
 
 
 //不支持A程序调用B程序

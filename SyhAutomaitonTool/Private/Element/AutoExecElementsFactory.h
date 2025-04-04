@@ -1,9 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "Templates/SharedPointer.h"
 #include <type_traits>
 #include "Element/Core/Interface/AutoExecElements.h"
-#include "SyhAutomationToolCommon.h"
 
 
 // 用于创建各种自动化执行任务的工厂

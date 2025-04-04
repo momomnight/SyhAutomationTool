@@ -10,7 +10,6 @@ public class SyhAutomaitonTool : ModuleRules
 		PrivateDependencyModuleNames.Add("Core");
 		PrivateDependencyModuleNames.Add("Projects");
 		PrivateDependencyModuleNames.Add("ApplicationCore");
-		PrivateDependencyModuleNames.Add("Json");
 		// to link with CoreUObject module:
 		PrivateDependencyModuleNames.Add("CoreUObject");
 		//PrivateDependencyModuleNames.Add("Engine");
@@ -21,6 +20,7 @@ public class SyhAutomaitonTool : ModuleRules
 		PrivateDependencyModuleNames.Add("SimpleConfig");
 		PrivateDependencyModuleNames.Add("SimpleZIP");
 		PrivateDependencyModuleNames.Add("SimpleMySQL");
+		PrivateDependencyModuleNames.Add("SimpleAutomatedToolCommon");
 		// to enable tracing:
 		// AppendStringToPublicDefinition("UE_TRACE_ENABLED", "1");
 

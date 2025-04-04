@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Element/AutomationCode/AutomatedCode_CommandNesting.h"
-#include "SyhAutomationToolType.h"
 
 
 //实现命令堆叠, 不支持外部传入参数

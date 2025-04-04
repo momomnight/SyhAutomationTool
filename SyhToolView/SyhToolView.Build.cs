@@ -20,7 +20,8 @@ public class SyhToolView : ModuleRules
 
 		PrivateDependencyModuleNames.Add("Projects");
 
-		if(Target.Platform == UnrealTargetPlatform.Mac)
+
+		if (Target.Platform == UnrealTargetPlatform.Mac)
 		{
 			PrivateDependencyModuleNames.Add("XCodeSourceCodeAccess");
 			AddEngineThirdPartyPrivateStaticDependencies(Target, "CEF3");

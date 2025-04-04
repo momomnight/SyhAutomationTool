@@ -23,28 +23,12 @@ bool FAutomatedCode_VS_Compile::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_VS_Compile::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::CallPathKey, SelfConfig->CallPath);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::SlnProjectPathKey, SelfConfig->SlnProjectPath);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::BuildStateKey, SelfConfig->BuildState);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ProjectKey, SelfConfig->Project);
-
-	if (Result)
-	{
-		FPaths::NormalizeFilename(SelfConfig->CallPath);
-		FPaths::RemoveDuplicateSlashes(SelfConfig->CallPath);
-		FPaths::NormalizeFilename(SelfConfig->SlnProjectPath);
-		FPaths::RemoveDuplicateSlashes(SelfConfig->SlnProjectPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->CallPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->SlnProjectPath);
-		return true;
-	}
-	else
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
 	}
+	return Result;
 }
 
 bool FAutomatedCode_VS_Compile::Execute()

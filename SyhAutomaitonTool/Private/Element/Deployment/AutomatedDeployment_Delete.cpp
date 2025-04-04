@@ -1,6 +1,6 @@
 #include "Element/Deployment/AutomatedDeployment_Delete.h"
-#include "SyhAutomationToolLog.h"
 #include "GenericPlatform\GenericPlatformFile.h"
+#include "SyhAutomationToolCommon.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -20,17 +20,12 @@ bool FAutomatedCode_Deployment_Delete::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_Deployment_Delete::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-
-	if (SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::FilesKey, SelfConfig->Files, true))
-	{
-		return true;
-	}
-	else
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
 	}
+	return Result;
 }
 
 bool FAutomatedCode_Deployment_Delete::Execute()
@@ -40,7 +35,7 @@ bool FAutomatedCode_Deployment_Delete::Execute()
 
 	for (auto& Temp : SelfConfig->Files)
 	{
-		SimpleAutomationToolCommon::DeletePath(Temp);
+		SyhAutomationToolCommon::DeletePath(Temp);
 	}
 	return true;
 

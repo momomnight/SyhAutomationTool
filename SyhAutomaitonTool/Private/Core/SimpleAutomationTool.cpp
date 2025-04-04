@@ -1,7 +1,7 @@
 #include "Core/SimpleAutomationTool.h"
 #include "SyhAutomationToolLog.h"
-#include "Misc/AutomatedExecutionPath.h"
-#include "Json/AutomationJson.h"
+#include "DllExports/AutomatedExecutionPath.h"
+#include "DllExports/AutomationJson.h"
 #include "Element/Core/Interface/AutoExecElements.h"
 #include "Element/AutoExecElementsFactory.h"
 #include "SyhAutomationToolCommon.h"
@@ -29,20 +29,20 @@ namespace SimpleAutomationTool
 				if (AutoExecElement->Execute())
 				{
 					UE_LOG(SyhAutomaitonToolLog, Display, TEXT("Successful to execute [%s] protocol."), 
-						*SimpleAutomationToolCommon::ToString<ECommandProtocol>(InProtocolIndex));
+						*SyhAutomationToolCommon::ToString<ECommandProtocol>(InProtocolIndex));
 					return true;
 				}
 				else
 				{
 					UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Fail to execute [%s] protocol."), 
-						*SimpleAutomationToolCommon::ToString<ECommandProtocol>(InProtocolIndex));
+						*SyhAutomationToolCommon::ToString<ECommandProtocol>(InProtocolIndex));
 					return false;
 				}
 			}
 			else
 			{
 				UE_LOG(SyhAutomaitonToolLog, Error, TEXT("Fail to create AutoExecElement. Protocol is [%s]"), 
-					*SimpleAutomationToolCommon::ToString<ECommandProtocol>(InProtocolIndex));
+					*SyhAutomationToolCommon::ToString<ECommandProtocol>(InProtocolIndex));
 				return false;
 			}
 		}
@@ -150,7 +150,7 @@ namespace SimpleAutomationTool
 
 	void BuildConfig()
 	{
-		SimpleAutomationToolCommon::PackagingSaveFileName = FDateTime::Now().ToString(TEXT("%Y-%m-%d-%H-%M"));
+		AutomationToolCommonMethod::PackagingSaveFileName = FDateTime::Now().ToString(TEXT("%Y-%m-%d-%H-%M"));
 	}
 }
 

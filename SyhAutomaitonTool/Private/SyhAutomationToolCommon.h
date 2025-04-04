@@ -1,7 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "SyhAutomationToolLog.h"
-#include "SyhAutomationToolType.h"
+#include "SimpleAutomatedToolType.h"
 #include "Misc/Parse.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
@@ -10,89 +10,14 @@
 #endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
-namespace SimpleAutomationToolCommon
+namespace SyhAutomationToolCommon
 {
-	//打包的文件路径，以时间为名
-	extern class FString PackagingSaveFileName;
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	//String(xxxx xxxx)-> "xxxx xxxx"
-	//对于.bat文件，使用"xxx/xxx xxx/xx"就可以读取
-	//对于.sh文件
-	void AdaptCommandArgsStringWithSpace(FString& InKey);
-
-	void GetBatPathString(FString& InPath);
-
-	inline FString GetMatchKey(const FString& InKey) { return FString(TEXT("-") + InKey + TEXT("=")); }
-
-	inline bool IsMatchKey(const FString& InKey)
-	{
-		if (InKey.StartsWith(TEXT("-")) && InKey.EndsWith(TEXT("=")))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	template<class Type>
-	bool GetValueFromCommandLine(const FString& InKey, Type& OutValue)
-	{
-		if (FString Key = GetMatchKey(InKey);
-			!FParse::Value(FCommandLine::Get(), *Key, OutValue))
-		{
-			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value. Use default value."), *Key);
-			return false;
-		}
-
-		return true;
-	}
-
-	template<>
-	bool GetValueFromCommandLine<bool>(const FString& InKey, bool& OutValue)
-	{
-		if (FString Key = GetMatchKey(InKey);
-			!FParse::Bool(FCommandLine::Get(), *Key, OutValue))
-		{
-			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value. Use default value."), *Key);
-			return false;
-		}
-		return true;
-	}
-
-	template<>
-	bool GetValueFromCommandLine<FString>(const FString& InKey, FString& OutValue)
-	{
-		OutValue.Empty();
-		if (FString Key = GetMatchKey(InKey);
-			!FParse::Value(FCommandLine::Get(), *Key, OutValue))
-		{
-			UE_LOG(SyhAutomaitonToolLog, Display, TEXT("%s was not found the value. Use default value."), *Key);
-			return false;
-		}
-		return true;
-	}
-
-	
-	//xxx1&&xxx2
-	bool ParseCommandLineByKey(const FString& InKey, TArray<FString>& InArray, bool bPath);
-
-	//xxx1||yyy1&&xxx2||yyy2
-	bool ParseCommandLineByKey(const FString& InKey, TMap<FString, FString>& InArray, bool bPath);
 
 	bool DeleteFile(const FString& InPath);
 	bool DeleteDirectory(const FString& InPath);
 	bool DeletePath(const struct FFileStatData& InFileStatData, const FString& InPath);
 	bool DeletePath(const FString& InPath);
-
-
-	//是否存在路径替换
-	// %~ProjectPath/xxx.txt
-	// C:\\MyProgram\\UnrealEngine-5.3.2-release\\SyhAutomaitonTool\\xxx.txt
-	//FAutomatedCode_Xxxx::BuildParameter(const FString& InJsonStr)
-	//FAutomatedCode_Xxxx::BuildParameter()
-	//在以上两种成员种控制替换的路径
-	void RecognizePathSyntax(FString& InPath);
 
 	bool PathExists(const FString& InPath, bool bFolder)
 	{

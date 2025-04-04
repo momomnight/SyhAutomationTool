@@ -1,8 +1,5 @@
 #pragma once
-
-
-#include "SyhAutomationToolTypeFwd.h"
-
+#include "CoreMinimal.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS

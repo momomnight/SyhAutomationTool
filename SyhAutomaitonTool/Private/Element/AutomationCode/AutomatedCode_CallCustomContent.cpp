@@ -27,15 +27,12 @@ bool FAutomatedCode_CallCustomContent::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_CallCustomContent::BuildParameter()
 {
-	if (Super::BuildParameter())
-	{
-		return true;
-	}
-	else
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
 	}
+	return Result;
 }
 
 bool FAutomatedCode_CallCustomContent::Execute()

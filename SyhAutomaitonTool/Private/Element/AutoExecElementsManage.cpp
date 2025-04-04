@@ -1,6 +1,6 @@
 #include "Element/AutoExecElementsManage.h"
 #include "Core/SimpleAutomationTool.h"
-#include "SyhAutomationToolType.h"
+#include "SimpleAutomatedToolType.h"
 
 TSharedPtr<FAutoExecElementsManage> FAutoExecElementsManage::Instance = nullptr;
 

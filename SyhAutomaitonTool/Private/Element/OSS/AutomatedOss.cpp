@@ -28,8 +28,12 @@ bool FAutomatedCode_OSS::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_OSS::BuildParameter()
 {
-	SyhLogDisplay(TEXT("the method of the command argument is too complex, please wait the new version."));
-	return false;
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
+	{
+		SyhLogDisplay(TEXT("the method of the command argument is too complex, please wait the new version."));
+	}
+	return Result;
 }
 
 bool FAutomatedCode_OSS::Execute()

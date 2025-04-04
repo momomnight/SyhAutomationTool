@@ -25,26 +25,12 @@ bool FAutomatedCode_UEProjectRefresh::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_UEProjectRefresh::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::UnrealBuildToolPathKey, SelfConfig->UnrealBuildToolPath);
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine(Tool<OwnConfig>::ProjectUProjectPathKey, SelfConfig->ProjectUProjectPath);
-
-	if (Result)
-	{
-		FPaths::NormalizeFilename(SelfConfig->UnrealBuildToolPath);
-		FPaths::RemoveDuplicateSlashes(SelfConfig->UnrealBuildToolPath);
-		FPaths::NormalizeFilename(SelfConfig->ProjectUProjectPath);
-		FPaths::RemoveDuplicateSlashes(SelfConfig->ProjectUProjectPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->UnrealBuildToolPath);
-		SimpleAutomationToolCommon::RecognizePathSyntax(SelfConfig->ProjectUProjectPath);
-		return true;
-	}
-	else
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
+	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
-		return false;
 	}
+	return Result;
 }
 
 bool FAutomatedCode_UEProjectRefresh::Execute()
@@ -63,7 +49,7 @@ bool FAutomatedCode_UEProjectRefresh::Execute()
 
 	SelfConfig->CallPath = SelfConfig->UnrealBuildToolPath;
 
-	SimpleAutomationToolCommon::GetBatPathString(SelfConfig->ProjectUProjectPath);
+	AutomationToolCommonMethod::GetBatPathString(SelfConfig->ProjectUProjectPath);
 	SelfConfig->Parameters = FString::Printf(TEXT(" -projectfiles -project=%s -game -engine -progress "), *SelfConfig->ProjectUProjectPath);
 
 	ReturnValue = Super::Execute();

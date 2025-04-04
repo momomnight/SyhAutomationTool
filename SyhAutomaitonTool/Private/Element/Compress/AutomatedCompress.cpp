@@ -26,7 +26,7 @@ bool IsUseZip()
 	return CompressStr == ZipStr;
 }
 
-struct FProcessPath_CompressUnderPath : public SimpleAutomationToolCommon::FProcessPath_Base
+struct FProcessPath_CompressUnderPath : public SyhAutomationToolCommon::FProcessPath_Base
 {
 	
 	//文件
@@ -63,7 +63,7 @@ struct FProcessPath_CompressUnderPath : public SimpleAutomationToolCommon::FProc
 	}
 };
 
-struct FProcessPath_Compress : public SimpleAutomationToolCommon::FProcessPath_Base
+struct FProcessPath_Compress : public SyhAutomationToolCommon::FProcessPath_Base
 {
 	//文件
 	virtual void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath)
@@ -93,7 +93,7 @@ struct FProcessPath_Compress : public SimpleAutomationToolCommon::FProcessPath_B
 };
 
 //用于bCompressEachFileUnderPath == false的情况，需要检查提供的目标路径是否正确，删除存在的目标路径
-struct FPreprocessPath_CheckSource : SimpleAutomationToolCommon::FPreprocessPath_Base
+struct FPreprocessPath_CheckSource : SyhAutomationToolCommon::FPreprocessPath_Base
 {
 	bool operator()(const FFileStatData& FileStatData, const FString& InPath)
 	{
@@ -106,7 +106,7 @@ struct FPreprocessPath_CheckSource : SimpleAutomationToolCommon::FPreprocessPath
 	}
 };
 
-struct FProcessPath_DecompressUnderPath : public SimpleAutomationToolCommon::FProcessPath_Base
+struct FProcessPath_DecompressUnderPath : public SyhAutomationToolCommon::FProcessPath_Base
 {
 
 	//文件
@@ -145,7 +145,7 @@ struct FProcessPath_DecompressUnderPath : public SimpleAutomationToolCommon::FPr
 	}
 };
 
-struct FProcessPath_Decompress : public SimpleAutomationToolCommon::FProcessPath_Base
+struct FProcessPath_Decompress : public SyhAutomationToolCommon::FProcessPath_Base
 {
 	//文件
 	virtual void operator()(TMap<FString, FString>& OutContent, const FString& SourcePath, const FString& TargetPath)
@@ -178,22 +178,11 @@ bool FAutomatedCode_Compress::BuildParameter(const FString& InJsonStr)
 
 bool FAutomatedCode_Compress::BuildParameter()
 {
-	TSharedPtr<OwnConfig> SelfConfig = GetSelfConfig<OwnConfig>();
-	bool Result = true;
-	Result &= SimpleAutomationToolCommon::GetValueFromCommandLine<bool>(Tool<OwnConfig>::Compress_BooleanKey, SelfConfig->bCompress);
-	SimpleAutomationToolCommon::GetValueFromCommandLine<bool>(Tool<OwnConfig>::CompressEachFileUnderPath_BooleanKey, SelfConfig->bCompressEachFileUnderPath);
-	SimpleAutomationToolCommon::GetValueFromCommandLine<ECompressType>(Tool<OwnConfig>::CompressMethodKey, SelfConfig->CompressMethod);
-	if(SelfConfig->CompressMethod == ECompressType::COMPRESS_Zip)
-	{
-		SimpleAutomationToolCommon::GetValueFromCommandLine<FString>(Tool<OwnConfig>::PasswordKey, SelfConfig->Password);
-	}
-	Result &= SimpleAutomationToolCommon::ParseCommandLineByKey(Tool<OwnConfig>::PathOfSourceToTargetKey, SelfConfig->PathOfSourceToTarget, true);
-	
+	bool Result = AutomationCommandLine::CommandLineArgumentToAutomatedConfig<OwnConfig>(GetSelfConfig<OwnConfig>());
 	if (!Result)
 	{
 		SyhLogError(TEXT("BuildParameter is failure to execute. Locate in %s"), GetCommandName<Self>());
 	}
-
 	return Result;
 }
 
@@ -214,9 +203,9 @@ bool FAutomatedCode_Compress::Execute()
 			//key = SourceDirectory
 			//value = TargetDirectory
 			//会移除所有扩展名，需要CompressMethod, 默认使用zip
-			if (!SimpleAutomationToolCommon::PathFilter<
-					SimpleAutomationToolCommon::FPreprocessPath_PathExists,
-					SimpleAutomationToolCommon::FPreprocessPath_Nothing,
+			if (!SyhAutomationToolCommon::PathFilter<
+					SyhAutomationToolCommon::FPreprocessPath_PathExists,
+					SyhAutomationToolCommon::FPreprocessPath_Nothing,
 					FProcessPath_CompressUnderPath>
 				(ExecuteContent, SelfConfig->PathOfSourceToTarget, true, false))
 			{
@@ -228,9 +217,9 @@ bool FAutomatedCode_Compress::Execute()
 			//key = SourcePath
 			//value = TargetPath
 			//根据提供的拓展名，无拓展名使用默认的zip
-			if (!SimpleAutomationToolCommon::PathFilter<
-					SimpleAutomationToolCommon::FPreprocessPath_PathExists,
-					SimpleAutomationToolCommon::FPreprocessPath_Nothing,
+			if (!SyhAutomationToolCommon::PathFilter<
+					SyhAutomationToolCommon::FPreprocessPath_PathExists,
+					SyhAutomationToolCommon::FPreprocessPath_Nothing,
 					FProcessPath_Compress>
 				(ExecuteContent, SelfConfig->PathOfSourceToTarget, false, false))
 			{
@@ -245,9 +234,9 @@ bool FAutomatedCode_Compress::Execute()
 			//提供的路径为文件夹路径，并且解压文件夹下的每一个压缩文件
 			//如果提供了非文件夹路径，不会做任何事
 
-			if (!SimpleAutomationToolCommon::PathFilter<
-				SimpleAutomationToolCommon::FPreprocessPath_PathExists,
-				SimpleAutomationToolCommon::FPreprocessPath_Nothing,
+			if (!SyhAutomationToolCommon::PathFilter<
+					SyhAutomationToolCommon::FPreprocessPath_PathExists,
+					SyhAutomationToolCommon::FPreprocessPath_Nothing,
 				FProcessPath_DecompressUnderPath>
 				(ExecuteContent, SelfConfig->PathOfSourceToTarget, true, false))
 			{
@@ -257,9 +246,9 @@ bool FAutomatedCode_Compress::Execute()
 		else
 		{
 			//需要检查提供的解压缩文件是否符合程序合法拓展名
-			if (!SimpleAutomationToolCommon::PathFilter<
+			if (!SyhAutomationToolCommon::PathFilter<
 					FPreprocessPath_CheckSource,
-					SimpleAutomationToolCommon::FPreprocessPath_Nothing,
+					SyhAutomationToolCommon::FPreprocessPath_Nothing,
 					FProcessPath_Decompress>
 				(ExecuteContent, SelfConfig->PathOfSourceToTarget, false, false))
 			{
