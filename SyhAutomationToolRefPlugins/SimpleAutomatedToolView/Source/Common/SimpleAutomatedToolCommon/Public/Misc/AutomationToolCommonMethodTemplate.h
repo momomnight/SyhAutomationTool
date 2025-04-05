@@ -54,7 +54,7 @@ namespace AutomationToolCommonMethod
 			return false;
 		}
 
-		OutValue = EnumTool<EMysqlMethodType>::GetEnumValue(Result);
+		OutValue = EnumTool<EMysqlMethodType>::GetEnumMemberValue(Result);
 
 		return true;
 	}
@@ -70,7 +70,7 @@ namespace AutomationToolCommonMethod
 			return false;
 		}
 
-		OutValue = EnumTool<EComparisionType>::GetEnumValue(Result);
+		OutValue = EnumTool<EComparisionType>::GetEnumMemberValue(Result);
 
 		return true;
 	}
@@ -86,7 +86,7 @@ namespace AutomationToolCommonMethod
 			return false;
 		}
 
-		OutValue = EnumTool<ECompressType>::GetEnumValue(Result);
+		OutValue = EnumTool<ECompressType>::GetEnumMemberValue(Result);
 
 		return true;
 	}
@@ -102,7 +102,7 @@ namespace AutomationToolCommonMethod
 			return false;
 		}
 
-		OutValue = EnumTool<ESimpleHTTPVerbType>::GetEnumValue(Result);
+		OutValue = EnumTool<ESimpleHTTPVerbType>::GetEnumMemberValue(Result);
 
 		return true;
 	}

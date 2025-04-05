@@ -1,9 +1,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SimpleAutomatedToolTypeRelated.h"
-#include "Json.h"
+#include "Dom/JsonValue.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonWriter.h"
 #include <type_traits>
+#include "SimpleAutomatedToolTypeRelated.h"
 
 namespace AutomationJson
 {

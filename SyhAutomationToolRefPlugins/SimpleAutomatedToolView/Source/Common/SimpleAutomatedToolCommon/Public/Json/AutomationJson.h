@@ -3,7 +3,6 @@
 #include "Misc/AutomationToolCommonMethod.h"
 
 
-
 //FAutomatedCallConfig
 //FAutomatedCallCustomContentConfig
 //FAutomatedUEProjectRefreshConfig
@@ -42,7 +41,7 @@ namespace AutomationJson
 	void ConfigureEnum(TSharedPtr<FJsonObject> InJsonObject, EnumType InEnumValue)
 	{
 		static_assert(std::is_enum_v<EnumType>, "EnumType must be enum type.");
-		InJsonObject->SetStringField(EnumTool<EnumType>::GetEnumNameKey(), EnumTool<EnumType>::GetShortName(InEnumValue));
+		InJsonObject->SetStringField(EnumTool<EnumType>::GetEnumNameKey(), EnumTool<EnumType>::GetEnumMemberShortName(InEnumValue));
 	}
 	template void ConfigureEnum<ECommandProtocol>(TSharedPtr<FJsonObject> InJsonObject, ECommandProtocol InEnumValue);
 	template void ConfigureEnum<ESimpleOSSCommand>(TSharedPtr<FJsonObject> InJsonObject, ESimpleOSSCommand InEnumValue);
@@ -55,7 +54,7 @@ namespace AutomationJson
 	EnumType GetEnum(TSharedPtr<FJsonObject> InJsonObject)
 	{
 		static_assert(std::is_enum_v<EnumType>, "EnumType must be enum type.");
-		return EnumTool<EnumType>::GetEnumValue(InJsonObject->GetStringField(EnumTool<EnumType>::GetEnumNameKey()));
+		return EnumTool<EnumType>::GetEnumMemberValue(InJsonObject->GetStringField(EnumTool<EnumType>::GetEnumNameKey()));
 	}
 	template ECommandProtocol GetEnum<ECommandProtocol>(TSharedPtr<FJsonObject> InJsonObject);
 	template ESimpleOSSCommand GetEnum<ESimpleOSSCommand>(TSharedPtr<FJsonObject> InJsonObject);
@@ -97,7 +96,7 @@ namespace AutomationJson
 	void AutomatedConfigToJsonObject<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedCommandNestingConfig& InConfig)
 	{
 		OutJsonObject->SetStringField(EnumTool<decltype(InConfig.ComparisionType)>::GetEnumNameKey(), 
-			EnumTool<decltype(InConfig.ComparisionType)>::GetShortName(InConfig.ComparisionType));
+			EnumTool<decltype(InConfig.ComparisionType)>::GetEnumMemberShortName(InConfig.ComparisionType));
 
 		//上面的命令对于配置无需更多处理
 		TArray<TSharedPtr<FJsonValue>> Array;
@@ -251,7 +250,7 @@ namespace AutomationJson
 	void AutomatedConfigToJsonObject<FAutomatedHTTPConfig>(TSharedPtr<FJsonObject> OutJsonObject, const FAutomatedHTTPConfig& InConfig)
 	{
 		OutJsonObject->SetStringField(Tool<FAutomatedHTTPConfig>::URLKey, InConfig.URL);
-		OutJsonObject->SetStringField(EnumTool<decltype(InConfig.VerbType)>::GetEnumNameKey(), EnumTool<decltype(InConfig.VerbType)>::GetShortName(InConfig.VerbType));
+		OutJsonObject->SetStringField(EnumTool<decltype(InConfig.VerbType)>::GetEnumNameKey(), EnumTool<decltype(InConfig.VerbType)>::GetEnumMemberShortName(InConfig.VerbType));
 		
 		OutJsonObject->SetBoolField(Tool<FAutomatedHTTPConfig>::Sync_BooleanKey, InConfig.bSync);
 		OutJsonObject->SetBoolField(Tool<FAutomatedHTTPConfig>::Binaries_BooleanKey, InConfig.bBinaries);
@@ -275,7 +274,7 @@ namespace AutomationJson
 	{
 		OutJsonObject->SetBoolField(Tool<FAutomatedCompressConfig>::Compress_BooleanKey, InConfig.bCompress);
 		OutJsonObject->SetBoolField(Tool<FAutomatedCompressConfig>::CompressEachFileUnderPath_BooleanKey, InConfig.bCompressEachFileUnderPath);
-		OutJsonObject->SetStringField(Tool<FAutomatedCompressConfig>::CompressMethodKey, EnumTool<decltype(InConfig.CompressMethod)>::GetShortName(InConfig.CompressMethod));
+		OutJsonObject->SetStringField(Tool<FAutomatedCompressConfig>::CompressMethodKey, EnumTool<decltype(InConfig.CompressMethod)>::GetEnumMemberShortName(InConfig.CompressMethod));
 		OutJsonObject->SetStringField(Tool<FAutomatedCompressConfig>::PasswordKey, InConfig.Password);
 
 		TArray<TSharedPtr<FJsonValue>> Array;
@@ -350,7 +349,7 @@ namespace AutomationJson
 	template<>
 	void JsonObjectToAutomatedConfig<FAutomatedCommandNestingConfig>(TSharedPtr<FJsonObject> InJsonObject, FAutomatedCommandNestingConfig& OutConfig)
 	{
-		OutConfig.ComparisionType = EnumTool<decltype(OutConfig.ComparisionType)>::GetEnumValue(
+		OutConfig.ComparisionType = EnumTool<decltype(OutConfig.ComparisionType)>::GetEnumMemberValue(
 			InJsonObject->GetStringField(EnumTool<decltype(OutConfig.ComparisionType)>::GetEnumNameKey()));
 		const TArray<TSharedPtr<FJsonValue>>& InArrayObject = InJsonObject->GetArrayField(Tool<FAutomatedCommandNestingConfig>::CommandListKey);
 		OutConfig.CommandList.Empty();
@@ -561,7 +560,7 @@ namespace AutomationJson
 	{
 		OutConfig.bCompress = InJsonObject->GetBoolField(Tool<FAutomatedCompressConfig>::Compress_BooleanKey);
 		OutConfig.bCompressEachFileUnderPath = InJsonObject->GetBoolField(Tool<FAutomatedCompressConfig>::CompressEachFileUnderPath_BooleanKey);
-		OutConfig.CompressMethod = EnumTool<decltype(OutConfig.CompressMethod)>::GetEnumValue(InJsonObject->GetStringField(Tool<FAutomatedCompressConfig>::CompressMethodKey));
+		OutConfig.CompressMethod = EnumTool<decltype(OutConfig.CompressMethod)>::GetEnumMemberValue(InJsonObject->GetStringField(Tool<FAutomatedCompressConfig>::CompressMethodKey));
 		OutConfig.Password = InJsonObject->GetStringField(Tool<FAutomatedCompressConfig>::PasswordKey);
 		
 		OutConfig.PathOfSourceToTarget.Empty();

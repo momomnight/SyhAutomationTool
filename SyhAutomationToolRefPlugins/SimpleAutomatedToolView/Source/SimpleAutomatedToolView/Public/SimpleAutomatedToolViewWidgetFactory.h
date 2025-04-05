@@ -3,9 +3,9 @@
 #include "CoreMinimal.h"
 #include "Widgets/SCompoundWidget.h"
 #include "SimpleAutomatedToolViewType.h"
-#include "Widgets/Input/SButton.h"
 #include "Widgets/Images/SImage.h"
 #include "Widgets/Input/SCheckBox.h"
+#include "Widget/DetailPanel/Automated/SAutomatedDetailEditorWidget.h"
 
 namespace SimpleAutomatedToolViewWidgetFactory
 {
@@ -15,7 +15,7 @@ namespace SimpleAutomatedToolViewWidgetFactory
 	template <>
 	TSharedPtr<SWidget> CreateWidget<EToolViewModePages::MP_Automated_Editor>()
 	{
-		return SNew(SButton);
+		return SNew(SAutomatedDetailEditorWidget);
 	}
 
 	template <>

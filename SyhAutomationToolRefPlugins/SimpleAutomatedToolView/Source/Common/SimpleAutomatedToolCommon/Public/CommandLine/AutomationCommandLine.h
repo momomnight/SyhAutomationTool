@@ -5,11 +5,15 @@
 #include "Misc/AutomationToolCommonMethodTemplate.h"
 #include "Misc/AutomationToolCommonMethod.h"
 #include "SimpleAutomatedToolCommonLog.h"
+#include "DllExports/AutomationCommandLine.h"
 
 namespace AutomationCommandLine
 {
 	template <class AutomatedConfigType>
-	bool CommandLineArgumentToAutomatedConfig(TSharedPtr<AutomatedConfigType> SelfConfig);
+	bool CommandLineArgumentToAutomatedConfig(TSharedPtr<AutomatedConfigType> SelfConfig)
+	{
+		return true;
+	}
 	// 清除配置
 	template <class AutomatedConfigType>
 	void ClearConfig(TSharedPtr<AutomatedConfigType> SelfConfig){}

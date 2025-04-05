@@ -27,7 +27,7 @@ public class SimpleAutomatedToolCommon : ModuleRules
 			{
 				"Core",
 				"CoreUObject",
-
+				"Json",
 
 				// ... add other public dependencies that you statically link with here ...
 			}
@@ -37,13 +37,12 @@ public class SimpleAutomatedToolCommon : ModuleRules
 			{
 				"Projects",
 				"InputCore",
-				"Json",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
 
-		PrivateDependencyModuleNames.Add("SimpleOSS");
-		PrivateDependencyModuleNames.Add("SimpleHTTP");
+		PublicDependencyModuleNames.Add("SimpleOSS");
+		PublicDependencyModuleNames.Add("SimpleHTTP");
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{

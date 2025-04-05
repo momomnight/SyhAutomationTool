@@ -34,7 +34,8 @@ public:
 		static_assert(std::is_base_of<FAutoExecElements, AutomatedCommandType>::value, "This type is not derived of FAutoExecElements.");
 		return EnumTool<ECommandProtocol>::ToCString<FCommandProtocol_ConfigType<AutomatedCommandType>::Value>();
 	}
-
+	
+	//将Config存放在最底层，具体类型通过构造的模板参数传入
 	template <class AutomatedCommandType>
 	static void CreateAutoExecElement(TSharedPtr<FAutoExecElements> SelfPtr)
 	{
@@ -45,9 +46,6 @@ public:
 		}
 	}
 
-	//将Config存放在最底层，具体类型通过构造的模板参数传入
-	//需要自己类型的Config时，临时转换
-	//具体想法，减少需要写的代码
 	FAutoExecElements() {}
 
 	//抽象基类的析构应该为虚函数，但是必须提供定义

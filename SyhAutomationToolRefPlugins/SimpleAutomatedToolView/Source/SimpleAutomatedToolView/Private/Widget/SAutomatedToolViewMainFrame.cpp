@@ -38,16 +38,23 @@ void SAutomatedToolViewMainFrame::ConstructChild()
 		SNew(SHorizontalBox)
 		+ SHorizontalBox::Slot()
 		.AutoWidth()
-		[	//模式选择
-			SAssignNew(ModeSelector, SComboBox<TSharedPtr<FString>>)
+		[	
+			SNew(SBox)
+			.MinDesiredWidth(100)
+			.MaxDesiredWidth(150)
+			.HeightOverride(25)
+			[
+				//模式选择
+				SAssignNew(ModeSelector, SComboBox<TSharedPtr<FString>>)
 				.OptionsSource(&Modes)
 				.OnGenerateWidget(this, &SAutomatedToolViewMainFrame::MakeComboBoxItemWidget)
 				.OnSelectionChanged(this, &SAutomatedToolViewMainFrame::OnSelectionChanged)
 				.OnComboBoxOpening(this, &SAutomatedToolViewMainFrame::OnModeMenuOpening)
 				[
 					SNew(STextBlock)
-					.Text(this, &SAutomatedToolViewMainFrame::GetSelectedModeText)
+						.Text(this, &SAutomatedToolViewMainFrame::GetSelectedModeText)
 				]
+			]
 		]
 		+ SHorizontalBox::Slot()
 		.Padding(10.f, 0.f, 0.f, 0.f)
@@ -114,7 +121,7 @@ void SAutomatedToolViewMainFrame::ConstructChild()
 								.HAlign(HAlign_Fill)
 								.VAlign(VAlign_Fill)
 								.Padding(5.f)
-								[	//层级3
+								[	//层级3--编辑器
 									Level_3
 								]
 						]
@@ -123,7 +130,7 @@ void SAutomatedToolViewMainFrame::ConstructChild()
 				+ SOverlay::Slot()
 				.HAlign(EHorizontalAlignment::HAlign_Right)
 				.VAlign(EVerticalAlignment::VAlign_Bottom)
-				.Padding(15.f)
+				.Padding(10.f)
 				[
 					SAssignNew(NotificationList, SNotificationList)
 					.Visibility(EVisibility::SelfHitTestInvisible)

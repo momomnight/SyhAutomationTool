@@ -150,7 +150,7 @@ namespace SimpleAutomationTool
 
 	void BuildConfig()
 	{
-		AutomationToolCommonMethod::PackagingSaveFileName = FDateTime::Now().ToString(TEXT("%Y-%m-%d-%H-%M"));
+		AutomationToolCommonMethod::SetPackagingSaveFileName(FDateTime::Now().ToString(TEXT("%Y-%m-%d-%H-%M")));
 	}
 }
 

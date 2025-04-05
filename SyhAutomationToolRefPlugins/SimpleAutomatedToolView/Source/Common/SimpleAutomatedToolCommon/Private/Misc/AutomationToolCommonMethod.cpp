@@ -1,15 +1,61 @@
 #include "Misc/AutomationToolCommonMethod.h"
 #include "SimpleAutomatedToolCommonLog.h"
+#include "DllExports/AutomatedExecutionPath.h"
+#include "SimpleAutomatedToolType.h"
+#include "SimpleAutomatedToolTypeRelated.h"
 
 namespace AutomationToolCommonMethod
 {
-	FString PackagingSaveFileName;
+	template <class EnumType>
+	FString GetEnumMemberName(EnumType InEnumValue)
+	{
+		return EnumTool<EnumType>::GetEnumMemberShortName(InEnumValue);
+	}
+
+	template <class EnumType>
+	TArray<FString> GetEnumMemberNames()
+	{
+		return EnumTool<EnumType>::GetEnumMemberNames();
+	}
+
+	template FString GetEnumMemberName<ECommandProtocol>(ECommandProtocol InEnumValue);
+	template FString GetEnumMemberName<EComparisionType>(EComparisionType InEnumValue);
+	template FString GetEnumMemberName<ESimpleOSSCommand>(ESimpleOSSCommand InEnumValue);
+	template FString GetEnumMemberName<ESimpleHTTPVerbType>(ESimpleHTTPVerbType InEnumValue);
+	template FString GetEnumMemberName<EMysqlMethodType>(EMysqlMethodType InEnumValue);
+	template FString GetEnumMemberName<ECompressType>(ECompressType InEnumValue);
+	
+	template TArray<FString> GetEnumMemberNames<ECommandProtocol>();
+	template TArray<FString> GetEnumMemberNames<EComparisionType>();
+	template TArray<FString> GetEnumMemberNames<ESimpleOSSCommand>();
+	template TArray<FString> GetEnumMemberNames<ESimpleHTTPVerbType>();
+	template TArray<FString> GetEnumMemberNames<ECompressType>();
+
+	struct FPackagingSaveFileName
+	{
+		//打包的文件路径，以时间为名
+		static FString& Get()
+		{
+			static FString PackagingSaveFileName;
+			return PackagingSaveFileName;
+		}
+	};
+
+	void SetPackagingSaveFileName(const FString& InFileName)
+	{
+		FPackagingSaveFileName::Get() = InFileName;
+	}
+
+	const FString& GetPackagingSaveFileName()
+	{
+		return FPackagingSaveFileName::Get();
+	}
 
 	void RecognizePathSyntax(FString& InPath)
 	{
 		if (InPath.Contains(TEXT("%~Time")))
 		{
-			InPath.ReplaceInline(TEXT("%~Time"), *PackagingSaveFileName);
+			InPath.ReplaceInline(TEXT("%~Time"), *FPackagingSaveFileName::Get());
 		}
 
 		if (InPath.Contains(TEXT("%~AutoPath")))

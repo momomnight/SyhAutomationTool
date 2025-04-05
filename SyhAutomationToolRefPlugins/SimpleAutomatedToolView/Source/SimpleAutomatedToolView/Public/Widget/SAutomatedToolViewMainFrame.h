@@ -1,10 +1,8 @@
 #pragma once
+#include "Widget/Core/SAutomatedToolViewWidget.h"
 
 
-#include "Widgets/SCompoundWidget.h"
-
-
-class SAutomatedToolViewMainFrame : public SCompoundWidget
+class SAutomatedToolViewMainFrame : public SAutomatedToolViewWidget
 {
 
 public:

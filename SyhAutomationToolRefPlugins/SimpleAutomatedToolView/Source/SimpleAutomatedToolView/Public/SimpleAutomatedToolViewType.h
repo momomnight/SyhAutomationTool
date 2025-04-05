@@ -48,7 +48,7 @@ inline uint32 GetTypeHash(const FText& Key)
 
 namespace SimpleAutomatedToolViewType
 {
-	SIMPLEAUTOMATEDTOOLVIEW_API const TArray<FViewButtonInfo>* FindButtonInfos(FText InText);
-	SIMPLEAUTOMATEDTOOLVIEW_API void InitViewButtonInfo();
-	SIMPLEAUTOMATEDTOOLVIEW_API void GatherModeName(TArray<FText>& OutName);
+	const SIMPLEAUTOMATEDTOOLVIEW_API TArray<FViewButtonInfo>* FindButtonInfos(FText InText);
+	void SIMPLEAUTOMATEDTOOLVIEW_API InitViewButtonInfo();
+	void SIMPLEAUTOMATEDTOOLVIEW_API GatherModeName(TArray<FText>& OutName);
 }

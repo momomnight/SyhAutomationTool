@@ -4,7 +4,7 @@
 
 // <Mode, Pages>
 TMap<FText, TArray<FViewButtonInfo>> ViewButtonMap;
-
+TArray<FText> ModeNameList;
 
 
 namespace SimpleAutomatedToolViewType
@@ -17,45 +17,50 @@ namespace SimpleAutomatedToolViewType
 	void InitViewButtonInfo()
 	{
 		{
-			TArray<FViewButtonInfo> ButtonInfos;
-			{
-				FViewButtonInfo& TempInfo = ButtonInfos.AddDefaulted_GetRef();
-				TempInfo.Name = LOCTEXT("MP_Automated_Editor", "Editor");
-				TempInfo.PageType = EToolViewModePages::MP_Automated_Editor;
-			}
-			{
-				FViewButtonInfo& TempInfo = ButtonInfos.AddDefaulted_GetRef();
-				TempInfo.Name = LOCTEXT("MP_L1", "L1");
-				TempInfo.PageType = EToolViewModePages::MP_L1;
-			}
-			ViewButtonMap.Add(LOCTEXT("ViewButtonInfo_Automated", "Automation"), ButtonInfos);
+			ModeNameList.Add(LOCTEXT("ModeName.Automation", "Automation"));
+			ModeNameList.Add(LOCTEXT("ModeName.Other", "Other"));
 		}
 
 		{
 			TArray<FViewButtonInfo> ButtonInfos;
 			{
 				FViewButtonInfo& TempInfo = ButtonInfos.AddDefaulted_GetRef();
-				TempInfo.Name = LOCTEXT("MP_Automated_Editor", "Editor");
+				TempInfo.Name = LOCTEXT("ModeName.Automation.Editor", "Editor");
 				TempInfo.PageType = EToolViewModePages::MP_Automated_Editor;
 			}
 			{
 				FViewButtonInfo& TempInfo = ButtonInfos.AddDefaulted_GetRef();
-				TempInfo.Name = LOCTEXT("MP_L1", "L1");
+				TempInfo.Name = LOCTEXT("ModeName.Automation.L1", "L1");
+				TempInfo.PageType = EToolViewModePages::MP_L1;
+			}
+			ViewButtonMap.Add(ModeNameList[0], ButtonInfos);
+		}
+
+		{
+			TArray<FViewButtonInfo> ButtonInfos;
+			{
+				FViewButtonInfo& TempInfo = ButtonInfos.AddDefaulted_GetRef();
+				TempInfo.Name = LOCTEXT("ModeName.Other.Editor", "Editor");
+				TempInfo.PageType = EToolViewModePages::MP_Automated_Editor;
+			}
+			{
+				FViewButtonInfo& TempInfo = ButtonInfos.AddDefaulted_GetRef();
+				TempInfo.Name = LOCTEXT("ModeName.Other.L1", "L1");
 				TempInfo.PageType = EToolViewModePages::MP_L1;
 			}
 			{
 				FViewButtonInfo& TempInfo = ButtonInfos.AddDefaulted_GetRef();
-				TempInfo.Name = LOCTEXT("MP_L2", "L2");
+				TempInfo.Name = LOCTEXT("ModeName.Other.L2", "L2");
 				TempInfo.PageType = EToolViewModePages::MP_L2;
 			}
-			ViewButtonMap.Add(LOCTEXT("ViewButtonInfo_Other", "Other"), ButtonInfos);
+			ViewButtonMap.Add(ModeNameList[1], ButtonInfos);
 		}
 
 	}
 
 	void GatherModeName(TArray<FText>& OutName)
 	{
-		ViewButtonMap.GetKeys(OutName);
+		OutName = ModeNameList;
 	}
 
 }

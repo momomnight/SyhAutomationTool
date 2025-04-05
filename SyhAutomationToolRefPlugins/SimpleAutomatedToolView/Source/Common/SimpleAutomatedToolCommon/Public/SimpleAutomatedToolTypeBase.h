@@ -134,8 +134,6 @@ public:
 	// 带下划线区分xxx_xxx_xxx、大写小写区分XxxXxxXxx、带空格区分Xxx xxx Xxx，统一格式：xxx_Xxx_xxx, 非标准, xxxyyyzzz找不到
 	FString NormalizeShortName(const FString& InShortName) const
 	{
-
-
 		FString Name = InShortName;
 		if (Name.Contains(TEXT(" ")))
 		{
@@ -186,6 +184,31 @@ public:
 		check((uint8)InEnumIndex >= 0 && (uint8)InEnumIndex < EnumMemberNameNumber && "EnumValue must be greater or equal to 0 and less to EnumMemberNameNumber.");
 		return Data.EnumMemberName[static_cast<uint8>(InEnumIndex)];
 	}
+
+	EnumType GetEnumValue(const FString& InName) const
+	{		
+		if (!InName.IsEmpty())
+		{
+			FString Temp;
+			if (IsWithPrefix(InName))
+			{
+				Temp = ErasePrefix(InName);
+			}
+			else
+			{
+				Temp = InName;
+			}
+
+			for (int32 i = 0; i < EnumMemberNameNumber; i++)
+			{
+				if (Temp.Equals(Data.EnumMemberName[i], ESearchCase::IgnoreCase))
+				{
+					return (EnumType)i;
+				}
+			}
+		}
+		return (EnumType)INDEX_NONE;
+	}
 };
 
 //用于给FEnumRelated初始化
@@ -219,7 +242,7 @@ struct FEnumFunctionObjectRelated
 	template <class EnumType>
 	struct DefaultInvalidEnumValueOperator
 	{
-		virtual EnumType operator()()
+		EnumType operator()()
 		{
 			return (EnumType)0;
 		}
@@ -227,7 +250,7 @@ struct FEnumFunctionObjectRelated
 	template <class EnumType>
 	struct InvalidEnumValueOperator_Error : DefaultInvalidEnumValueOperator<EnumType>
 	{
-		virtual EnumType operator()()
+		EnumType operator()()
 		{
 			check(0 && TEXT("Invalid Enum Value"));
 			return (EnumType)0;
@@ -244,10 +267,10 @@ struct FEnumRelated
 		std::is_base_of_v<FEnumFunctionObjectRelated::DefaultInvalidEnumValueOperator<EnumType>, InvalidEnumValueOperator>, 
 		"EnumType must be enum type.");
 
+
 public:
-	static FString GetFullName(const FString& InName)
+	static FString GetEnumMemberFullName(const FString& InName)
 	{		
-		check(Impl && "Impl can not be nullptr.");
 		if (!InName.IsEmpty())
 		{
 			if (Impl->IsWithPrefix(InName))
@@ -262,7 +285,7 @@ public:
 		return {};	
 	}
 
-	static FString GetShortName(const FString& InName)
+	static FString GetEnumMemberShortName(const FString& InName)
 	{
 		if (!InName.IsEmpty())
 		{
@@ -279,20 +302,18 @@ public:
 		return {};
 	}
 
-	static FString GetFullName(EnumType InEnumIndex)
+	static FString GetEnumMemberFullName(EnumType InEnumIndex)
 	{
 		return Impl->GetEnumValueFullName(GetShortName(InEnumIndex));
 	}
 
-	static FString GetShortName(EnumType InEnumIndex)
+	static FString GetEnumMemberShortName(EnumType InEnumIndex)
 	{
-		check(Impl && "Impl can not be nullptr.");
 		return Impl->GetEnumValueName(InEnumIndex);
 	}
 
 	static bool IsValid(const FString& InName)
 	{
-		check(Impl && "Impl can not be nullptr.");
 		if (InName.IsEmpty()) return false;
 		if (Impl->IsWithPrefix(InName))
 		{	//带前缀
@@ -306,7 +327,6 @@ public:
 
 	static bool IsNormal(const FString& InName)
 	{
-		check(Impl && "Impl can not be nullptr.");
 		if (InName.IsEmpty()) return false;
 
 		if (Impl->IsWithNormalPrefix(InName))
@@ -320,45 +340,60 @@ public:
 	template <EnumType EnumValue>
 	constexpr static const TCHAR* ToCString()
 	{
-		check(Impl && "Impl can not be nullptr.");
 		return Impl->GetEnumValueNameKey<EnumValue>();
 	}
 
 	template <EnumType EnumValue>
 	static FString ToString()
 	{
-		check(Impl && "Impl can not be nullptr.");
 		return Impl->GetEnumValueNameKey<EnumValue>();
 	}
 
 	constexpr static const TCHAR* GetEnumNameKeyCString()
 	{
-		check(Impl && "Impl can not be nullptr.");
 		return Impl->GetEnumNameKey();
 	}
 
 	static FString GetEnumNameKey()
 	{
-		check(Impl && "Impl can not be nullptr.");
 		return Impl->GetEnumNameKey();
 	}
 
-	static EnumType GetEnumValue(const FString& InName)
+	static EnumType GetEnumMemberValue(const FString& InName)
 	{
-		FString ProtocolName = GetFullName(InName);
-		int64 Result = UEnum::LookupEnumName(FName(), *ProtocolName);
-		if (Result == INDEX_NONE)
+		EnumType Result = Impl->GetEnumValue(InName);
+		if (Result == (EnumType)INDEX_NONE)
 		{
 			return InvalidEnumValueOperator()();
 		}
 		else
 		{
-			return (EnumType)Result;//无法使用模板，模板需要常量表达式输入
+			return Result;
 		}
+	}
+
+	static TArray<FString> GetEnumMemberNames()
+	{
+		TArray<FString> Result;
+		for (int32 i = 0; i < FEnumInitialValueImpl<EnumType>::GetMemberNumber(); i++)
+		{
+			FString Temp = Impl->Data.EnumMemberName[i];
+			if (Temp.Equals(TEXT("None"), ESearchCase::IgnoreCase) || Temp.Equals(TEXT("Max"), ESearchCase::IgnoreCase))
+			{
+				continue;
+			}
+			else
+			{
+				Temp.ReplaceCharInline(TEXT('_'), TEXT(' '));
+				Result.Add(Temp);
+			}
+		}
+		return Result;
 	}
 
 protected:
 	constexpr static const FEnumRelatedBase<EnumType, FEnumInitialValueImpl<EnumType>::GetMemberNumber()>* Impl = FEnumInitialValueImpl<EnumType>::GetInitialValue();
+	static_assert(Impl, "Impl can not be nullptr.");
 };
 
 

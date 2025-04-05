@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "SyhAutomationToolLog.h"
 #include "SimpleAutomatedToolType.h"
+#include "DllExports/AutomationToolCommonMethod.h"
 #include "Misc/Parse.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
@@ -49,7 +50,7 @@ namespace SyhAutomationToolCommon
 	template<>
 	typename ReturnTypeTrait<ECommandProtocol>::ReturnType ToString<ECommandProtocol>(typename ReturnTypeTrait<ECommandProtocol>::ParameterType InCommandProtocol)
 	{
-		return FCommandProtocolRelated::GetShortName(InCommandProtocol);
+		return AutomationToolCommonMethod::GetEnumMemberName<ECommandProtocol>(InCommandProtocol);
 	}
 
 	template<>
