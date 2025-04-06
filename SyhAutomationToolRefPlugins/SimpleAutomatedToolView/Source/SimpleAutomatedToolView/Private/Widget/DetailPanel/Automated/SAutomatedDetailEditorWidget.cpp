@@ -2,6 +2,14 @@
 #include "Widget/DetailPanel/Automated/SAutomatedBlueprintOutline.h"
 #include "Widget/DetailPanel/Automated/SAutomatedFileDirectory.h"
 #include "Widgets/SOverlay.h"
+
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", off)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+
 SAutomatedDetailEditorWidget::SAutomatedDetailEditorWidget()
 {
 }
@@ -52,3 +60,9 @@ void SAutomatedDetailEditorWidget::Construct(const FArguments& InArgs)
 void SAutomatedDetailEditorWidget::OnCommandButtonClicked(ECommandProtocol InProtocol)
 {
 }
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", on)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT

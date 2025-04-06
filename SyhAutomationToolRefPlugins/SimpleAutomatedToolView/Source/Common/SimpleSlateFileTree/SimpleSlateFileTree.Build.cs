@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class SimpleAutomatedToolView : ModuleRules
+public class SimpleSlateFileTree : ModuleRules
 {
-	public SimpleAutomatedToolView(ReadOnlyTargetRules Target) : base(Target)
+	public SimpleSlateFileTree(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -26,7 +26,6 @@ public class SimpleAutomatedToolView : ModuleRules
 			new string[]
 			{
 				"Core",
-				"SimpleSlateFileTree"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -36,29 +35,17 @@ public class SimpleAutomatedToolView : ModuleRules
 			new string[]
 			{
 				"Projects",
-				"InputCore",			
-				"ToolMenus",
-				"CoreUObject",
+				"InputCore",
+				//"EditorFramework",
+				//"UnrealEd",
+				//"CoreUObject",
+				//"Engine",
 				"Slate",
 				"SlateCore",
-				"SimpleAutomatedToolCommon",
-
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
 		
-		if(Target.Type == TargetType.Editor)
-		{
-			PrivateDependencyModuleNames.AddRange(
-				new string[]
-				{
-					"EditorFramework",
-					"UnrealEd",
-					"Engine",
-				}
-				);
-		}
-
 		
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]

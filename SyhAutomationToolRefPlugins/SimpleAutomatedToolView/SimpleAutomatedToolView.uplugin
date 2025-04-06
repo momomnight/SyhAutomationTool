@@ -24,6 +24,11 @@
 			"Name": "SimpleAutomatedToolCommon",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "SimpleSlateFileTree",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
 	]
 }
