@@ -4,7 +4,6 @@
 
 class SAutomatedToolViewMainFrame : public SAutomatedToolViewWidget
 {
-
 public:
 	SLATE_BEGIN_ARGS(SAutomatedToolViewMainFrame) {}
 

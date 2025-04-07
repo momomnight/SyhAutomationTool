@@ -41,6 +41,7 @@ public class SimpleAutomatedToolView : ModuleRules
 				"CoreUObject",
 				"Slate",
 				"SlateCore",
+				"SlateReflector",
 				"SimpleAutomatedToolCommon",
 
 				// ... add private dependencies that you statically link with here ...	

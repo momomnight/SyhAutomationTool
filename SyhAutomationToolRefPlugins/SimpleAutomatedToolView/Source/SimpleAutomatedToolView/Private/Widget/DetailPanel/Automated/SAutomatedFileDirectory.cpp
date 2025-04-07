@@ -35,20 +35,26 @@ void SAutomatedFileDirectory::Construct(const FArguments& InArgs)
 	ChildSlot
 	[
 		SNew(SBox)
-		.WidthOverride(400)
+		.MaxDesiredWidth(400.f)
+		.MinDesiredWidth(400.f)	
 		[
-			SNew(SVerticalBox)
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.HAlign(HAlign_Fill)
+			SNew(SScrollBox)
+			.Orientation(EOrientation::Orient_Horizontal)
+			+ SScrollBox::Slot()
+			.HAlign(EHorizontalAlignment::HAlign_Fill)
 			[
-				SAssignNew(FileTreeView, STreeView<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>>)
-				.TreeItemsSource(&FileTreeDataSource)
-				.OnGenerateRow(this, &SAutomatedFileDirectory::OnGenerateRow)
-				.OnGetChildren(this, &SAutomatedFileDirectory::OnGetChildren)
-				.OnExpansionChanged(this, &SAutomatedFileDirectory::OnExpansionChanged)
+				SNew(SScrollBox)
+				.ScrollBarVisibility(EVisibility::Visible)
+				+ SScrollBox::Slot()
+				.HAlign(EHorizontalAlignment::HAlign_Fill)
+				[
+					SAssignNew(FileTreeView, STreeView<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>>)
+					.TreeItemsSource(&FileTreeDataSource)
+					.OnGenerateRow(this, &SAutomatedFileDirectory::OnGenerateRow)
+					.OnGetChildren(this, &SAutomatedFileDirectory::OnGetChildren)
+					.OnExpansionChanged(this, &SAutomatedFileDirectory::OnExpansionChanged)
+				]
 			]
-
 		]
 	];
 }
@@ -66,9 +72,16 @@ TSharedRef<class ITableRow> SAutomatedFileDirectory::OnGenerateRow(TSharedPtr<Si
 	{
 		return SNew(STableRow<TSharedPtr<SimpleSlateFileTree::FFileTree_File>>, InOwnerTable)
 			[
-				SNew(STextBlock)
-				.Text(FText::Format(LOCTEXT("ParseFileTree", "{0}(file)"), FText::FromString(InNode->GetFullName())))
-				.TextStyle(FAppStyle::Get(), "FlatButton.DefaultTextStyle")
+				SNew(SButton)
+				.ButtonColorAndOpacity(FLinearColor::Transparent)
+				.ButtonStyle(FCoreStyle::Get(), "NoBorder")
+				.HAlign(HAlign_Fill)
+				[
+					SNew(STextBlock)
+
+						.Text(FText::Format(LOCTEXT("ParseFileTree", "{0}(file)"), FText::FromString(InNode->GetFullName())))
+						.TextStyle(FAppStyle::Get(), "FlatButton.DefaultTextStyle")
+				]
 			];
 	}
 	else if(InNode->GetFileType() == SimpleSlateFileTree::EFileType::Folder)
@@ -79,28 +92,40 @@ TSharedRef<class ITableRow> SAutomatedFileDirectory::OnGenerateRow(TSharedPtr<Si
 		
 		return SNew(STableRow<TSharedPtr<SimpleSlateFileTree::FFileTree_Folder>>, InOwnerTable)
 			[
-				SNew(SHorizontalBox)
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
+				SNew(SButton)
+				.ButtonColorAndOpacity(FLinearColor::Transparent)
+				.ButtonStyle(FCoreStyle::Get(), "NoBorder")
+				.HAlign(HAlign_Fill)
 				[
-					Image.ToSharedRef()
-				]
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				[
-					SNew(STextBlock)
-					.Text(FText::Format(LOCTEXT("ParseFileTree", "{0}(folder)"), FText::FromString(InNode->GetFullName())))
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					[
+						Image.ToSharedRef()
+					]
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					[
+						SNew(STextBlock)
+						.Text(FText::Format(LOCTEXT("ParseFileTree", "{0}(folder)"), FText::FromString(InNode->GetFullName())))
+					]
 				]
 			];
 	}
 	else if(InNode->GetFileType() == SimpleSlateFileTree::EFileType::Invalid)
 	{
 		return SNew(STableRow<TSharedPtr<SimpleSlateFileTree::FFileTree_Invalid>>, InOwnerTable)[
-			SNew(STextBlock).Text(FText::Format(LOCTEXT("ParseFileTree", "{0}(Invalid)"), FText::FromString(InNode->GetFullName())))
+			SNew(STextBlock).Text(FText::Format(LOCTEXT("ParseFileTree", "{0}"), FText::FromString(InNode->GetFullName())))
+		];
+	}
+	else
+	{
+		return SNew(STableRow<TSharedPtr<SimpleSlateFileTree::FFileTree_None>>, InOwnerTable)[
+			SNew(STextBlock).Text(FText::Format(LOCTEXT("ParseFileTree", "{0}"), FText::FromString(InNode->GetFullName())))
 		];
 	}
 
-	return SNew(STableRow<TSharedPtr<SimpleSlateFileTree::FFileTree_None>>, InOwnerTable);
+	
 }
 
 void SAutomatedFileDirectory::OnGetChildren(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, 
@@ -133,10 +158,8 @@ void SAutomatedFileDirectory::OnExpansionChanged(TSharedPtr<SimpleSlateFileTree:
 		{
 			TempNode->SetLoadingState(true);
 
-			// 模拟异步加载（实际替换为真实异步操作）
 			AsyncTask(ENamedThreads::GameThread, [this, TempNode]() 
 			{
-				// 加载子数据
 				TempNode->GetChildren().Empty();
 				SimpleSlateFileTree::FindFiles(
 					TempNode->GetChildren(), TempNode, [](const FString&) {return true; }

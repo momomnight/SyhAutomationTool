@@ -14,6 +14,13 @@ namespace SimpleSlateFileTree
 		TArray<FString> Result;
 		IFileManager::Get().FindFiles(Result, *(Parent->GetPath() / TEXT("*")), true, true);
 
+
+		if (Result.Num() <= 0)
+		{
+			OutChildren.Add(MakeShareable(new FFileTree_None{ Parent->GetPath() / TEXT("Empty"), Parent }));
+			return;
+		}
+
 		for (auto FoundPath : Result)
 		{
 			FString CombinePath = Parent->GetPath() / FoundPath;
@@ -42,7 +49,7 @@ namespace SimpleSlateFileTree
 			}
 			else
 			{
-				OutChildren.Add(MakeShareable(new FFileTree_Invalid{ FoundPath, CombinePath, Parent}));
+				OutChildren.Add(MakeShareable(new FFileTree_Invalid{ FoundPath, CombinePath, Parent }));
 			}
 		}
 	}
@@ -52,6 +59,12 @@ namespace SimpleSlateFileTree
 	{
 		TArray<FString> Result;
 		IFileManager::Get().FindFiles(Result, *(Parent->GetPath() / TEXT("*")), true, true);
+
+		if (Result.Num() <= 0)
+		{
+			OutChildren.Add(MakeShareable(new FFileTree_None{ Parent->GetPath() / TEXT("Empty"), Parent}));
+			return;
+		}
 
 		for (auto FoundPath : Result)
 		{
@@ -83,6 +96,7 @@ namespace SimpleSlateFileTree
 			{
 				Child = MakeShareable(new FFileTree_Invalid{ FoundPath, CombinePath, Parent });
 			}
+
 			OutChildren.Add(Child);
 		}
 	}

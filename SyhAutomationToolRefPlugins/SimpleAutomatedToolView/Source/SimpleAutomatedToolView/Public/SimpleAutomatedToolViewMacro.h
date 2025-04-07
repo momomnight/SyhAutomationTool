@@ -22,6 +22,12 @@ struct F##InCommandName\
 };\
 static F##InCommandName InCommandName;
 
+#define BindUIAction(InCommandName, InSequenceIndex, UIActionObject)\
+UIActions[FText(InCommandName)][InSequenceIndex] = UIActionObject
+
+#define BindMenuSpawner(InCommandName, MenuExtensionDelegate)\
+MenuEntries[FText(InCommandName)].Add(MenuExtensionDelegate);
+
 #define CreateUICommand(InCommandName, InSequenceIndex, FriendlyName, InDescription, CommandType, InDefaultChord)\
 TSharedPtr<FUICommandInfo>& InCommandName##_Command_##InSequenceIndex = CreateCommandInfo(FText(InCommandName), InSequenceIndex);\
 MakeUICommand_InternalUseOnly(\
@@ -34,4 +40,7 @@ PREPROCESSOR_TO_COMMAND_NAME_TCHAR(InCommandName##_Command, InSequenceIndex),\
 FriendlyName,\
 InDescription,\
 CommandType, \
-InDefaultChord)
+InDefaultChord);
+
+#define GetRealCommandName(InCommandName,InSequenceIndex)\
+InCommandName##_Command_##InSequenceIndex

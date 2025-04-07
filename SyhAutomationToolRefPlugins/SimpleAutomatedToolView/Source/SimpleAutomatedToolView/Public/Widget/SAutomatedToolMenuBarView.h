@@ -21,9 +21,8 @@ public:
 	void Construct(const FArguments& InArgs);
 
 public:
-	bool IsButtonEnabled(FText InKey, int32 InType) { return true; }
-	bool IsButtonChecked(FText InKey, int32 InType) { return true; }
-	void OnButtonPressd(FText InKey, int32 InType);
+
+	//用于填充下拉菜单
 	void OnFillMenuEntries(FMenuBuilder& InMenuBuilder, FText InKey);
 
 protected:

@@ -39,17 +39,20 @@ void SAutomatedDetailEditorWidget::Construct(const FArguments& InArgs)
 		[
 			SNew(SHorizontalBox)
 			+ SHorizontalBox::Slot()
-			.AutoWidth()
+			.HAlign(HAlign_Fill)
+			.FillWidth(0.2f)
 			[
 				FileDirectory
 			]
 			+ SHorizontalBox::Slot()
-			.FillWidth(1.f)
+			.HAlign(HAlign_Fill)
+			.FillWidth(0.6f)
 			[
 				ViewGraph
 			]
 			+ SHorizontalBox::Slot()
-			.AutoWidth()
+			.HAlign(HAlign_Fill)
+			.FillWidth(0.2f)
 			[
 				BlueprintOutline
 			]

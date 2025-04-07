@@ -80,13 +80,11 @@ namespace SimpleSlateFileTree
 	struct SIMPLESLATEFILETREE_API FFileTree_None : public FFileTreeBase
 	{
 	public:
-		FFileTree_None() : FFileTreeBase(TEXT("None"), TEXT("None"), nullptr, EFileType::None)
+		FFileTree_None(const FString& InPath, TSharedPtr<FFileTreeBase> InParent = nullptr) 
+			: FFileTreeBase(TEXT("None"), InPath, InParent, EFileType::None)
 		{
-			check(false && TEXT("This node can not created!"));
 		}
 		void SetName(const FString& InName) noexcept = delete;
-		void SetParent(TSharedPtr<FFileTreeBase> InParent) noexcept = delete;
-		void SetPath(const FString& InPath) noexcept = delete;
 	};
 
 	struct SIMPLESLATEFILETREE_API FFileTree_Invalid : public FFileTreeBase

@@ -11,6 +11,7 @@
 #include "Widget/SAutomatedToolMenuBarView.h"
 #include "Widget/SAutomatedToolViewMainFrame.h"
 #include "Widgets/SBoxPanel.h"
+
 #if WITH_EDITOR
 #include "LevelEditor.h"
 #endif
@@ -33,11 +34,14 @@ void FSimpleAutomatedToolViewModule::StartupModule()
 		FExecuteAction::CreateRaw(this, &FSimpleAutomatedToolViewModule::PluginButtonClicked),
 		FCanExecuteAction());
 
-	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FSimpleAutomatedToolViewModule::RegisterMenus));
+	//UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FSimpleAutomatedToolViewModule::RegisterMenus));
 	
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(FSimpleAutomatedToolViewEditorID::TabName, FOnSpawnTab::CreateRaw(this, &FSimpleAutomatedToolViewModule::OnSpawnPluginTab))
 		.SetDisplayName(LOCTEXT("FSimpleAutomatedToolViewTabTitle", "SimpleAutomatedToolView"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
+	
+
+
 }
 
 void FSimpleAutomatedToolViewModule::ShutdownModule()

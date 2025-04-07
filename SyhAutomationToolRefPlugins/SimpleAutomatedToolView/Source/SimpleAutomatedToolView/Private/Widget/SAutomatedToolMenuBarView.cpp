@@ -4,6 +4,10 @@
 
 #define LOCTEXT_NAMESPACE "SAutomatedToolMenuBarView"
 
+//Construct中绑定映射命令, 包括FText对应的下拉菜单绑定OnFillMenuEntries, FText和int32对应的按钮绑定的OnButtonPressd
+//OnFillMenuEntries中填充下拉菜单
+//OnButtonPressd执行对应的命令
+
 SAutomatedToolMenuBarView::SAutomatedToolMenuBarView()
 {
 }
@@ -11,13 +15,18 @@ SAutomatedToolMenuBarView::SAutomatedToolMenuBarView()
 void SAutomatedToolMenuBarView::Construct(const FArguments& InArgs)
 {
 	CommandList = InArgs._CommandList;
-	FMenuBarBuilder MenuBarBuilder(CommandList.Pin());
+
+	TSharedPtr<FUICommandList> Commands = CommandList.Pin();
+
+	//横向菜单栏构建
+	FMenuBarBuilder MenuBarBuilder(Commands);
 
 	//绑定MenuBar的命令
 	for (auto& Command : FSimpleAutomatedToolViewCommands::Get().CommandInfoList)
 	{
 		//设置菜单栏
-		MenuBarBuilder.AddPullDownMenu(
+		MenuBarBuilder.AddPullDownMenu
+		(
 			Command.Key,
 			Command.Key,
 			//参数在前，Payload在后
@@ -28,12 +37,16 @@ void SAutomatedToolMenuBarView::Construct(const FArguments& InArgs)
 		for (auto& SubCommand : Command.Value)
 		{
 			//FUIBindingMap UICommandBindingMap; <FUICommandInfo, FUIAction>
-			CommandList.Pin()->MapAction(
-				SubCommand.Value,
-				FExecuteAction::CreateSP(this, &SAutomatedToolMenuBarView::OnButtonPressd, Command.Key, SubCommand.Key),
-				FCanExecuteAction::CreateSP(this, &SAutomatedToolMenuBarView::IsButtonEnabled, Command.Key, SubCommand.Key),
-				FIsActionChecked::CreateSP(this, &SAutomatedToolMenuBarView::IsButtonChecked, Command.Key, SubCommand.Key)
-			);
+			if(	FSimpleAutomatedToolViewCommands::Get().UIActions.Contains(Command.Key) && 
+				FSimpleAutomatedToolViewCommands::Get().UIActions[Command.Key].Contains(SubCommand.Key) &&
+				FSimpleAutomatedToolViewCommands::Get().UIActions[Command.Key][SubCommand.Key].IsBound())
+			{
+				Commands->MapAction
+				(
+					SubCommand.Value,
+					FSimpleAutomatedToolViewCommands::Get().UIActions[Command.Key][SubCommand.Key]
+				);
+			}
 		}
 	}
 
@@ -49,21 +62,11 @@ void SAutomatedToolMenuBarView::Construct(const FArguments& InArgs)
 
 }
 
-void SAutomatedToolMenuBarView::OnButtonPressd(FText InKey, int32 InType)
-{
-}
-
 void SAutomatedToolMenuBarView::OnFillMenuEntries(FMenuBuilder& InMenuBuilder, FText InKey)
 {
-
 	if (FSimpleAutomatedToolViewCommands::Get().CommandInfoList.Contains(InKey))
 	{
-		for (auto& SubCommand : FSimpleAutomatedToolViewCommands::Get().CommandInfoList[InKey])
-		{
-			InMenuBuilder.BeginSection(TEXT("MenuEntries"));
-			InMenuBuilder.AddMenuEntry(SubCommand.Value);
-			InMenuBuilder.EndSection();
-		}
+		FSimpleAutomatedToolViewCommands::Get().MenuEntries[InKey].Broadcast(InMenuBuilder);
 	}
 
 }

@@ -104,8 +104,6 @@ void SAutomatedBlueprintOutline::OnSearchCommand(const FString& InCommand)
 
 }
 
-
-
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
 #pragma optimize("", on)
