@@ -66,6 +66,7 @@ void SAutomatedToolMenuBarView::OnFillMenuEntries(FMenuBuilder& InMenuBuilder, F
 {
 	if (FSimpleAutomatedToolViewCommands::Get().CommandInfoList.Contains(InKey))
 	{
+		//生成下拉菜单子项
 		FSimpleAutomatedToolViewCommands::Get().MenuEntries[InKey].Broadcast(InMenuBuilder);
 	}
 

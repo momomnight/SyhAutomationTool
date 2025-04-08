@@ -32,28 +32,70 @@ void SAutomatedFileDirectory::Construct(const FArguments& InArgs)
 	FileTreeDataSource.Add(MakeShareable(new SimpleSlateFileTree::FFileTree_Folder{ 
 		FPaths::GetCleanFilename(RootPath.GetRootPath()), RootPath.GetRootPath() }));
 
+	SAssignNew(HorizontalScrollBar, SScrollBar)
+		.Orientation(Orient_Horizontal)
+		//.AlwaysShowScrollbar(true)
+		.Thickness(FVector2f(FAppStyle::Get().GetWidgetStyle<FScrollBoxStyle>("ScrollBox").BarThickness));
+	SAssignNew(VerticalScrollBar, SScrollBar)
+		.Orientation(Orient_Vertical)
+		//.AlwaysShowScrollbar(true)
+		.Thickness(FVector2f(FAppStyle::Get().GetWidgetStyle<FScrollBoxStyle>("ScrollBox").BarThickness));
+
 	ChildSlot
 	[
-		SNew(SBox)
-		.MaxDesiredWidth(400.f)
-		.MinDesiredWidth(400.f)	
+		SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.FillHeight(1.f)
 		[
-			SNew(SScrollBox)
-			.Orientation(EOrientation::Orient_Horizontal)
-			+ SScrollBox::Slot()
-			.HAlign(EHorizontalAlignment::HAlign_Fill)
+			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot()
+			.FillWidth(1.f)
 			[
-				SNew(SScrollBox)
-				.ScrollBarVisibility(EVisibility::Visible)
+				SNew(SScrollBox) // 外层：垂直滚动
+				.Orientation(Orient_Vertical)
+				.ExternalScrollbar(VerticalScrollBar) // 绑定垂直滚动条
 				+ SScrollBox::Slot()
-				.HAlign(EHorizontalAlignment::HAlign_Fill)
 				[
-					SAssignNew(FileTreeView, STreeView<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>>)
-					.TreeItemsSource(&FileTreeDataSource)
-					.OnGenerateRow(this, &SAutomatedFileDirectory::OnGenerateRow)
-					.OnGetChildren(this, &SAutomatedFileDirectory::OnGetChildren)
-					.OnExpansionChanged(this, &SAutomatedFileDirectory::OnExpansionChanged)
+					SNew(SScrollBox) // 内层：水平滚动
+					.Orientation(Orient_Horizontal)
+					.ExternalScrollbar(HorizontalScrollBar) // 绑定水平滚动条
+					.ConsumeMouseWheel(EConsumeMouseWheel::Never)
+					+ SScrollBox::Slot()
+					.FillSize(1.f)
+					[
+						SAssignNew(FileTreeView, STreeView<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>>)
+							.TreeItemsSource(&FileTreeDataSource)
+							.OnGenerateRow(this, &SAutomatedFileDirectory::OnGenerateRow)
+							.OnGetChildren(this, &SAutomatedFileDirectory::OnGetChildren)
+							.OnExpansionChanged(this, &SAutomatedFileDirectory::OnExpansionChanged)
+					]
 				]
+			]
+			+ SHorizontalBox::Slot()
+			.AutoWidth()
+			.HAlign(HAlign_Left)
+			[
+				VerticalScrollBar.ToSharedRef()
+			]
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.VAlign(VAlign_Top)
+		[
+			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot()
+			[
+				HorizontalScrollBar.ToSharedRef()
+			]
+			+ SHorizontalBox::Slot()
+			.AutoWidth()
+			.HAlign(HAlign_Right)
+			[
+				SNew(SBox)
+				.HAlign(HAlign_Left)
+				.VAlign(VAlign_Top)
+				.WidthOverride(FAppStyle::Get().GetWidgetStyle<FScrollBoxStyle>("ScrollBox").BarThickness)
+				.HeightOverride(FAppStyle::Get().GetWidgetStyle<FScrollBoxStyle>("ScrollBox").BarThickness)
 			]
 		]
 	];

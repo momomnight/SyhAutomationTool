@@ -15,4 +15,6 @@ protected:
 
 	void OnCommandButtonClicked(ECommandProtocol InProtocol);
 
+private:
+
 };

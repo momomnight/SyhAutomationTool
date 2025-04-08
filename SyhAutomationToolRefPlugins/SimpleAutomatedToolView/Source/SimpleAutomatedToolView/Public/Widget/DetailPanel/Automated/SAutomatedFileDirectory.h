@@ -24,10 +24,14 @@ protected:
 	void OnExpansionChanged(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, bool bIsExpanded);
 	void GetFileIcon(TSharedPtr<SWidget> Widget, bool bIsExpanded) const;
 
+
 private:
 	TSharedPtr<STreeView<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>>> FileTreeView;
 	TArray<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>> FileTreeDataSource;
 
 	SimpleSlateFileTree::FFileTree RootPath;
+
+	TSharedPtr<SScrollBar> HorizontalScrollBar;
+	TSharedPtr<SScrollBar> VerticalScrollBar;
 
 };

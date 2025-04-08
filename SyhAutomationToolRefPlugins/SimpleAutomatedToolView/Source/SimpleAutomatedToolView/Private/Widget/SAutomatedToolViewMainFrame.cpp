@@ -34,11 +34,13 @@ void SAutomatedToolViewMainFrame::Construct(const FArguments& InArgs)
 void SAutomatedToolViewMainFrame::ConstructChild()
 {
 	//层级1--模式加ToolBar
-	TSharedRef<SHorizontalBox> Level_1 =
+	TSharedRef<SBorder> Level_1 = 
+	SNew(SBorder)
+	[
 		SNew(SHorizontalBox)
 		+ SHorizontalBox::Slot()
 		.AutoWidth()
-		[	
+		[
 			SNew(SBox)
 			.MinDesiredWidth(100)
 			.MaxDesiredWidth(150)
@@ -52,7 +54,7 @@ void SAutomatedToolViewMainFrame::ConstructChild()
 				.OnComboBoxOpening(this, &SAutomatedToolViewMainFrame::OnModeMenuOpening)
 				[
 					SNew(STextBlock)
-						.Text(this, &SAutomatedToolViewMainFrame::GetSelectedModeText)
+					.Text(this, &SAutomatedToolViewMainFrame::GetSelectedModeText)
 				]
 			]
 		]
@@ -62,13 +64,15 @@ void SAutomatedToolViewMainFrame::ConstructChild()
 		[	//根据模式，切换对应toolbar
 			//SAssignNew(ToolBarSwitcher, SWidgetSwitcher)
 			SAssignNew(WrapBox, SWrapBox)
-			.UseAllottedWidth(true)
-			.InnerSlotPadding(FVector2d(4.f, 4.f))
-		];
-
+				.UseAllottedWidth(true)
+				.InnerSlotPadding(FVector2d(4.f, 4.f))
+		]
+	];
 
 	//层级2--搜索
-	TSharedRef<SHorizontalBox> Level_2 =
+	TSharedRef<SBorder> Level_2 =
+	SNew(SBorder)
+	[
 		SNew(SHorizontalBox)
 		+ SHorizontalBox::Slot()
 		[
@@ -81,7 +85,9 @@ void SAutomatedToolViewMainFrame::ConstructChild()
 			SNew(SButton)
 			.Text(LOCTEXT("Add", "xxx"))
 			.OnClicked(FOnClicked::CreateSP(this, &SAutomatedToolViewMainFrame::OnSearch))
-		];
+		]
+	];
+
 
 
 	//层级3--编辑器
@@ -251,6 +257,7 @@ void SAutomatedToolViewMainFrame::RefreshModePageButtonBar()
 			TSharedPtr<SButton>& Button = Buttons.AddDefaulted_GetRef();
 
 			WrapBox->AddSlot()
+			.HAlign(HAlign_Center)
 			[
 				SAssignNew(Button, SButton)
 				.Text(Temp.Name)

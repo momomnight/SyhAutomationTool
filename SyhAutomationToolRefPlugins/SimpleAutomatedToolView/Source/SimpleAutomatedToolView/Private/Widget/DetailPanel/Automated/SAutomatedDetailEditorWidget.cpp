@@ -18,19 +18,32 @@ void SAutomatedDetailEditorWidget::Construct(const FArguments& InArgs)
 {
 
 	TSharedRef<SWidget> FileDirectory = 
-		SNew(SAutomatedFileDirectory);
-
-	TSharedRef<SWidget> ViewGraph =
-		SNew(SScrollBox)
-		+ SScrollBox::Slot()
+		SNew(SBorder)
+		.Padding(3.f)
 		[
-			SNew(SImage)
+			SNew(SAutomatedFileDirectory)
+		];
+	TSharedRef<SWidget> ViewGraph =
+		SNew(SBorder)
+		.Padding(3.f)
+		[
+			SNew(SScrollBox)
+			+ SScrollBox::Slot()
+			[
+				SNew(SImage)
+			]
 		];
 
 
+
 	TSharedRef<SWidget> BlueprintOutline = 
-		SNew(SAutomatedBlueprintOutline)
-		.OnCommandButtonClicked(this, &SAutomatedDetailEditorWidget::OnCommandButtonClicked);
+		SNew(SBorder)
+		.Padding(3.f)
+		[
+			SNew(SAutomatedBlueprintOutline)
+			.OnCommandButtonClicked(this, &SAutomatedDetailEditorWidget::OnCommandButtonClicked)
+		];
+
 
 	ChildSlot
 	[
