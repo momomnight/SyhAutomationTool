@@ -6,7 +6,6 @@
 
 void FSimpleSlateFileTreeModule::StartupModule()
 {
-
 }
 
 void FSimpleSlateFileTreeModule::ShutdownModule()

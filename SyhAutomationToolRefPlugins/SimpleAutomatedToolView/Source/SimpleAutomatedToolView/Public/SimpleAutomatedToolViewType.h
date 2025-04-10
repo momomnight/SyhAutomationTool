@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FileTreeTool.h"
 #include "SimpleAutomatedToolViewType.generated.h"
 
 //编辑器页面类型，根据类型创建不同页面
@@ -31,20 +32,6 @@ struct SIMPLEAUTOMATEDTOOLVIEW_API FViewButtonInfo
 	EToolViewModePages PageType;
 
 };
-
-//For TMap
-inline bool operator==(const FText& Lhs, const FText& Rhs)
-{
-	return Lhs.ToString().Equals(Rhs.ToString());
-}
-
-inline uint32 GetTypeHash(const FText& Key)
-{
-	uint32 Hash = 0;
-	Hash = HashCombine(Hash, GetTypeHash(Key.ToString()));
-	return Hash;
-}
-
 
 namespace SimpleAutomatedToolViewType
 {

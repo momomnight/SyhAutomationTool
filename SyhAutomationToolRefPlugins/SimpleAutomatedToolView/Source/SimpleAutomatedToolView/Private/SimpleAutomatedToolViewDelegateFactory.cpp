@@ -27,4 +27,15 @@ namespace SimpleAutomatedToolViewDelegateFactory
 		return WidgetReflector;
 	}
 
+	FOnFileTreeContextMenuClicked CreateFileTreeContextMenuDelegate_Delete()
+	{
+		FOnFileTreeContextMenuClicked ContextMenu_Delete;
+		ContextMenu_Delete.BindLambda(
+			[](TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InFileTree)
+			{
+				
+			}
+		);
+		return ContextMenu_Delete;
+	}
 }

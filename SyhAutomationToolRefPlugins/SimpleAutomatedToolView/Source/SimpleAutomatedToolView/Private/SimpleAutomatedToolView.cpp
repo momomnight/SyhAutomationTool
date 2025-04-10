@@ -74,7 +74,7 @@ TSharedRef<SDockTab> FSimpleAutomatedToolViewModule::OnSpawnPluginTab(const FSpa
 				+ SVerticalBox::Slot()
 				.FillHeight(1.f)
 				[
-					SNew(SAutomatedToolViewMainFrame)
+					SAssignNew(AutomatedToolViewMainFrame, SAutomatedToolViewMainFrame)
 				]
 		];
 }

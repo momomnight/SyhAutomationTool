@@ -11,10 +11,14 @@ public:
 	SAutomatedDetailEditorWidget();
 	void Construct(const FArguments& InArgs);
 
+
+public:
+	void ResetState();
 protected:
 
 	void OnCommandButtonClicked(ECommandProtocol InProtocol);
 
 private:
-
+	TSharedPtr<class SAutomatedFileDirectory> AutomatedFileDirectory;
+	TSharedPtr<class SAutomatedBlueprintOutline> AutomatedBlueprintOutline;
 };

@@ -33,4 +33,7 @@ public:
 	TMap<FText, TMap<int32, FUIAction>> UIActions;
 	TMap<FText, FSpawnMenuEntries> MenuEntries;
 
+	//ContextMenu
+	TMap<FText, FOnFileTreeContextMenuClicked> FileTreeContextMenuActions;
+
 };

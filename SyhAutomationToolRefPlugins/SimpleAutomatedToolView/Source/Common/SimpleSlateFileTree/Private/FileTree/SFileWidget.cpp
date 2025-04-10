@@ -1,27 +1,29 @@
-#include "FileTree/SFileWidget.h"
-#include "FileTree/FileParse.h"
+#include "FileTreeWidget/SFileWidget.h"
 #include "Styling/CoreStyle.h"
+#include "FileTreeType.h"
+#include "Widgets/Text/STextBlock.h"
 
 
 #define LOCTEXT_NAMESPACE "SFolderWidget"
 
-void SFileWidget::Construct(const FArguments& InArgs, const SimpleSlateFileTree::FFileTree_File& InFile)
-{	
-	AssetPaths = InFile.GetFullName();
+void SFileWidget::Construct(const FArguments& InArgs, TSharedPtr<SimpleSlateFileTree::FFileTree_File> InFile)
+{
 	ChildSlot
 	[
-		SNew(SButton)
-		.Text(FText::Format(LOCTEXT("ParseFileTree", "{0}(file)"), FText::FromString(AssetPaths)))
+		SAssignNew(Button, SButton)
+		.ButtonColorAndOpacity(FLinearColor::Transparent)
+		.ButtonStyle(FCoreStyle::Get(), "NoBorder")
 		.HAlign(HAlign_Fill)
-		.OnClicked(this, &SFileWidget::OnClicked)
-		//.ButtonStyle(FCoreStyle::Get(), "NoBorder")
-		.TextStyle(FAppStyle::Get(), "FlatButton.DefaultTextStyle")
+		[
+			SNew(STextBlock)
+			.Text(FText::Format(LOCTEXT("ParseFileTree", "{0}(file)"), FText::FromString(InFile->GetFullName())))
+			.TextStyle(FAppStyle::Get(), "FlatButton.DefaultTextStyle")
+		]
 	];
-}
-
-FReply SFileWidget::OnClicked()
-{
-	return FReply::Handled();
+	SFileTreeWidgetBase::Construct(SFileTreeWidgetBase::FArguments()
+		.OnLeftMouseKeyClick(InArgs._OnLeftMouseKeyClick)
+		.OnRightMouseKeyClick(InArgs._OnRightMouseKeyClick)
+		, InFile);
 }
 
 

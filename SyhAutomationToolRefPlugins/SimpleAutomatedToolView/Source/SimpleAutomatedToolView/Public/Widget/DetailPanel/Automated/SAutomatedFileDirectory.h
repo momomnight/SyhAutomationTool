@@ -1,7 +1,7 @@
 #pragma once
 #include "Widget/Core/SAutomatedToolViewWidget.h"
-#include "FileTree/SFolderWidget.h"
-
+#include "FileTreeType.h"
+#include <atomic>
 
 class SAutomatedFileDirectory : public SAutomatedToolViewWidget
 {
@@ -15,14 +15,28 @@ public:
 
 	SAutomatedFileDirectory();
 	void Construct(const FArguments& InArgs);
-	
-protected:
-	void OnClicked(const FString& InFileName);
 
+	void ConstructChildern();
+	
+
+protected:
+
+	//STreeView
 	TSharedRef<class ITableRow> OnGenerateRow(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, const TSharedRef<class STableViewBase>& InOwnerTable);
 	void OnGetChildren(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, TArray<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>>& OutChildren);
 	void OnExpansionChanged(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, bool bIsExpanded);
 	void GetFileIcon(TSharedPtr<SWidget> Widget, bool bIsExpanded) const;
+	void SetItemExpansion(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode);
+
+
+	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
+	virtual FReply OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
+
+
+protected:
+	void OnFileNodeClicked(const FString& InFileName);
+	void InvokeContextMenuOnFileTree(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
+	void OnContextMenuClicked(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode);
 
 
 private:
@@ -30,8 +44,9 @@ private:
 	TArray<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>> FileTreeDataSource;
 
 	SimpleSlateFileTree::FFileTree RootPath;
+	std::atomic_bool bIsLoading{false};
 
-	TSharedPtr<SScrollBar> HorizontalScrollBar;
-	TSharedPtr<SScrollBar> VerticalScrollBar;
+	TSharedPtr<class SFileTreeContextMenu> FileContextMenuWidget;
+	TSharedPtr<class SFileTreeContextMenu> FolderContextMenuWidget;
 
 };

@@ -83,6 +83,11 @@ void FSimpleAutomatedToolViewCommands::RegisterCommands()
 				FName(TEXT("Help.MenuEntries")), GetRealCommandName(MenuBar_Help, 0)));
 		}
 	}
+
+	{
+		FileTreeContextMenuActions.Add(LOCTEXT("FileTree_ContextMenu_Delete", "Delete"), SimpleAutomatedToolViewDelegateFactory::CreateFileTreeContextMenuDelegate_Delete());
+	}
+
 }
 
 TSharedPtr<FUICommandInfo>& FSimpleAutomatedToolViewCommands::CreateCommandInfo(const FText& InKey, int32 InType)

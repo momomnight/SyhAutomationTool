@@ -1,4 +1,4 @@
-#include "FileTree/FileParse.h"
+#include "FileTreeType.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -62,7 +62,7 @@ namespace SimpleSlateFileTree
 
 		if (Result.Num() <= 0)
 		{
-			OutChildren.Add(MakeShareable(new FFileTree_None{ Parent->GetPath() / TEXT("Empty"), Parent}));
+			OutChildren.Add(MakeShareable(new FFileTree_None{ Parent->GetPath(), Parent}));
 			return;
 		}
 
@@ -101,35 +101,72 @@ namespace SimpleSlateFileTree
 		}
 	}
 
-
-	bool ParseFileTreeRecursive(const FFileTree& InFileTree, TSharedPtr<FFileTree_Folder> InFolder, TFunction<bool(const FString&)> Filter)
+	uint32 GetTypeHash(const TSharedPtr<const FFileTreeBase>& Key)
 	{
-		if(!InFileTree.IsValid()) return false;
-
-		FFileStatData FileStatData = IFileManager::Get().GetStatData(*InFileTree.GetRootPath());
-		if (FileStatData.bIsValid && FileStatData.bIsDirectory)
-		{
-			InFolder->SetName(FPaths::GetCleanFilename(InFileTree.GetRootPath()));
-			InFolder->SetPath(InFileTree.GetRootPath());
-			FindFilesRecursive(InFolder->GetChildren(), InFolder, Filter);
-		}
-		return false;
+		uint32 Hash = 0;
+		Hash = HashCombine(Hash, GetTypeHash(Key->GetPath()));
+		return Hash;
 	}
 
-	bool ParseFileTree(const FFileTree& InFileTree, TSharedPtr<FFileTree_Folder> InFolder, TFunction<bool(const FString&)> Filter)
+	struct FFileTreeSharedPtrKeyFuncs : public BaseKeyFuncs<TSharedPtr<FFileTreeBase>, TSharedPtr<FFileTreeBase>, true>
 	{
-		if (!InFileTree.IsValid()) return false;
+		typedef typename TTypeTraits<TSharedPtr<FFileTreeBase>>::ConstPointerType KeyInitType;
+		typedef typename TCallTraits<TSharedPtr<FFileTreeBase>>::ParamType ElementInitType;
 
-		FFileStatData FileStatData = IFileManager::Get().GetStatData(*InFileTree.GetRootPath());
-		if (FileStatData.bIsValid && FileStatData.bIsDirectory)
+		/**
+		 * @return The key used to index the given element.
+		 */
+		static FORCEINLINE KeyInitType GetSetKey(ElementInitType Element)
 		{
-			InFolder->SetName(FPaths::GetCleanFilename(InFileTree.GetRootPath()));
-			InFolder->SetPath(InFileTree.GetRootPath());
-			FindFiles(InFolder->GetChildren(), InFolder, Filter);
+			return Element;
 		}
-		return false;
-	}
 
+		static FORCEINLINE uint32 GetKeyHash(KeyInitType Key)
+		{
+			return SimpleSlateFileTree::GetTypeHash(Key); // 调用自定义哈希函数
+		}
+
+		static FORCEINLINE bool Matches(KeyInitType A, KeyInitType B)
+		{
+			// 比较是否指向同一对象
+			return A->GetPath() == B->GetPath();
+		}
+	};
+
+	void UpdateFileData(const TArray<TSharedPtr<FFileTreeBase>>& InChildren, TArray<TSharedPtr<FFileTreeBase>>& OutChildren, TSharedPtr<FFileTree_Folder> Parent)
+	{
+		if(!Parent.IsValid() || !Parent->IsFolder()) return;
+
+		TArray<TSharedPtr<FFileTreeBase>> Children;
+		FindFiles(Children, Parent);
+
+		if (Children.IsEmpty())
+		{
+			return;
+		}
+
+		TSet<TSharedPtr<FFileTreeBase>, FFileTreeSharedPtrKeyFuncs> OldChildren{ InChildren };
+		for (auto& Temp : Children)
+		{
+			if (Temp->GetFileType() == EFileType::Folder)
+			{		
+				TSharedPtr<FFileTree_Folder> Folder = Temp->CastTo<FFileTree_Folder>();
+				if (OldChildren.Contains(Temp))
+				{
+					//已有的
+					TSharedPtr<FFileTree_Folder> OldChild = (*OldChildren.Find(Temp))->CastTo<FFileTree_Folder>();
+					Folder->SetExpandedState(OldChild->IsExpanded());
+					UpdateFileData(OldChild->GetChildren(), Folder->GetChildren(), Folder);
+				}
+				else
+				{
+					//新添加项
+					FindFilesRecursive(Folder->GetChildren(), Folder);
+				}
+			}
+		}
+		OutChildren = MoveTemp(Children);
+	}
 }
 
 

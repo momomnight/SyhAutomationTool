@@ -21,7 +21,7 @@ void SAutomatedDetailEditorWidget::Construct(const FArguments& InArgs)
 		SNew(SBorder)
 		.Padding(3.f)
 		[
-			SNew(SAutomatedFileDirectory)
+			SAssignNew(AutomatedFileDirectory, SAutomatedFileDirectory)
 		];
 	TSharedRef<SWidget> ViewGraph =
 		SNew(SBorder)
@@ -40,7 +40,7 @@ void SAutomatedDetailEditorWidget::Construct(const FArguments& InArgs)
 		SNew(SBorder)
 		.Padding(3.f)
 		[
-			SNew(SAutomatedBlueprintOutline)
+			SAssignNew(AutomatedBlueprintOutline, SAutomatedBlueprintOutline)
 			.OnCommandButtonClicked(this, &SAutomatedDetailEditorWidget::OnCommandButtonClicked)
 		];
 
@@ -75,6 +75,11 @@ void SAutomatedDetailEditorWidget::Construct(const FArguments& InArgs)
 
 void SAutomatedDetailEditorWidget::OnCommandButtonClicked(ECommandProtocol InProtocol)
 {
+}
+
+void SAutomatedDetailEditorWidget::ResetState()
+{
+	AutomatedFileDirectory->ResetContextMenuOnFileTree();
 }
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
