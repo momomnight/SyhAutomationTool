@@ -7,6 +7,13 @@
 #include "Widgets/Input/SButton.h"
 #include <type_traits>
 
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", off)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+
 struct FContextMenuData
 {
 	using DelegateType = void;
@@ -34,20 +41,9 @@ public:
 
 	SLATE_END_ARGS()
 
-	SContextMenuWidget()
-	{
-		//注册通知，当点击控件外部时，关闭当前窗口
-		DelegateHandle = FSlateApplication::Get().GetPopupSupport().RegisterClickNotification(this->AsShared(),
-			FOnClickedOutside::CreateLambda([this]()
-				{
-					this->Close();
-				}
-			));
-	}
-
 	~SContextMenuWidget()
 	{
-		FSlateApplication::Get().GetPopupSupport().UnregisterClickNotification(DelegateHandle);
+		UnregisterClickNotification();
 	}
 
 	void Construct(const FArguments& InArgs)
@@ -62,6 +58,8 @@ public:
 			]
 		];
 		ConstructChild();
+		RegisterClickNotification();
+		CloseContextMenu();
 	}
 
 public:
@@ -72,16 +70,28 @@ public:
 		ConstructChild();
 	}
 
-	//右键唤醒，并传入Data
-	void Invoke(TSharedPtr<DataType> InData)
+	bool IsCollapsed() const noexcept
 	{
-		Data = InData;
-		this->SetVisibility(EVisibility::SelfHitTestInvisible);
+		return this->GetVisibility() == EVisibility::Collapsed;
 	}
-	void Close()
+
+	//右键唤醒，并传入Data
+	void InvokeContextMenu(TSharedPtr<DataType> InData)
 	{
-		Data.Reset();
-		this->SetVisibility(EVisibility::Collapsed);
+		if (IsCollapsed())
+		{
+			Data = InData;
+			this->SetVisibility(EVisibility::SelfHitTestInvisible);
+		}
+	}
+
+	void CloseContextMenu()
+	{
+		if (!IsCollapsed())
+		{
+			Data.Reset();
+			this->SetVisibility(EVisibility::Collapsed);
+		}
 	}
 
 	FReply OnClicked(FText InCommandName)
@@ -113,9 +123,44 @@ protected:
 		}
 	}
 
+	void RegisterClickNotification()
+	{
+		//注册通知，当点击控件外部时，关闭当前窗口
+		if (FSlateApplication::IsInitialized())
+		{
+			if (DelegateHandle.IsValid())
+			{
+				UnregisterClickNotification();
+			}
+
+			DelegateHandle = FSlateApplication::Get().GetPopupSupport().RegisterClickNotification(this->AsShared(),
+				FOnClickedOutside::CreateLambda([this]()
+					{
+						this->CloseContextMenu();
+					}
+				));
+		}
+	}
+
+	void UnregisterClickNotification()
+	{
+		if (FSlateApplication::IsInitialized() && DelegateHandle.IsValid())
+		{
+			FSlateApplication::Get().GetPopupSupport().UnregisterClickNotification(DelegateHandle);
+			DelegateHandle.Reset();
+		}
+	}
+
 private:
 	FContextMenuCommandMap CommandMap;
 	TSharedPtr<SVerticalBox> VerticalBox;
 	TWeakPtr<DataType> Data;
 	FDelegateHandle DelegateHandle;
 };
+
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", on)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT

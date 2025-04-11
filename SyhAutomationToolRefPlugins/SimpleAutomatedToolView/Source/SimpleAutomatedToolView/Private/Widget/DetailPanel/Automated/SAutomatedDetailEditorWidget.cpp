@@ -77,10 +77,6 @@ void SAutomatedDetailEditorWidget::OnCommandButtonClicked(ECommandProtocol InPro
 {
 }
 
-void SAutomatedDetailEditorWidget::ResetState()
-{
-	AutomatedFileDirectory->ResetContextMenuOnFileTree();
-}
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS

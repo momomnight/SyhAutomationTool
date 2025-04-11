@@ -12,3 +12,6 @@ DECLARE_DELEGATE_OneParam(FOperationWidget, TSharedPtr<SWidget>);
 
 DECLARE_DELEGATE_OneParam(FOnLeftMouseKeyClick, TSharedPtr<SimpleSlateFileTree::FFileTreeBase>);
 DECLARE_DELEGATE_ThreeParams(FOnRightMouseKeyClick, TSharedPtr<SimpleSlateFileTree::FFileTreeBase>, const FGeometry&, const FPointerEvent&);
+
+DECLARE_DELEGATE_FourParams(FOnFileTreeWidgetDrag, const FGeometry&, const FDragDropEvent&, SimpleSlateFileTree::FFileTreeDragDefinition, 
+	SimpleSlateFileTree::FFileTreeDragDefinition);

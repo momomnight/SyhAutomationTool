@@ -6,6 +6,8 @@
 
 namespace SimpleSlateFileTree
 {
+
+
 	void SIMPLESLATEFILETREE_API FindFilesRecursive(TArray<TSharedPtr<FFileTreeBase>>& OutChildren, TSharedPtr<FFileTree_Folder> Parent,
 		TFunction<bool(const FString&)> Filter = [](const FString&)->bool {return true; });
 	void SIMPLESLATEFILETREE_API FindFiles(TArray<TSharedPtr<FFileTreeBase>>& OutChildren, TSharedPtr<FFileTree_Folder> Parent,
@@ -169,9 +171,13 @@ namespace SimpleSlateFileTree
 		}
 	};
 
+
 	template <> struct SIMPLESLATEFILETREE_API FFileTypeTrait<FFileTreeBase> { constexpr static EFileType Type = EFileType::None; };
 	template <> struct SIMPLESLATEFILETREE_API FFileTypeTrait<FFileTree_None> { constexpr static EFileType Type = EFileType::None; };
 	template <> struct SIMPLESLATEFILETREE_API FFileTypeTrait<FFileTree_Invalid> { constexpr static EFileType Type = EFileType::Invalid; };
 	template <> struct SIMPLESLATEFILETREE_API FFileTypeTrait<FFileTree_File> { constexpr static EFileType Type = EFileType::File; };
 	template <> struct SIMPLESLATEFILETREE_API FFileTypeTrait<FFileTree_Folder> { constexpr static EFileType Type = EFileType::Folder; };
+
+
+
 }

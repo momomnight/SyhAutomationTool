@@ -22,8 +22,12 @@ public:
 protected:
 
 	//STreeView
-	TSharedRef<class ITableRow> OnGenerateRow(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, const TSharedRef<class STableViewBase>& InOwnerTable);
-	void OnGetChildren(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, TArray<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>>& OutChildren);
+	TSharedRef<class ITableRow> OnGenerateRow(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, 
+		const TSharedRef<class STableViewBase>& InOwnerTable);
+
+	void OnGetChildren(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, 
+		TArray<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>>& OutChildren);
+
 	void OnExpansionChanged(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, bool bIsExpanded);
 	void GetFileIcon(TSharedPtr<SWidget> Widget, bool bIsExpanded) const;
 	void SetItemExpansion(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode);
@@ -32,6 +36,9 @@ protected:
 	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 	virtual FReply OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 
+
+	void OnTableRowDrag(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent, 
+		SimpleSlateFileTree::FFileTreeDragDefinition From, SimpleSlateFileTree::FFileTreeDragDefinition To);
 
 protected:
 	void OnFileNodeClicked(const FString& InFileName);
@@ -48,5 +55,5 @@ private:
 
 	TSharedPtr<class SFileTreeContextMenu> FileContextMenuWidget;
 	TSharedPtr<class SFileTreeContextMenu> FolderContextMenuWidget;
-
+	TSharedPtr<class SFileTreeContextMenu> DragDropContextMenuWidget;
 };

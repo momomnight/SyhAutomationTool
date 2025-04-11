@@ -12,6 +12,7 @@ public:
 	SLATE_BEGIN_ARGS(SFileWidget) {}
 	SLATE_EVENT(FOnRightMouseKeyClick, OnRightMouseKeyClick)
 	SLATE_EVENT(FOnLeftMouseKeyClick, OnLeftMouseKeyClick)
+	SLATE_EVENT(FOnFileTreeWidgetDrag, OnFileTreeWidgetDrag)
 	SLATE_END_ARGS()
 
 	void SIMPLESLATEFILETREE_API Construct(const FArguments& InArgs, TSharedPtr<SimpleSlateFileTree::FFileTree_File> InFile);

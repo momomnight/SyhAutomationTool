@@ -11,10 +11,15 @@
 
 void SFolderWidget::Construct(const FArguments& InArgs, TSharedPtr<SimpleSlateFileTree::FFileTree_Folder> InFolder)
 {
+	SetOnLeftMouseKeyClick(InArgs._OnLeftMouseKeyClick);
+	SetOnRightMouseKeyClick(InArgs._OnRightMouseKeyClick);
+	SetOnFileTreeWidgetDrag(InArgs._OnFileTreeWidgetDrag);
+
+	FileBase = InFolder;
 	ChildSlot
 	[
 		SAssignNew(Button, SButton)
-		.OnClicked(FOnClicked::CreateSP(this, &SFolderWidget::OnClicked))
+		.OnClicked(FOnClicked::CreateSP(this, &SFileTreeWidgetBase::OnClicked))
 		.ButtonColorAndOpacity(FLinearColor::Transparent)
 		.ButtonStyle(FAppStyle::Get(), "NoBorder")
 		.HAlign(HAlign_Fill)
@@ -34,10 +39,7 @@ void SFolderWidget::Construct(const FArguments& InArgs, TSharedPtr<SimpleSlateFi
 		]
 	];
 	
-	SFileTreeWidgetBase::Construct(SFileTreeWidgetBase::FArguments()
-		.OnLeftMouseKeyClick(InArgs._OnLeftMouseKeyClick)
-		.OnRightMouseKeyClick(InArgs._OnRightMouseKeyClick)
-	, InFolder);
+
 }
 
 

@@ -34,6 +34,7 @@ public:
 	TMap<FText, FSpawnMenuEntries> MenuEntries;
 
 	//ContextMenu
-	TMap<FText, FOnFileTreeContextMenuClicked> FileTreeContextMenuActions;
+	TMap<FText, FOnFileTreeContextMenuClicked> FileTree_RightMouseButtonClickContextMenuActions;
 
+	TMap<FText, FOnFileTreeContextMenuClicked> FileTree_DragDropContextMenuActions;
 };

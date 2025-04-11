@@ -85,7 +85,13 @@ void FSimpleAutomatedToolViewCommands::RegisterCommands()
 	}
 
 	{
-		FileTreeContextMenuActions.Add(LOCTEXT("FileTree_ContextMenu_Delete", "Delete"), SimpleAutomatedToolViewDelegateFactory::CreateFileTreeContextMenuDelegate_Delete());
+		FileTree_RightMouseButtonClickContextMenuActions.Add(LOCTEXT("FileTree_ClickContextMenu_Delete", "Delete"),
+			SimpleAutomatedToolViewDelegateFactory::CreateFileTreeContextMenuDelegate_Delete());
+
+		FileTree_DragDropContextMenuActions.Add(LOCTEXT("FileTree_DragDropContextMenu_MoveTo", "MoveTo"),
+			SimpleAutomatedToolViewDelegateFactory::CreateFileTreeContextMenuDelegate_Delete());
+		FileTree_DragDropContextMenuActions.Add(LOCTEXT("FileTree_DragDropContextMenu_CopyTo", "CopyTo"),
+			SimpleAutomatedToolViewDelegateFactory::CreateFileTreeContextMenuDelegate_Delete());
 	}
 
 }

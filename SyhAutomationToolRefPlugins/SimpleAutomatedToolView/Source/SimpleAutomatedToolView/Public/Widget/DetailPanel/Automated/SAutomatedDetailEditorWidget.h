@@ -11,9 +11,6 @@ public:
 	SAutomatedDetailEditorWidget();
 	void Construct(const FArguments& InArgs);
 
-
-public:
-	void ResetState();
 protected:
 
 	void OnCommandButtonClicked(ECommandProtocol InProtocol);
