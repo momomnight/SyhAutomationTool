@@ -8,9 +8,9 @@ namespace SimpleSlateFileTree
 	struct SIMPLESLATEFILETREE_API FFileTree_File;
 	struct SIMPLESLATEFILETREE_API FFileTreeBase;
 
-	struct SIMPLESLATEFILETREE_API FFileTreeDragDefinition
+	struct SIMPLESLATEFILETREE_API FFileTreeDragDropDefinition
 	{
-		TSharedPtr<FFileTreeBase> File;
-		TSharedPtr<SWidget> Widget;
+		TSharedPtr<FFileTreeBase> From;
+		TSharedPtr<FFileTreeBase> To;
 	};
 }

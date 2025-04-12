@@ -10,8 +10,13 @@
 DECLARE_DELEGATE_OneParam(FOperationWidget, TSharedPtr<SWidget>);
 
 
-DECLARE_DELEGATE_OneParam(FOnLeftMouseKeyClick, TSharedPtr<SimpleSlateFileTree::FFileTreeBase>);
-DECLARE_DELEGATE_ThreeParams(FOnRightMouseKeyClick, TSharedPtr<SimpleSlateFileTree::FFileTreeBase>, const FGeometry&, const FPointerEvent&);
+//唤醒情景菜单等操作
+DECLARE_DELEGATE_RetVal_OneParam(FTransform2D, FOnGetCurrentContextMenuTransform, const FPointerEvent&);
 
-DECLARE_DELEGATE_FourParams(FOnFileTreeWidgetDrag, const FGeometry&, const FDragDropEvent&, SimpleSlateFileTree::FFileTreeDragDefinition, 
-	SimpleSlateFileTree::FFileTreeDragDefinition);
+//用于执行具体操作
+DECLARE_DELEGATE_TwoParams(FOnFileTreeContextMenuClicked, TWeakPtr<SWidget>, TWeakPtr<SimpleSlateFileTree::FFileTreeBase>);
+DECLARE_DELEGATE_TwoParams(FOnFileTreeDragDropContextMenuClicked, TWeakPtr<SWidget>, SimpleSlateFileTree::FFileTreeDragDropDefinition);
+
+
+//用于操作父级控件
+

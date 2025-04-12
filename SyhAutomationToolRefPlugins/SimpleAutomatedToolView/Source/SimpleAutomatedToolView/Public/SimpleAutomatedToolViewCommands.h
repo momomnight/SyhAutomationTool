@@ -29,12 +29,11 @@ public:
 	TSharedPtr< FUICommandInfo > OpenPluginWindow;
 	//FText--下拉菜单 int32--菜单Button索引 FUICommandInfo--Action
 	//FName无法本地化
-	TMap<FText, TMap<int32, TSharedPtr<FUICommandInfo>>> CommandInfoList;
-	TMap<FText, TMap<int32, FUIAction>> UIActions;
-	TMap<FText, FSpawnMenuEntries> MenuEntries;
+	static TMap<FText, TMap<int32, TSharedPtr<FUICommandInfo>>> CommandInfoList;
+	static TMap<FText, TMap<int32, FUIAction>> UIActions;
+	static TMap<FText, FSpawnMenuEntries> MenuEntries;
 
-	//ContextMenu
-	TMap<FText, FOnFileTreeContextMenuClicked> FileTree_RightMouseButtonClickContextMenuActions;
-
-	TMap<FText, FOnFileTreeContextMenuClicked> FileTree_DragDropContextMenuActions;
+	//ContextMenu具体操作
+	static TMap<FText, FOnFileTreeContextMenuClicked> FileTree_RightMouseButtonClickContextMenuActions;
+	static TMap<FText, FOnFileTreeDragDropContextMenuClicked> FileTree_DragDropContextMenuActions;
 };

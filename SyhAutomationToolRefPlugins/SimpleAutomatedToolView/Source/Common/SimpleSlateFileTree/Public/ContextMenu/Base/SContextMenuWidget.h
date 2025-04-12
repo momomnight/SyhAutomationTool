@@ -5,7 +5,6 @@
 #include "Widgets/SCompoundWidget.h"
 #include "FileTreeTool.h"
 #include "Widgets/Input/SButton.h"
-#include <type_traits>
 
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
@@ -14,22 +13,20 @@
 #endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
+template <class InDelegate, class InData>
 struct FContextMenuData
 {
-	using DelegateType = void;
-	using DataType = void;
+	using DelegateType = InDelegate;
 
+	//DataType变量会被传入DelegateType，要将需要的变量聚合起来
+	using DataType = InData;
 };
 
 //情景菜单，对不同Widget右键唤出
-template<class ContextMenuDataType = FContextMenuData>
+template<class ContextMenuDataType>
 class SContextMenuWidget : public SCompoundWidget
 {
 public:
-	static_assert(!std::is_same_v<typename ContextMenuDataType::DelegateType, void>, "need a DelegateType");
-	static_assert(!std::is_same_v<typename ContextMenuDataType::DataType, void>, "need a DataType");
-
-
 	using DelegateType = typename ContextMenuDataType::DelegateType;
 	using DataType = typename ContextMenuDataType::DataType;
 	using FContextMenuCommandMap = TMap<FText, DelegateType>;
@@ -39,16 +36,20 @@ public:
 	//注意逗号
 	SLATE_ARGUMENT(FContextMenuCommandMap, CommandMap);
 
+	SLATE_ARGUMENT(TSharedPtr<SWidget>, ParentWidget)
+
 	SLATE_END_ARGS()
 
 	~SContextMenuWidget()
 	{
 		UnregisterClickNotification();
+		CommandMap.Empty();
 	}
 
 	void Construct(const FArguments& InArgs)
 	{
 		CommandMap = InArgs._CommandMap;
+		ParentWidget = InArgs._ParentWidget;
 
 		ChildSlot
 		[
@@ -63,12 +64,43 @@ public:
 	}
 
 public:
-	//添加新的命令
-	void AddCommands(const FContextMenuCommandMap& InCommandMap)
+	
+	void SetParentWidget(TSharedPtr<SWidget> InWidget)
 	{
-		CommandMap.Append(InCommandMap);
+		ParentWidget = InWidget;
+	}
+	TSharedPtr<SWidget> GetParentWidget()
+	{
+		return ParentWidget.IsValid() ? ParentWidget.Pin() : nullptr;
+	}
+
+	void SetCommands(const FContextMenuCommandMap& InCommandMap)
+	{
+		if (InCommandMap.Num() <= 0) return;
+		CommandMap = InCommandMap;//添加命令就会出问题
 		ConstructChild();
 	}
+
+	void SetCommands(FContextMenuCommandMap&& InCommandMap)
+	{
+		if (InCommandMap.Num() <= 0) return;
+		CommandMap = MoveTemp(InCommandMap);//添加命令就会出问题
+		ConstructChild();
+	}
+
+	////添加新的命令
+	//void AddCommands(const FContextMenuCommandMap& InCommandMap)
+	//{
+	//	if(InCommandMap.Num() <= 0) return;
+	//	CommandMap = InCommandMap;
+	//	ConstructChild();
+	//}
+	//void RemoveCommand(const FText& Text)
+	//{
+	//	DelegateType Temp;
+	//	CommandMap.RemoveAndCopyValue(Text, Temp);
+	//	ConstructChild();
+	//}
 
 	bool IsCollapsed() const noexcept
 	{
@@ -76,7 +108,7 @@ public:
 	}
 
 	//右键唤醒，并传入Data
-	void InvokeContextMenu(TSharedPtr<DataType> InData)
+	void InvokeContextMenu(DataType InData)
 	{
 		if (IsCollapsed())
 		{
@@ -89,22 +121,25 @@ public:
 	{
 		if (!IsCollapsed())
 		{
-			Data.Reset();
 			this->SetVisibility(EVisibility::Collapsed);
 		}
 	}
 
+	
+protected:
+
+	//点击情景菜单按钮
 	FReply OnClicked(FText InCommandName)
 	{
-		if (CommandMap.Contains(InCommandName) && Data.IsValid())
+		this->CloseContextMenu();//点击后关闭情景菜单
+		if (CommandMap.Contains(InCommandName))
 		{
-			CommandMap[InCommandName].Execute(Data.Pin());
+			//把自己传进去
+			CommandMap[InCommandName].Execute(this->AsWeak(), Data);
 			return FReply::Handled();
 		}
 		return FReply::Unhandled();
 	}
-
-protected:
 
 	void ConstructChild()
 	{
@@ -118,6 +153,7 @@ protected:
 			[
 				SNew(SButton)
 				.Text(Temp.Key)
+				//需要Temp.Key来辨别命令
 				.OnClicked(FOnClicked::CreateSP(this, &SContextMenuWidget::OnClicked, Temp.Key))
 			];
 		}
@@ -154,8 +190,9 @@ protected:
 private:
 	FContextMenuCommandMap CommandMap;
 	TSharedPtr<SVerticalBox> VerticalBox;
-	TWeakPtr<DataType> Data;
+	DataType Data;
 	FDelegateHandle DelegateHandle;
+	TWeakPtr<SWidget> ParentWidget;	//给予传入控件的机会
 };
 
 

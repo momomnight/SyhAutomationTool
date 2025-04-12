@@ -6,6 +6,14 @@
 #include "ISlateReflectorModule.h"
 
 
+TMap<FText, TMap<int32, TSharedPtr<FUICommandInfo>>> FSimpleAutomatedToolViewCommands::CommandInfoList;
+TMap<FText, TMap<int32, FUIAction>> FSimpleAutomatedToolViewCommands::UIActions;
+TMap<FText, FSpawnMenuEntries> FSimpleAutomatedToolViewCommands::MenuEntries;
+
+//ContextMenu具体操作
+TMap<FText, FOnFileTreeContextMenuClicked> FSimpleAutomatedToolViewCommands::FileTree_RightMouseButtonClickContextMenuActions;
+TMap<FText, FOnFileTreeDragDropContextMenuClicked> FSimpleAutomatedToolViewCommands::FileTree_DragDropContextMenuActions;
+
 #define LOCTEXT_NAMESPACE "FSimpleAutomatedToolViewModule"
 
 GenerateToolMenuTextStruct(MenuBar_File,	"AutomatedToolViewMenuBar", "MenuBar.File",		"File");
@@ -84,14 +92,25 @@ void FSimpleAutomatedToolViewCommands::RegisterCommands()
 		}
 	}
 
+
+	//ContextMenu
 	{
+		FileTree_RightMouseButtonClickContextMenuActions.Add(LOCTEXT("FileTree_ClickContextMenu_Copy", "Copy"),
+			SimpleAutomatedToolViewDelegateFactory::CreateFileTreeContextMenuDelegate_Copy());
 		FileTree_RightMouseButtonClickContextMenuActions.Add(LOCTEXT("FileTree_ClickContextMenu_Delete", "Delete"),
 			SimpleAutomatedToolViewDelegateFactory::CreateFileTreeContextMenuDelegate_Delete());
 
+	}
+	
+
+	//DragDropContext
+	{
+
 		FileTree_DragDropContextMenuActions.Add(LOCTEXT("FileTree_DragDropContextMenu_MoveTo", "MoveTo"),
-			SimpleAutomatedToolViewDelegateFactory::CreateFileTreeContextMenuDelegate_Delete());
+			SimpleAutomatedToolViewDelegateFactory::CreateFileTreeDragDropContextMenuDelegate_MoveTo());
+
 		FileTree_DragDropContextMenuActions.Add(LOCTEXT("FileTree_DragDropContextMenu_CopyTo", "CopyTo"),
-			SimpleAutomatedToolViewDelegateFactory::CreateFileTreeContextMenuDelegate_Delete());
+			SimpleAutomatedToolViewDelegateFactory::CreateFileTreeDragDropContextMenuDelegate_CopyTo());
 	}
 
 }

@@ -8,15 +8,16 @@
 
 void SFileWidget::Construct(const FArguments& InArgs, TSharedPtr<SimpleSlateFileTree::FFileTree_File> InFile)
 {
-	
+
 	SFileTreeWidgetBase::Construct(
 		SFileTreeWidgetBase::FArguments()
-		.OnLeftMouseKeyClick(InArgs._OnLeftMouseKeyClick)
-		.OnRightMouseKeyClick(InArgs._OnRightMouseKeyClick)
-		.OnFileTreeWidgetDrag(InArgs._OnFileTreeWidgetDrag),
+		.OnGetCurrentContextMenuTransform(InArgs._OnGetCurrentContextMenuTransform)
+		.ContextMenu(InArgs._ContextMenu)
+		.DragDropContextMenu(InArgs._DragDropContextMenu),
 		InFile
 	);
 }
+
 
 
 #undef LOCTEXT_NAMESPACE

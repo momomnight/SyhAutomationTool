@@ -6,7 +6,7 @@
 //多播绑定，可生成多个菜单按钮
 DECLARE_MULTICAST_DELEGATE_OneParam(FSpawnMenuEntries, FMenuBuilder&);
 
-DECLARE_DELEGATE_OneParam(FOnFileTreeContextMenuClicked, TSharedPtr<SimpleSlateFileTree::FFileTreeBase>)
+
 
 namespace SimpleAutomatedToolViewDelegateFactory
 {
@@ -18,5 +18,10 @@ namespace SimpleAutomatedToolViewDelegateFactory
 
 	//ContextMenu
 	FOnFileTreeContextMenuClicked CreateFileTreeContextMenuDelegate_Delete();
+	FOnFileTreeContextMenuClicked CreateFileTreeContextMenuDelegate_Copy();
+	FOnFileTreeContextMenuClicked CreateFileTreeContextMenuDelegate_Paste();
+
+	FOnFileTreeDragDropContextMenuClicked CreateFileTreeDragDropContextMenuDelegate_MoveTo();
+	FOnFileTreeDragDropContextMenuClicked CreateFileTreeDragDropContextMenuDelegate_CopyTo();
 
 }

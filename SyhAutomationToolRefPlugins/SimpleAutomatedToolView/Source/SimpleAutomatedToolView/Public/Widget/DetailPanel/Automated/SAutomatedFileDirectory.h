@@ -17,7 +17,12 @@ public:
 	void Construct(const FArguments& InArgs);
 
 	void ConstructChildern();
-	
+
+
+public:
+	void AsyncUpdateFileTree(TSharedPtr<SimpleSlateFileTree::FFileTree_Folder> InNode);
+
+	FTransform2D GetCurrentContextMenuTransform(const FPointerEvent& MouseEvent);
 
 protected:
 
@@ -36,16 +41,6 @@ protected:
 	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 	virtual FReply OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 
-
-	void OnTableRowDrag(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent, 
-		SimpleSlateFileTree::FFileTreeDragDefinition From, SimpleSlateFileTree::FFileTreeDragDefinition To);
-
-protected:
-	void OnFileNodeClicked(const FString& InFileName);
-	void InvokeContextMenuOnFileTree(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
-	void OnContextMenuClicked(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode);
-
-
 private:
 	TSharedPtr<STreeView<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>>> FileTreeView;
 	TArray<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>> FileTreeDataSource;
@@ -55,5 +50,5 @@ private:
 
 	TSharedPtr<class SFileTreeContextMenu> FileContextMenuWidget;
 	TSharedPtr<class SFileTreeContextMenu> FolderContextMenuWidget;
-	TSharedPtr<class SFileTreeContextMenu> DragDropContextMenuWidget;
+	TSharedPtr<class SFileTreeDragDropContextMenu> DragDropContextMenuWidget;
 };
