@@ -32,8 +32,4 @@ public:
 	static TMap<FText, TMap<int32, TSharedPtr<FUICommandInfo>>> CommandInfoList;
 	static TMap<FText, TMap<int32, FUIAction>> UIActions;
 	static TMap<FText, FSpawnMenuEntries> MenuEntries;
-
-	//ContextMenu具体操作
-	static TMap<FText, FOnFileTreeContextMenuClicked> FileTree_RightMouseButtonClickContextMenuActions;
-	static TMap<FText, FOnFileTreeDragDropContextMenuClicked> FileTree_DragDropContextMenuActions;
 };

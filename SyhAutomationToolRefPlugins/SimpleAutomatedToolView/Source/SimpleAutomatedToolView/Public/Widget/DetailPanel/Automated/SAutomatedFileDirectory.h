@@ -20,35 +20,31 @@ public:
 
 
 public:
-	void AsyncUpdateFileTree(TSharedPtr<SimpleSlateFileTree::FFileTree_Folder> InNode);
+	void AsyncUpdateFileTree(TSharedPtr<SlateFileTree::FFileTree_Folder> InNode);
 
 	FTransform2D GetCurrentContextMenuTransform(const FPointerEvent& MouseEvent);
 
 protected:
 
 	//STreeView
-	TSharedRef<class ITableRow> OnGenerateRow(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, 
+	TSharedRef<class ITableRow> OnGenerateRow(TSharedPtr<SlateFileTree::FFileTreeBase> InNode, 
 		const TSharedRef<class STableViewBase>& InOwnerTable);
 
-	void OnGetChildren(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, 
-		TArray<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>>& OutChildren);
+	void OnGetChildren(TSharedPtr<SlateFileTree::FFileTreeBase> InNode, 
+		TArray<TSharedPtr<SlateFileTree::FFileTreeBase>>& OutChildren);
 
-	void OnExpansionChanged(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode, bool bIsExpanded);
+	void OnExpansionChanged(TSharedPtr<SlateFileTree::FFileTreeBase> InNode, bool bIsExpanded);
 	void GetFileIcon(TSharedPtr<SWidget> Widget, bool bIsExpanded) const;
-	void SetItemExpansion(TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InNode);
+	void SetItemExpansion(TSharedPtr<SlateFileTree::FFileTreeBase> InNode);
 
 
 	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 	virtual FReply OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 
 private:
-	TSharedPtr<STreeView<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>>> FileTreeView;
-	TArray<TSharedPtr<SimpleSlateFileTree::FFileTreeBase>> FileTreeDataSource;
+	TSharedPtr<STreeView<TSharedPtr<SlateFileTree::FFileTreeBase>>> FileTreeView;
+	TArray<TSharedPtr<SlateFileTree::FFileTreeBase>> FileTreeDataSource;
 
-	SimpleSlateFileTree::FFileTree RootPath;
+	SlateFileTree::FFileTree RootPath;
 	std::atomic_bool bIsLoading{false};
-
-	TSharedPtr<class SFileTreeContextMenu> FileContextMenuWidget;
-	TSharedPtr<class SFileTreeContextMenu> FolderContextMenuWidget;
-	TSharedPtr<class SFileTreeDragDropContextMenu> DragDropContextMenuWidget;
 };

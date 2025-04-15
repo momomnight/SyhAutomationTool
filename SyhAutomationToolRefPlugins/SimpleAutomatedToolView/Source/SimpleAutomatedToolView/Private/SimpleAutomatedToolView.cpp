@@ -4,13 +4,12 @@
 #include "SimpleAutomatedToolViewStyle.h"
 #include "SimpleAutomatedToolViewCommands.h"
 #include "Widgets/Docking/SDockTab.h"
-#include "Widgets/Layout/SBox.h"
-#include "Widgets/Text/STextBlock.h"
 #include "ToolMenus.h"
 #include "SimpleAutomatedToolViewEditorID.h"
 #include "Widget/SAutomatedToolMenuBarView.h"
 #include "Widget/SAutomatedToolViewMainFrame.h"
 #include "Widgets/SBoxPanel.h"
+#include "SimpleSlateFileTree.h"
 
 #if WITH_EDITOR
 #include "LevelEditor.h"
@@ -40,24 +39,20 @@ void FSimpleAutomatedToolViewModule::StartupModule()
 		.SetDisplayName(LOCTEXT("FSimpleAutomatedToolViewTabTitle", "SimpleAutomatedToolView"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
 	
-
+	FSimpleSlateFileTreeModule& AutomatedToolViewModule = FModuleManager::Get().LoadModuleChecked<FSimpleSlateFileTreeModule>("SimpleSlateFileTree");
 
 }
 
 void FSimpleAutomatedToolViewModule::ShutdownModule()
 {
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
-
-	UToolMenus::UnRegisterStartupCallback(this);
-
-	UToolMenus::UnregisterOwner(this);
 
 	FSimpleAutomatedToolViewStyle::Shutdown();
 
 	FSimpleAutomatedToolViewCommands::Unregister();
 
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(FSimpleAutomatedToolViewEditorID::TabName);
+
+	FModuleManager::Get().UnloadModule("SimpleSlateFileTree");
 }
 
 TSharedRef<SDockTab> FSimpleAutomatedToolViewModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
@@ -82,31 +77,6 @@ TSharedRef<SDockTab> FSimpleAutomatedToolViewModule::OnSpawnPluginTab(const FSpa
 void FSimpleAutomatedToolViewModule::PluginButtonClicked()
 {
 	FGlobalTabmanager::Get()->TryInvokeTab(FSimpleAutomatedToolViewEditorID::TabName);
-}
-
-void FSimpleAutomatedToolViewModule::RegisterMenus()
-{
-	// Owner will be used for cleanup in call to UToolMenus::UnregisterOwner
-	FToolMenuOwnerScoped OwnerScoped(this);
-
-	{
-		UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.MainMenu.Window");
-		{
-			FToolMenuSection& Section = Menu->FindOrAddSection("WindowLayout");
-			Section.AddMenuEntryWithCommandList(FSimpleAutomatedToolViewCommands::Get().OpenPluginWindow, PluginCommands);
-		}
-	}
-
-	{
-		UToolMenu* ToolbarMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar");
-		{
-			FToolMenuSection& Section = ToolbarMenu->FindOrAddSection("Settings");
-			{
-				FToolMenuEntry& Entry = Section.AddEntry(FToolMenuEntry::InitToolBarButton(FSimpleAutomatedToolViewCommands::Get().OpenPluginWindow));
-				Entry.SetCommandList(PluginCommands);
-			}
-		}
-	}
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -6,18 +6,21 @@
 
 #define LOCTEXT_NAMESPACE "SFolderWidget"
 
-void SFileWidget::Construct(const FArguments& InArgs, TSharedPtr<SimpleSlateFileTree::FFileTree_File> InFile)
+void SFileWidget::Construct(const FArguments& InArgs, const TSharedRef<class STableViewBase>& InOwnerTable, TSharedPtr<SlateFileTree::FFileTree_File> InFileNode)
 {
-
 	SFileTreeWidgetBase::Construct(
-		SFileTreeWidgetBase::FArguments()
-		.OnGetCurrentContextMenuTransform(InArgs._OnGetCurrentContextMenuTransform)
-		.ContextMenu(InArgs._ContextMenu)
-		.DragDropContextMenu(InArgs._DragDropContextMenu),
-		InFile
+		SFileTreeWidgetBase::FArguments(),
+		InOwnerTable,
+		InFileNode
 	);
 }
 
+TSharedRef<SWidget> SFileWidget::ConstructChild(TSharedPtr<SlateFileTree::FFileTreeBase> InFileNode)
+{
+	return SAssignNew(Text, STextBlock)
+		.Text(FText::Format(LOCTEXT("ParseFileTree", "{0}(file)"), FText::FromString(InFileNode->GetFullName())))
+		.TextStyle(FAppStyle::Get(), "FlatButton.DefaultTextStyle");
+}
 
 
 #undef LOCTEXT_NAMESPACE

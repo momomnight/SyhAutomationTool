@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "Input/DragAndDrop.h"
 
+
 class SIMPLESLATEFILETREE_API FFileTreeDragDrop : public FDragDropOperation
 {
 public:

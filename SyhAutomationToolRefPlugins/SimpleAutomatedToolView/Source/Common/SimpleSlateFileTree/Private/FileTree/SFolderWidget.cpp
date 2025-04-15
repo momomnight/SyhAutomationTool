@@ -9,37 +9,28 @@
 
 #define LOCTEXT_NAMESPACE "SFolderWidget"
 
-void SFolderWidget::Construct(const FArguments& InArgs, TSharedPtr<SimpleSlateFileTree::FFileTree_Folder> InFolder)
+void SFolderWidget::Construct(const FArguments& InArgs, const TSharedRef<class STableViewBase>& InOwnerTable, TSharedPtr<SlateFileTree::FFileTree_Folder> InFolder)
 {
-	SFileTreeWidgetBase::Construct(SFileTreeWidgetBase::FArguments()
-		.OnGetCurrentContextMenuTransform(InArgs._OnGetCurrentContextMenuTransform)
-		.ContextMenu(InArgs._ContextMenu)
-		.DragDropContextMenu(InArgs._DragDropContextMenu),
+	SFileTreeWidgetBase::Construct(SFileTreeWidgetBase::FArguments(),
+		InOwnerTable,
 		InFolder
 	);
 }
 
-void SFolderWidget::ConstructChild()
+TSharedRef<SWidget> SFolderWidget::ConstructChild(TSharedPtr<SlateFileTree::FFileTreeBase> InFileNode)
 {
-	SButton::Construct(SButton::FArguments()
-		.ButtonColorAndOpacity(FLinearColor::Transparent)
-		.ButtonStyle(FAppStyle::Get(), "NoBorder")
-		.HAlign(HAlign_Fill)
+	return SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
 		[
-			SNew(SHorizontalBox)
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				[
-					FileBase.Pin()->GetWidget().IsValid() ? FileBase.Pin()->GetWidget().ToSharedRef() : SNew(SImage)
-				]
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				[
-					SNew(STextBlock)
-						.Text(FText::Format(LOCTEXT("ParseFileTree", "{0}(folder)"), FText::FromString(FileBase.Pin()->GetFullName())))
-				]
+			InFileNode->GetWidget().IsValid() ? InFileNode->GetWidget().ToSharedRef() : SNew(SImage)
 		]
-	);
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
+		[
+			SAssignNew(Text, STextBlock)
+				.Text(FText::Format(LOCTEXT("ParseFileTree", "{0}(folder)"), FText::FromString(InFileNode->GetFullName())))
+		];
 }
 
 

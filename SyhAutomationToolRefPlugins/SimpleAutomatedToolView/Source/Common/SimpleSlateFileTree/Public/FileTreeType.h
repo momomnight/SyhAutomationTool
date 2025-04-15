@@ -4,7 +4,7 @@
 #include "FileTreeEvent.h"
 #include "FileTreeTypeFwd.h"
 
-namespace SimpleSlateFileTree
+namespace SlateFileTree
 {
 
 
@@ -23,6 +23,9 @@ namespace SimpleSlateFileTree
 		File,
 		Folder
 	};
+
+	FText SIMPLESLATEFILETREE_API GetFileTypeText(EFileType InType);
+
 
 	template <class FileTreeType>
 	struct SIMPLESLATEFILETREE_API FFileTypeTrait { constexpr static EFileType Type = EFileType::None; };
@@ -52,6 +55,8 @@ namespace SimpleSlateFileTree
 		FORCEINLINE TWeakPtr<FFileTreeBase> GetParent() noexcept {return Parent;}
 
 		FORCEINLINE EFileType GetFileType() const noexcept {return FileType;}
+		FORCEINLINE FText GetFileTypeText(){ return SlateFileTree::GetFileTypeText(FileType); }
+
 		FORCEINLINE bool IsFolder() const noexcept { return FileType == EFileType::Folder; }
 
 		//文件类型由派生类构造决定
@@ -60,6 +65,7 @@ namespace SimpleSlateFileTree
 
 		FORCEINLINE void SetWidget(TSharedPtr<SWidget> InWidget){Widget = InWidget;}
 		FORCEINLINE TSharedPtr<SWidget> GetWidget() const { return Widget.Pin(); }
+
 		void OperationWidget(FOperationWidget InOp)
 		{
 			InOp.ExecuteIfBound(Widget.Pin());

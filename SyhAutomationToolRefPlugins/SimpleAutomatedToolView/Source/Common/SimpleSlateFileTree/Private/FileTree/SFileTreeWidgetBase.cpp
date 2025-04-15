@@ -1,126 +1,99 @@
 #include "FileTreeWidget/SFileTreeWidgetBase.h"
-#include "Widgets/Input/SButton.h"
 #include "FileTreeType.h"
 #include "DragDropDefinition/FileTreeDragDrop.h"
-#include "ContextMenu/SFileTreeDragDropContextMenu.h"
-#include "ContextMenu/SFileTreeContextMenu.h"
+#include "Widgets/Views/STableViewBase.h"
+#include "Widgets/Text/STextBlock.h"
+#include "SFileTreeView.h"
+
 #define LOCTEXT_NAMESPACE "FileTreeWidgetBase"
 
-void SFileTreeWidgetBase::Construct(const FArguments& InArgs, TSharedPtr<SimpleSlateFileTree::FFileTreeBase> InFileBase)
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", off)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+
+void SFileTreeWidgetBase::Construct(const FArguments& InArgs, const TSharedRef<class STableViewBase>& InOwnerTable, TSharedPtr<SlateFileTree::FFileTreeBase> InFileNode)
 {
-	check(InFileBase.IsValid());
-	FileBase = InFileBase;
-	ContextMenu = InArgs._ContextMenu;
-	DragDropContextMenu = InArgs._DragDropContextMenu;
-	OnGetCurrentContextMenuTransform = InArgs._OnGetCurrentContextMenuTransform;
-	SetOnClicked(FOnClicked::CreateSP(this, &SFileTreeWidgetBase::OnClicked));
-
-	this->ConstructChild();
-}
-
-
-void SFileTreeWidgetBase::ConstructChild()
-{
-	FText Temp = FileBase.Pin()->GetFileType() == SimpleSlateFileTree::EFileType::Folder ? LOCTEXT("FileTreeWidgetBase.Text.Folder", "Folder")
-		: LOCTEXT("FileTreeWidgetBase.Text.File", "File");
-
-	SButton::Construct(SButton::FArguments()
-		.ButtonColorAndOpacity(FLinearColor::Transparent)
-		.ButtonStyle(FCoreStyle::Get(), "NoBorder")
-		.HAlign(HAlign_Fill)
+	check(InFileNode.IsValid());
+	
+	Super::Construct(
+		Super::FArguments()
+		.Content()
 		[
-			SNew(STextBlock)
-				.Text(FText::Format(LOCTEXT("ParseFileTree", "{0}({1})"), FText::FromString(FileBase.Pin()->GetFullName()), Temp))
-				.TextStyle(FAppStyle::Get(), "FlatButton.DefaultTextStyle")
-		]
+			ConstructChild(InFileNode)
+		],
+		InOwnerTable
 	);
+	OnDragDetected_Handler.BindSP(this, &SFileTreeWidgetBase::DragDetected);
+	OnDrop_Handler.BindSP(this, &SFileTreeWidgetBase::Drop);
 }
 
-FReply SFileTreeWidgetBase::OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+TSharedRef<SWidget> SFileTreeWidgetBase::ConstructChild(TSharedPtr<SlateFileTree::FFileTreeBase> InFileNode)
 {
-	FReply Reply = FReply::Unhandled();
-	Reply = SButton::OnMouseButtonUp(MyGeometry, MouseEvent);
-
-	if (MouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
-	{
-		this->InvokeContextMenu(MouseEvent);
-	}
-	return Reply;
+	return SAssignNew(Text, STextBlock)
+		.Text(FText::Format(LOCTEXT("ParseFileTree", "{0}({1})"), FText::FromString(InFileNode->GetFullName()), InFileNode->GetFileTypeText()));
 }
 
 FReply SFileTreeWidgetBase::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
+	FReply Reply = Super::OnMouseButtonDown(MyGeometry, MouseEvent);
+
 	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
-		return FReply::Handled().DetectDrag(this->AsShared(), EKeys::LeftMouseButton);
+		return Reply.DetectDrag(this->AsShared(), EKeys::LeftMouseButton);
 	}
 
 	return FReply::Unhandled();
 }
 
-FReply SFileTreeWidgetBase::OnDragDetected(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+FReply SFileTreeWidgetBase::DragDetected(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	TSharedRef<FDragDropOperation> DragDropOp = MakeShared<FFileTreeDragDrop>(this->AsShared());
-	return FReply::Handled().BeginDragDrop(DragDropOp);
+	if(TSharedPtr<SFileTreeView> FileTreeView = GetOwnerTable())
+	{
+		TSharedRef<FDragDropOperation> DragDropOp = MakeShared<FFileTreeDragDrop>(this->AsShared().ToSharedPtr());
+		FileTreeView->StartDragDrop();
+		return FReply::Handled().BeginDragDrop(DragDropOp);
+	}
+	return FReply::Unhandled();
 }
 
-FReply SFileTreeWidgetBase::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
+FReply SFileTreeWidgetBase::Drop(const FDragDropEvent& DragDropEvent)
 {
-	if (TSharedPtr<FFileTreeDragDrop> DragDropOp = DragDropEvent.GetOperationAs<FFileTreeDragDrop>())
+	TSharedPtr<FFileTreeDragDrop> DragDropOp = DragDropEvent.GetOperationAs<FFileTreeDragDrop>();
+
+	if (DragDropOp && (DragDropOp->GetDragObject<SFileTreeWidgetBase>() != this->AsShared().ToSharedPtr()))
 	{
-		if(DragDropOp->GetDragObject<SFileTreeWidgetBase>() != this->AsShared().ToSharedPtr())
+		if(TSharedPtr<SFileTreeView> FileTreeView = GetOwnerTable())
 		{
-			SimpleSlateFileTree::FFileTreeDragDropDefinition DragDropData;
-			DragDropData.From = DragDropOp->GetDragObject<SFileTreeWidgetBase>()->GetFileTreeData();
-			DragDropData.To = this->GetFileTreeData();
-			InvokeDragDropContextMenu(DragDropEvent, DragDropData);
+			//同级目录，由具体操作决定
+			//相比与事先创建的ContextMenu, 临时创建更加灵活，无需在ContextMenu关闭后才EndDragDrop
+			FileTreeView->OpenContextMenu(DragDropEvent);
+			//通过GetSelectedItems可以获得被选中的节点，拖拽到本节点可以直接获得
+			TArray<TSharedPtr<SlateFileTree::FFileTreeBase>> Items = FileTreeView->GetSelectedItems();
+			FileTreeView->EndDragDrop();
 			return FReply::Handled().EndDragDrop();
 		}
 	}
 	return FReply::Unhandled();
 }
 
-FReply SFileTreeWidgetBase::OnClicked()
+TSharedPtr<class STextBlock> SFileTreeWidgetBase::GetDragDropText() const
 {
-	return FReply::Handled();
+	return Text.IsValid() ? Text.Pin() : nullptr;
 }
 
-void SFileTreeWidgetBase::SetOnGetCurrentContextMenuTransform(FOnGetCurrentContextMenuTransform InDelegate)
+TSharedPtr<SFileTreeView> SFileTreeWidgetBase::GetOwnerTable()
 {
-	OnGetCurrentContextMenuTransform = InDelegate;
+	return StaticCastSharedPtr<SFileTreeView>(OwnerTablePtr.IsValid() ? OwnerTablePtr.Pin() : nullptr);
 }
 
-//SFileTreeWidgetBase::OnDrop -> SFileTreeWidgetBase::InvokeDragDropContextMenu
-// -> (手动)SButton::OnClicked -> FSimpleAutomatedToolViewCommands::FileTree_DragDropContextMenuActions
-void SFileTreeWidgetBase::InvokeContextMenu(const FPointerEvent& PointerEvent)
-{
-	if (ContextMenu.IsValid())
-	{
-		ContextMenu.Pin()->InvokeContextMenu( FileBase.IsValid() ? FileBase.Pin() :nullptr );
-		
-		if (OnGetCurrentContextMenuTransform.IsBound())
-		{
-			FTransform2D Transform;
-			Transform = OnGetCurrentContextMenuTransform.Execute(PointerEvent);
-			ContextMenu.Pin()->SetRenderTransform(Transform);
-		}
-	}
-}
 
-void SFileTreeWidgetBase::InvokeDragDropContextMenu(const FPointerEvent& PointerEvent, SimpleSlateFileTree::FFileTreeDragDropDefinition InData)
-{
-	if (DragDropContextMenu.IsValid())
-	{
-		DragDropContextMenu.Pin()->InvokeContextMenu(InData);
 
-		if (OnGetCurrentContextMenuTransform.IsBound())
-		{
-			FTransform2D Transform;
-			Transform = OnGetCurrentContextMenuTransform.Execute(PointerEvent);
-			DragDropContextMenu.Pin()->SetRenderTransform(Transform);
-		}
-	}
-}
-
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+#if PLATFORM_WINDOWS
+#pragma optimize("", on)
+#endif
+#endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
 #undef LOCTEXT_NAMESPACE

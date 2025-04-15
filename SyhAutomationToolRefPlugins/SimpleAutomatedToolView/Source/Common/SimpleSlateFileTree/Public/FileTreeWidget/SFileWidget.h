@@ -1,21 +1,16 @@
 #pragma once
-
-
-#include "CoreMinimal.h"
-#include "Widgets/SCompoundWidget.h"
 #include "FileTreeWidget/SFileTreeWidgetBase.h"
-#include "FileTreeEvent.h"
 
 
-class SFileWidget : public SFileTreeWidgetBase
+class SIMPLESLATEFILETREE_API SFileWidget : public SFileTreeWidgetBase
 {
 public:
 	SLATE_BEGIN_ARGS(SFileWidget) {}
-	SLATE_EVENT(FOnGetCurrentContextMenuTransform, OnGetCurrentContextMenuTransform)
-	SLATE_ARGUMENT(TSharedPtr<class SFileTreeContextMenu>, ContextMenu)
-	SLATE_ARGUMENT(TSharedPtr<class SFileTreeDragDropContextMenu>, DragDropContextMenu)
 	SLATE_END_ARGS()
 
-	void SIMPLESLATEFILETREE_API Construct(const FArguments& InArgs, TSharedPtr<SimpleSlateFileTree::FFileTree_File> InFile);
-
+	void Construct(const FArguments& InArgs, const TSharedRef<class STableViewBase>& InOwnerTable, 
+		TSharedPtr<SlateFileTree::FFileTree_File> InFileNode);
+	
+private:
+	TSharedRef<SWidget> ConstructChild(TSharedPtr<SlateFileTree::FFileTreeBase> InFileNode);
 };

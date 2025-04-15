@@ -6,7 +6,7 @@
 #endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
-namespace SimpleSlateFileTree
+namespace SlateFileTree
 {
 	void FindFilesRecursive(TArray<TSharedPtr<FFileTreeBase>>& OutChildren, TSharedPtr<FFileTree_Folder> Parent, 
 		TFunction<bool(const FString&)> Filter)
@@ -17,7 +17,7 @@ namespace SimpleSlateFileTree
 
 		if (Result.Num() <= 0)
 		{
-			OutChildren.Add(MakeShareable(new FFileTree_None{ Parent->GetPath() / TEXT("Empty"), Parent }));
+			OutChildren.Add(MakeShareable(new FFileTree_None{ Parent->GetPath() / TEXT("None"), Parent }));
 			return;
 		}
 
@@ -62,7 +62,7 @@ namespace SimpleSlateFileTree
 
 		if (Result.Num() <= 0)
 		{
-			OutChildren.Add(MakeShareable(new FFileTree_None{ Parent->GetPath(), Parent}));
+			OutChildren.Add(MakeShareable(new FFileTree_None{ Parent->GetPath() / TEXT("None"), Parent}));
 			return;
 		}
 
@@ -123,7 +123,7 @@ namespace SimpleSlateFileTree
 
 		static FORCEINLINE uint32 GetKeyHash(KeyInitType Key)
 		{
-			return SimpleSlateFileTree::GetTypeHash(Key); // 调用自定义哈希函数
+			return SlateFileTree::GetTypeHash(Key); // 调用自定义哈希函数
 		}
 
 		static FORCEINLINE bool Matches(KeyInitType A, KeyInitType B)
@@ -166,6 +166,22 @@ namespace SimpleSlateFileTree
 			}
 		}
 		OutChildren = MoveTemp(Children);
+	}
+	FText GetFileTypeText(EFileType InType)
+	{	
+		switch (InType)
+		{
+		case SlateFileTree::EFileType::None:
+			return NSLOCTEXT("SlateFileTree", "FileType.None", "None");
+		case SlateFileTree::EFileType::Invalid:
+			return NSLOCTEXT("SlateFileTree", "FileType.Invalid", "Invalid");
+		case SlateFileTree::EFileType::File:
+			return NSLOCTEXT("SlateFileTree", "FileType.File", "File");
+		case SlateFileTree::EFileType::Folder:
+			return NSLOCTEXT("SlateFileTree", "FileType.Folder", "Folder");
+		default:
+			return FText::GetEmpty();
+		}	
 	}
 }
 
