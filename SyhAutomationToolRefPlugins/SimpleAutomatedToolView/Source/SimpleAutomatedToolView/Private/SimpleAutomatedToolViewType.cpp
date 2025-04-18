@@ -1,4 +1,5 @@
 #include "SimpleAutomatedToolViewType.h"
+#include "FileTreeTool.h"
 
 #define LOCTEXT_NAMESPACE "SimpleAutomatedToolViewType"
 

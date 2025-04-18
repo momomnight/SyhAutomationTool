@@ -17,4 +17,28 @@ inline uint32 GetTypeHash(const FText& Key)
 	return Hash;
 }
 
+struct FTextStruct
+{
+	constexpr FTextStruct() = delete;
+	constexpr FTextStruct(const TCHAR* InNamespace, const TCHAR* InKey, const TCHAR* InTextLiteral)
+		: Namespace(InNamespace), Key(InKey), TextLiteral(InTextLiteral) {
+	}
+
+	const TCHAR* const Namespace;
+	const TCHAR* const Key;
+	const TCHAR* const TextLiteral;
+
+	FText ToText() const
+	{
+		return FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(TextLiteral, Namespace, Key);
+	}
+	FString ToString() const
+	{
+		return FString(TextLiteral);
+	}
+	FName ToName() const
+	{
+		return FName(TextLiteral);
+	}
+};
 

@@ -1,8 +1,6 @@
 #include "SimpleAutomatedToolViewDelegateFactory.h"
 #include "ISlateReflectorModule.h"
-#include "Widget/DetailPanel/Automated/SAutomatedFileDirectory.h"
-#include "SimpleAutomatedToolViewCommands.h"
-#include "FileTreeOperation.h"
+
 
 #define LOCTEXT_NAMESPACE "SimpleAutomatedToolViewDelegateFactory"
 

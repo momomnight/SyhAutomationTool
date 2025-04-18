@@ -16,14 +16,6 @@ namespace SlateFileTree
 		TSharedPtr<FFileTree_Folder> Parent);
 	//void SIMPLESLATEFILETREE_API CopyFiledata(const TArray<TSharedPtr<FFileTreeBase>>& InChildren, TArray<TSharedPtr<FFileTreeBase>>& OutChildren);
 
-	enum class EFileType : uint8
-	{
-		None,
-		Invalid,
-		File,
-		Folder
-	};
-
 	FText SIMPLESLATEFILETREE_API GetFileTypeText(EFileType InType);
 
 
@@ -58,7 +50,8 @@ namespace SlateFileTree
 		FORCEINLINE FText GetFileTypeText(){ return SlateFileTree::GetFileTypeText(FileType); }
 
 		FORCEINLINE bool IsFolder() const noexcept { return FileType == EFileType::Folder; }
-
+		FORCEINLINE bool IsFile() const noexcept { return FileType == EFileType::File; }
+		FORCEINLINE bool IsValid() const noexcept { return FileType == EFileType::Folder || FileType == EFileType::File; }
 		//文件类型由派生类构造决定
 		FORCEINLINE void SetName(const FString& InName) noexcept {Name = InName;}
 		FORCEINLINE void SetParent(TSharedPtr<FFileTreeBase> InParent) noexcept {Parent = InParent;}

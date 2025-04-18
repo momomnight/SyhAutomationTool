@@ -1,6 +1,5 @@
 #include "Widget/DetailPanel/Automated/SAutomatedFileDirectory.h"
 #include "Widgets/Layout/SScrollBox.h"
-#include "Widgets/Views/STableRow.h"
 #include "Widgets/Views/STreeView.h"
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/SBoxPanel.h"
@@ -8,9 +7,7 @@
 #include "FileTreeWidget/SFolderWidget.h"
 #include "FileTreeWidget/SInvalidWidget.h"
 #include "FileTreeWidget/SNoneWidget.h"
-#include "Widgets/Layout/SConstraintCanvas.h"
 #include "DllExports/AutomatedExecutionPath.h"
-#include "ContextMenu/FileTreeContextMenu.h"
 #include "SFileTreeView.h"
 
 
@@ -85,7 +82,8 @@ void SAutomatedFileDirectory::ConstructChildern()
 										.OnGenerateRow(this, &SAutomatedFileDirectory::OnGenerateRow)
 										.OnGetChildren(this, &SAutomatedFileDirectory::OnGetChildren)
 										.OnExpansionChanged(this, &SAutomatedFileDirectory::OnExpansionChanged)
-										.ExternalScrollbar(VerticalScrollBar)								
+										.ExternalScrollbar(VerticalScrollBar)		
+										.OnRefreshFileTree(FOnRefreshFileTree::CreateSP(this, &SAutomatedFileDirectory::AsyncUpdateFileTree))
 								]
 						]
 						+ SHorizontalBox::Slot()
@@ -128,29 +126,35 @@ void SAutomatedFileDirectory::ConstructChildern()
 	];
 }
 
-void SAutomatedFileDirectory::AsyncUpdateFileTree(TSharedPtr<SlateFileTree::FFileTree_Folder> InNode)
+void SAutomatedFileDirectory::AsyncUpdateFileTree(TSharedPtr<SlateFileTree::FFileTreeBase> InNode)
 {
 	if(!InNode.IsValid()) return;
+
+	TSharedPtr<SlateFileTree::FFileTree_Folder> FolderNode = StaticCastSharedPtr<SlateFileTree::FFileTree_Folder>(InNode);
+
 	//只是为了更新文件是否新增或删除
 	//重新加载并比对更新数据
-	AsyncTask(ENamedThreads::GameThread, [this, InNode]()
+	if(FolderNode.IsValid())
 	{
-		while (true)
-		{
-			bool PreState = false;
-			if (this->bIsLoading.compare_exchange_strong(PreState, true, std::memory_order_acq_rel, std::memory_order_relaxed))
+		AsyncTask(ENamedThreads::GameThread, [this, FolderNode]()
 			{
-				InNode->Update();
-				FileTreeView->RequestTreeRefresh();
-				bIsLoading.exchange(false, std::memory_order_release);
-				break;
-			}
-			else
-			{
-				FPlatformProcess::Yield();
-			}
-		}		
-	});
+				while (true)
+				{
+					bool PreState = false;
+					if (this->bIsLoading.compare_exchange_strong(PreState, true, std::memory_order_acq_rel, std::memory_order_relaxed))
+					{
+						FolderNode->Update();
+						FileTreeView->RequestTreeRefresh();
+						bIsLoading.exchange(false, std::memory_order_release);
+						break;
+					}
+					else
+					{
+						FPlatformProcess::Yield();
+					}
+				}
+			});
+	}
 }
 
 FTransform2D SAutomatedFileDirectory::GetCurrentContextMenuTransform(const FPointerEvent& MouseEvent)

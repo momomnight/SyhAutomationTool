@@ -20,7 +20,7 @@ public:
 
 
 public:
-	void AsyncUpdateFileTree(TSharedPtr<SlateFileTree::FFileTree_Folder> InNode);
+	void AsyncUpdateFileTree(TSharedPtr<SlateFileTree::FFileTreeBase> InNode);
 
 	FTransform2D GetCurrentContextMenuTransform(const FPointerEvent& MouseEvent);
 

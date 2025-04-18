@@ -4,7 +4,6 @@
 #include "SimpleAutomatedToolViewStyle.h"
 #include "SimpleAutomatedToolViewCommands.h"
 #include "Widgets/Docking/SDockTab.h"
-#include "ToolMenus.h"
 #include "SimpleAutomatedToolViewEditorID.h"
 #include "Widget/SAutomatedToolMenuBarView.h"
 #include "Widget/SAutomatedToolViewMainFrame.h"

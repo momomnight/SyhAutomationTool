@@ -9,19 +9,18 @@
 //FFileTreeBase
 DECLARE_DELEGATE_OneParam(FOperationWidget, TSharedPtr<SWidget>);
 
+//拖拽
+//DECLARE_DELEGATE(FOnStartDragDrop);
+DECLARE_DELEGATE(FOnEndDragDrop);
 
 //唤醒情景菜单等操作
-DECLARE_DELEGATE_RetVal_OneParam(FTransform2D, FOnGetCurrentContextMenuTransform, const FPointerEvent&);
-DECLARE_DELEGATE_OneParam(FOnRefreshFileTree, TSharedPtr<SlateFileTree::FFileTree_Folder>);
+DECLARE_DELEGATE_OneParam(FOnRefreshFileTree, TSharedPtr<SlateFileTree::FFileTreeBase>);
 
 //用于执行具体操作
 DECLARE_DELEGATE_TwoParams(FOnFileTreeContextMenuClicked, TSharedPtr<SWidget>, TWeakPtr<SlateFileTree::FFileTreeBase>);
 
 
-//用于模态窗口
-DECLARE_DELEGATE_RetVal(FReply, FOnLeftButtonClicked);
-DECLARE_DELEGATE_RetVal(FReply, FOnRightButtonClicked);
-
+DECLARE_DELEGATE_OneParam(FOnRename, const FText&);
 
 //填充情景菜单
 DECLARE_DELEGATE_OneParam(FSpawnMenuEntry, FMenuBuilder&);

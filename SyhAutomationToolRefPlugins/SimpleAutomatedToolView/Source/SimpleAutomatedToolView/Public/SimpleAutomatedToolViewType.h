@@ -2,7 +2,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FileTreeTool.h"
 #include "SimpleAutomatedToolViewType.generated.h"
 
 //编辑器页面类型，根据类型创建不同页面

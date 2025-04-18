@@ -1,5 +1,7 @@
 #include "SimpleAutomatedToolViewWidgetFactory.h"
-
+#include "Widget/DetailPanel/Automated/SAutomatedDetailEditorWidget.h"
+#include "Widgets/Images/SImage.h"
+#include "Widgets/Input/SCheckBox.h"
 
 namespace SimpleAutomatedToolViewWidgetFactory
 {

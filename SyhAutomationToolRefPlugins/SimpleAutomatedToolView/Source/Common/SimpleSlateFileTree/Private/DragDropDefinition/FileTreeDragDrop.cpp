@@ -9,6 +9,16 @@ FFileTreeDragDrop::FFileTreeDragDrop( TSharedPtr<SWidget> InDragWidget)
 	FDragDropOperation::Construct();
 }
 
+FFileTreeDragDrop::~FFileTreeDragDrop()
+{
+	OnEndDragDrop.ExecuteIfBound();
+}
+
+void FFileTreeDragDrop::SetOnEndDragDrop(FOnEndDragDrop InDelegate)
+{
+	OnEndDragDrop = InDelegate;
+}
+
 TSharedPtr<SWidget> FFileTreeDragDrop::GetDefaultDecorator() const
 {
 	if (DragWidget.IsValid())

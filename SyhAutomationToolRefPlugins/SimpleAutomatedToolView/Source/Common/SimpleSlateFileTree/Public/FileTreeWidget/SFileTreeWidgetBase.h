@@ -19,6 +19,7 @@ public:
 
 	TSharedPtr<class STextBlock> GetDragDropText() const;
 	TSharedPtr<class SFileTreeView> GetOwnerTable();
+	TSharedPtr<SlateFileTree::FFileTreeBase> GetFileDataNode();
 
 private:
 	virtual TSharedRef<SWidget> ConstructChild(TSharedPtr<SlateFileTree::FFileTreeBase> InFileNode);
@@ -26,4 +27,5 @@ private:
 protected:
 	//用于拖拽显示
 	TWeakPtr<class STextBlock> Text;
+	TWeakPtr<SlateFileTree::FFileTreeBase> FileDataNode;
 };

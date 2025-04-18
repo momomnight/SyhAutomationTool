@@ -8,6 +8,20 @@
 #include "FileTreeEvent.h"
 #include "FileTreeCommand.h"
 
+#include "Internationalization/Internationalization.h"
+
+
+
+extern const FTextStruct MenuEntry_Open;
+extern const FTextStruct MenuEntry_Rename;
+extern const FTextStruct MenuEntry_Cut;
+extern const FTextStruct MenuEntry_Copy;
+extern const FTextStruct MenuEntry_Paste;
+extern const FTextStruct MenuEntry_Duplicate;
+extern const FTextStruct MenuEntry_Delete;
+extern const FTextStruct MenuEntry_CopyTo;
+extern const FTextStruct MenuEntry_MoveTo;
+
 class FFileTreeMenuCommands : public TCommands<FFileTreeMenuCommands>
 {
 public:

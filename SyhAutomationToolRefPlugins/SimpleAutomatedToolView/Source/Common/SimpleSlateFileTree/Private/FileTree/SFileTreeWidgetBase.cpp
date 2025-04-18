@@ -16,7 +16,7 @@
 void SFileTreeWidgetBase::Construct(const FArguments& InArgs, const TSharedRef<class STableViewBase>& InOwnerTable, TSharedPtr<SlateFileTree::FFileTreeBase> InFileNode)
 {
 	check(InFileNode.IsValid());
-	
+	FileDataNode = InFileNode;
 	Super::Construct(
 		Super::FArguments()
 		.Content()
@@ -51,8 +51,9 @@ FReply SFileTreeWidgetBase::DragDetected(const FGeometry& MyGeometry, const FPoi
 {
 	if(TSharedPtr<SFileTreeView> FileTreeView = GetOwnerTable())
 	{
-		TSharedRef<FDragDropOperation> DragDropOp = MakeShared<FFileTreeDragDrop>(this->AsShared().ToSharedPtr());
+		TSharedRef<FFileTreeDragDrop> DragDropOp = MakeShared<FFileTreeDragDrop>(this->AsShared().ToSharedPtr());
 		FileTreeView->StartDragDrop();
+		DragDropOp->SetOnEndDragDrop(FOnEndDragDrop::CreateLambda([=](){FileTreeView.IsValid() ? FileTreeView->EndDragDrop() : void(0);}));
 		return FReply::Handled().BeginDragDrop(DragDropOp);
 	}
 	return FReply::Unhandled();
@@ -66,12 +67,8 @@ FReply SFileTreeWidgetBase::Drop(const FDragDropEvent& DragDropEvent)
 	{
 		if(TSharedPtr<SFileTreeView> FileTreeView = GetOwnerTable())
 		{
-			//同级目录，由具体操作决定
-			//相比与事先创建的ContextMenu, 临时创建更加灵活，无需在ContextMenu关闭后才EndDragDrop
 			FileTreeView->OpenContextMenu(DragDropEvent);
-			//通过GetSelectedItems可以获得被选中的节点，拖拽到本节点可以直接获得
-			TArray<TSharedPtr<SlateFileTree::FFileTreeBase>> Items = FileTreeView->GetSelectedItems();
-			FileTreeView->EndDragDrop();
+			FileTreeView->EndDragDrop(this->FileDataNode);
 			return FReply::Handled().EndDragDrop();
 		}
 	}
@@ -86,6 +83,11 @@ TSharedPtr<class STextBlock> SFileTreeWidgetBase::GetDragDropText() const
 TSharedPtr<SFileTreeView> SFileTreeWidgetBase::GetOwnerTable()
 {
 	return StaticCastSharedPtr<SFileTreeView>(OwnerTablePtr.IsValid() ? OwnerTablePtr.Pin() : nullptr);
+}
+
+TSharedPtr<SlateFileTree::FFileTreeBase> SFileTreeWidgetBase::GetFileDataNode()
+{
+	return FileDataNode.IsValid() ? FileDataNode.Pin() : nullptr;
 }
 
 

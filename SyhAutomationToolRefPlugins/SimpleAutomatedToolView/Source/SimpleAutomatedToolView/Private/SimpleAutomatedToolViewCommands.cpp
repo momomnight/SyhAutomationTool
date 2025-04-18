@@ -2,22 +2,16 @@
 
 #include "SimpleAutomatedToolViewCommands.h"
 #include "SimpleAutomatedToolViewMacro.h"
-#include "SimpleAutomatedToolViewEditorID.h"
-#include "ISlateReflectorModule.h"
+#include "FileTreeTool.h"
 
-
-TMap<FText, TMap<int32, TSharedPtr<FUICommandInfo>>> FSimpleAutomatedToolViewCommands::CommandInfoList;
-TMap<FText, TMap<int32, FUIAction>> FSimpleAutomatedToolViewCommands::UIActions;
-TMap<FText, FSpawnMenuEntries> FSimpleAutomatedToolViewCommands::MenuEntries;
 
 #define LOCTEXT_NAMESPACE "FSimpleAutomatedToolViewModule"
 
-GenerateToolMenuTextStruct(MenuBar_File,	"AutomatedToolViewMenuBar", "MenuBar.File",		"File");
-GenerateToolMenuTextStruct(MenuBar_Windows, "AutomatedToolViewMenuBar", "MenuBar.Windows",	"Windows");
-GenerateToolMenuTextStruct(MenuBar_Editor,	"AutomatedToolViewMenuBar", "MenuBar.Editor",	"Editor");
-GenerateToolMenuTextStruct(MenuBar_Debug,	"AutomatedToolViewMenuBar", "MenuBar.Debug",	"Debug");
-GenerateToolMenuTextStruct(MenuBar_Help,	"AutomatedToolViewMenuBar", "MenuBar.Help",		"Help");
-
+extern const FTextStruct MenuBar_File{ TEXT("AutomatedToolViewMenuBar") , TEXT("MenuBar.File") , TEXT("File") };
+extern const FTextStruct MenuBar_Window{ TEXT("AutomatedToolViewMenuBar") , TEXT("MenuBar.Windows") , TEXT("Windows") };
+extern const FTextStruct MenuBar_Editor{ TEXT("AutomatedToolViewMenuBar") , TEXT("MenuBar.Editor") , TEXT("Editor") };
+extern const FTextStruct MenuBar_Debug{ TEXT("AutomatedToolViewMenuBar") , TEXT("MenuBar.Debug") , TEXT("Debug") };
+extern const FTextStruct MenuBar_Help{ TEXT("AutomatedToolViewMenuBar") , TEXT("MenuBar.Help") , TEXT("Help") };
 
 void FSimpleAutomatedToolViewCommands::RegisterCommands()
 {
@@ -28,28 +22,31 @@ void FSimpleAutomatedToolViewCommands::RegisterCommands()
 	{
 		{
 			CreateUICommand(MenuBar_File, 0, TEXT("MenuBar_File_0"), TEXT("MenuBar_File_Description_0"), EUserInterfaceActionType::Button, FInputChord());
-			BindMenuSpawner(MenuBar_File, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
-				FName(TEXT("File.MenuEntries")), GetRealCommandName(MenuBar_File, 0)));
+
+			CreateMenuSpawner(MenuBar_File, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
+				FName("File.MenuEntries"), GetRealCommandInfoName(MenuBar_File, 0)));
 		}
 		{
 			CreateUICommand(MenuBar_File, 1, TEXT("MenuBar_File_1"), TEXT("MenuBar_File_Description_1"), EUserInterfaceActionType::Button, FInputChord());
-			BindMenuSpawner(MenuBar_File, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
-				FName(TEXT("File.MenuEntries")), GetRealCommandName(MenuBar_File, 1)));
 
+			CreateMenuSpawner(MenuBar_File, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
+				FName("File.MenuEntries"), GetRealCommandInfoName(MenuBar_File, 1)));
 		}
 		{
 			CreateUICommand(MenuBar_File, 2, TEXT("MenuBar_File_2"), TEXT("MenuBar_File_Description_2"), EUserInterfaceActionType::Button, FInputChord());
-			BindMenuSpawner(MenuBar_File, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
-				FName(TEXT("File.MenuEntries")), GetRealCommandName(MenuBar_File, 2)));
+
+			CreateMenuSpawner(MenuBar_File, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
+				FName("File.MenuEntries"), GetRealCommandInfoName(MenuBar_File, 2)));
 		}
 	}
 
 	//Windows
 	{
 		{
-			CreateUICommand(MenuBar_Windows, 0, TEXT("MenuBar_Windows_0"), TEXT("MenuBar_Windows_Description_0"), EUserInterfaceActionType::Button, FInputChord());
-			BindMenuSpawner(MenuBar_Windows, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
-				FName(TEXT("Windows.MenuEntries")), GetRealCommandName(MenuBar_Windows, 0)));
+			CreateUICommand(MenuBar_Window, 0, TEXT("MenuBar_Window_0"), TEXT("MenuBar_Window_Description_0"), EUserInterfaceActionType::Button, FInputChord());
+
+			CreateMenuSpawner(MenuBar_Window, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
+				FName("Window.MenuEntries"), GetRealCommandInfoName(MenuBar_Window, 0)));
 		}
 	}
 
@@ -57,8 +54,9 @@ void FSimpleAutomatedToolViewCommands::RegisterCommands()
 	{
 		{
 			CreateUICommand(MenuBar_Editor, 0, TEXT("MenuBar_Editor_0"), TEXT("MenuBar_Editor_Description_0"), EUserInterfaceActionType::Button, FInputChord());
-			BindMenuSpawner(MenuBar_Editor, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
-				FName(TEXT("Editor.MenuEntries")), GetRealCommandName(MenuBar_Editor, 0)));
+
+			CreateMenuSpawner(MenuBar_Editor, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
+				FName("Editor.MenuEntries"), GetRealCommandInfoName(MenuBar_Editor, 0)));
 		}
 	}
 
@@ -71,11 +69,11 @@ void FSimpleAutomatedToolViewCommands::RegisterCommands()
 				EUserInterfaceActionType::Button, FInputChord());
 
 			//绑定对应菜单项的Action
-			BindUIAction(MenuBar_Debug, 0, SimpleAutomatedToolViewDelegateFactory::CreateUIActionDelegate_WidgetReflector());
+			CreateUIAction(MenuBar_Debug, 0, SimpleAutomatedToolViewDelegateFactory::CreateUIActionDelegate_WidgetReflector());
 
 			//绑定用于生成下拉菜单菜单项的Action
-			BindMenuSpawner(MenuBar_Debug, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
-				FName(TEXT("Debug.MenuEntries")), GetRealCommandName(MenuBar_Debug, 0)));
+			CreateMenuSpawner(MenuBar_Debug, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
+				FName("Debug.MenuEntries"), GetRealCommandInfoName(MenuBar_Debug, 0)));
 		}
 	}
 
@@ -83,44 +81,54 @@ void FSimpleAutomatedToolViewCommands::RegisterCommands()
 	{
 		{
 			CreateUICommand(MenuBar_Help, 0, TEXT("MenuBar_Help_0"), TEXT("MenuBar_Help_Description_0"), EUserInterfaceActionType::Button, FInputChord());
-			BindMenuSpawner(MenuBar_Help, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
-				FName(TEXT("Help.MenuEntries")), GetRealCommandName(MenuBar_Help, 0)));
+
+			CreateMenuSpawner(MenuBar_Help, SimpleAutomatedToolViewDelegateFactory::CreateMenuEntryDelegate_WidgetReflector(
+				FName("Help.MenuEntries"), GetRealCommandInfoName(MenuBar_Help, 0)));
 		}
 	}
 }
 
 TSharedPtr<FUICommandInfo>& FSimpleAutomatedToolViewCommands::CreateCommandInfo(const FText& InKey, int32 InType)
 {
-	if (CommandInfoList.Contains(InKey))
+	if (TMap<int32, TSharedPtr<FUICommandInfo>>* CommandInfos = CommandInfoList.Find(InKey))
 	{
-		if (!CommandInfoList[InKey].Contains(InType))
+		if (TSharedPtr<FUICommandInfo>* CommandInfo = CommandInfos->Find(InType); !CommandInfo)
 		{
-			CommandInfoList[InKey].Add({ InType, TSharedPtr<FUICommandInfo>() });
+			CommandInfos->Add({ InType, TSharedPtr<FUICommandInfo>() });
 		}
 	}
 	else
 	{
 		CommandInfoList.Add(InKey, TMap<int32, TSharedPtr<FUICommandInfo>>{{InType, TSharedPtr<FUICommandInfo>()}});
 	}
+	return CommandInfoList[InKey][InType];
+}
 
-	if (!MenuEntries.Contains(InKey))
-	{
-		MenuEntries.Add(InKey, FSpawnMenuEntries());
-	}
+FUIAction& FSimpleAutomatedToolViewCommands::CreateAction(const FText& InKey, int32 InType)
+{
 
-	if (UIActions.Contains(InKey))
+	if (TMap<int32, FUIAction>* Actions = UIActions.Find(InKey))
 	{
-		if (!UIActions[InKey].Contains(InType))
+		if (FUIAction* Action = Actions->Find(InType); !Action)
 		{
-			UIActions[InKey].Add(InType, FUIAction());
+			Actions->Add(InType, FUIAction());
 		}
 	}
 	else
 	{
 		UIActions.Add(InKey, TMap<int32, FUIAction>{{InType, FUIAction()}});
 	}
+	return UIActions[InKey][InType];
+}
 
-	return CommandInfoList[InKey][InType];
+FSpawnMenuEntries& FSimpleAutomatedToolViewCommands::CreateSpawner(const FText& InKey)
+{
+	if (FSpawnMenuEntries* MenuSpawner = MenuEntries.Find(InKey); !MenuSpawner)
+	{
+		MenuEntries.Add(InKey, FSpawnMenuEntries());
+	}
+
+	return MenuEntries[InKey];
 }
 
 

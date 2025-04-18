@@ -1,7 +1,17 @@
 #pragma once
 #include "FileTreeEvent.h"
 #include "FileTreeTool.h"
-#include "Misc/LazySingleton.h"
+#include "Misc/EnumClassFlags.h"
+
+
+enum class EShowMark
+{
+	None = 0,
+	Show = 1,
+	MultiplyFile = 1 << 1,
+	SingleFile = 1 << 2,
+};
+ENUM_CLASS_FLAGS(EShowMark);
 
 struct SIMPLESLATEFILETREE_API FFileTreeMenuGenerationInfo
 {
@@ -9,7 +19,7 @@ struct SIMPLESLATEFILETREE_API FFileTreeMenuGenerationInfo
 	FSpawnMenuEntry Spawner;
 	FUIAction UIAction;
 	FUIActionGenerator UIActionGenerator;
-
+	EShowMark ShowMark;
 	FName ExtensionHook;
 	FText Label;
 	FText ToolTip;
@@ -21,7 +31,7 @@ struct SIMPLESLATEFILETREE_API FFileTreeMenuSectionInfo
 {
 	FFileTreeMenuSectionInfo(const FName& InSection, const FText& InSectionHeadingText = FText::GetEmpty()) :
 		Section(InSection), SectionHeadingText(InSectionHeadingText){}
-	TSharedPtr<SWidget> MakeWidget(FMenuBuilder& InBuilder);
+	TSharedPtr<SWidget> MakeWidget(FMenuBuilder& InBuilder, EShowMark Filter);
 	FName Section;
 	FText SectionHeadingText;
 	TMap<FText, FFileTreeMenuGenerationInfo> GenerationInfo;
@@ -35,4 +45,12 @@ struct SIMPLESLATEFILETREE_API FFileTreeContextMenuSpawners
 struct SIMPLESLATEFILETREE_API FFileTreeContextMenuUIActionSpawner
 {
 	static FUIActionGenerator GenerateOpen();
+	static FUIActionGenerator GenerateRename();
+	static FUIActionGenerator GenerateDelete();
+	static FUIActionGenerator GenerateCopyTo();
+	static FUIActionGenerator GenerateMoveTo();
+	static FUIActionGenerator GenerateCopy();
+	static FUIActionGenerator GenerateCut();
+	static FUIActionGenerator GeneratePaste();
+	static FUIActionGenerator GenerateDuplicate();
 };

@@ -12,18 +12,16 @@
 #endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
-GenerateMenuEntryTextStruct(MenuEntry_Open, LOCTEXT_NAMESPACE, "FileTreeCommand.Open", "Open");
-GenerateMenuEntryTextStruct(MenuEntry_Rename, LOCTEXT_NAMESPACE, "FileTreeCommand.Rename", "Rename");
-GenerateMenuEntryTextStruct(MenuEntry_Cut, LOCTEXT_NAMESPACE, "FileTreeCommand.Cut", "Cut");
-GenerateMenuEntryTextStruct(MenuEntry_Copy, LOCTEXT_NAMESPACE, "FileTreeCommand.Copy", "Copy");
-GenerateMenuEntryTextStruct(MenuEntry_Paste, LOCTEXT_NAMESPACE, "FileTreeCommand.Paste", "Paste");
-GenerateMenuEntryTextStruct(MenuEntry_Duplicate, LOCTEXT_NAMESPACE, "FileTreeCommand.Duplicate", "Duplicate");
-GenerateMenuEntryTextStruct(MenuEntry_Delete, LOCTEXT_NAMESPACE, "FileTreeCommand.Delete", "Delete");
 
-GenerateMenuEntryTextStruct(MenuEntry_CopyTo, LOCTEXT_NAMESPACE, "FileTreeCommand.CopyTo", "CopyTo");
-GenerateMenuEntryTextStruct(MenuEntry_MoveTo, LOCTEXT_NAMESPACE, "FileTreeCommand.MoveTo", "MoveTo");
-
-
+extern const FTextStruct MenuEntry_Open{ TEXT("FileTreeCommand") , TEXT("FileTreeCommand.Open") , TEXT("Open") };
+extern const FTextStruct MenuEntry_Rename{ TEXT("FileTreeCommand") , TEXT("FileTreeCommand.Rename") , TEXT("Rename") };
+extern const FTextStruct MenuEntry_Cut{ TEXT("FileTreeCommand") , TEXT("FileTreeCommand.Cut") , TEXT("Cut") };
+extern const FTextStruct MenuEntry_Copy{ TEXT("FileTreeCommand") , TEXT("FileTreeCommand.Copy") , TEXT("Copy") };
+extern const FTextStruct MenuEntry_Paste{ TEXT("FileTreeCommand") , TEXT("FileTreeCommand.Paste") , TEXT("Paste") };
+extern const FTextStruct MenuEntry_Duplicate{ TEXT("FileTreeCommand") , TEXT("FileTreeCommand.Duplicate") , TEXT("Duplicate") };
+extern const FTextStruct MenuEntry_Delete{ TEXT("FileTreeCommand") , TEXT("FileTreeCommand.Delete") , TEXT("Delete") };
+extern const FTextStruct MenuEntry_CopyTo{ TEXT("FileTreeCommand") , TEXT("FileTreeCommand.CopyTo") , TEXT("CopyTo") };
+extern const FTextStruct MenuEntry_MoveTo{ TEXT("FileTreeCommand") , TEXT("FileTreeCommand.MoveTo") , TEXT("MoveTo") };
 
 void FFileTreeMenuCommands::RegisterCommands()
 {
@@ -37,11 +35,12 @@ void FFileTreeMenuCommands::RegisterCommands()
 		Info.CommandInfo = GetUICommandInfoName(MenuEntry_Open);
 
 		Info.ExtensionHook = FName("ContextMenu.General.Open");
-		Info.Label = FText(MenuEntry_Open);
+		Info.Label = MenuEntry_Open.ToText();
 		Info.Spawner = FFileTreeContextMenuSpawners::BuildButton(Info);
 		Info.UIActionGenerator = FFileTreeContextMenuUIActionSpawner::GenerateOpen();
+		Info.ShowMark = EShowMark::SingleFile | EShowMark::Show;
 		
-		MenuCommand_General->GenerationInfo.Add(FText(MenuEntry_Open), Info);
+		MenuCommand_General->GenerationInfo.Add(MenuEntry_Open.ToText(), Info);
 	}
 
 	{
@@ -50,11 +49,12 @@ void FFileTreeMenuCommands::RegisterCommands()
 		Info.CommandInfo = GetUICommandInfoName(MenuEntry_Rename);
 
 		Info.ExtensionHook = FName("ContextMenu.General.Rename");
-		Info.Label = FText(MenuEntry_Rename);
+		Info.Label = MenuEntry_Rename.ToText();
 		Info.Spawner = FFileTreeContextMenuSpawners::BuildButton(Info);
-		Info.UIAction;
+		Info.UIActionGenerator = FFileTreeContextMenuUIActionSpawner::GenerateRename();
+		Info.ShowMark = EShowMark::SingleFile | EShowMark::Show;
 
-		MenuCommand_General->GenerationInfo.Add(FText(MenuEntry_Rename), Info);
+		MenuCommand_General->GenerationInfo.Add(MenuEntry_Rename.ToText(), Info);
 	}
 	{
 		CreateUICommand(MenuEntry_Cut, TEXT("Cut"), TEXT("Cut a file."), EUserInterfaceActionType::Button, FInputChord());
@@ -62,11 +62,12 @@ void FFileTreeMenuCommands::RegisterCommands()
 		Info.CommandInfo = GetUICommandInfoName(MenuEntry_Cut);
 
 		Info.ExtensionHook = FName("ContextMenu.General.Cut");
-		Info.Label = FText(MenuEntry_Cut);
+		Info.Label = MenuEntry_Cut.ToText();
 		Info.Spawner = FFileTreeContextMenuSpawners::BuildButton(Info);
-		Info.UIAction;
+		Info.UIActionGenerator = FFileTreeContextMenuUIActionSpawner::GenerateCut();
+		Info.ShowMark = EShowMark::SingleFile | EShowMark::MultiplyFile | EShowMark::Show;
 
-		MenuCommand_General->GenerationInfo.Add(FText(MenuEntry_Cut), Info);
+		MenuCommand_General->GenerationInfo.Add(MenuEntry_Cut.ToText(), Info);
 	}
 	{
 		CreateUICommand(MenuEntry_Copy, TEXT("Copy"), TEXT("Copy a file."), EUserInterfaceActionType::Button, FInputChord());
@@ -74,11 +75,11 @@ void FFileTreeMenuCommands::RegisterCommands()
 		Info.CommandInfo = GetUICommandInfoName(MenuEntry_Copy);
 
 		Info.ExtensionHook = FName("ContextMenu.General.Copy");
-		Info.Label = FText(MenuEntry_Copy);
+		Info.Label = MenuEntry_Copy.ToText();
 		Info.Spawner = FFileTreeContextMenuSpawners::BuildButton(Info);
-		Info.UIAction;
-
-		MenuCommand_General->GenerationInfo.Add(FText(MenuEntry_Copy), Info);
+		Info.UIActionGenerator = FFileTreeContextMenuUIActionSpawner::GenerateCopy();
+		Info.ShowMark = EShowMark::SingleFile | EShowMark::MultiplyFile | EShowMark::Show;
+		MenuCommand_General->GenerationInfo.Add(MenuEntry_Copy.ToText(), Info);
 	}
 	{
 		CreateUICommand(MenuEntry_Paste, TEXT("Paste"), TEXT("Paste a file."), EUserInterfaceActionType::Button, FInputChord());
@@ -87,11 +88,12 @@ void FFileTreeMenuCommands::RegisterCommands()
 
 
 		Info.ExtensionHook = FName("ContextMenu.General.Paste");
-		Info.Label = FText(MenuEntry_Paste);
+		Info.Label = MenuEntry_Paste.ToText();
 		Info.Spawner = FFileTreeContextMenuSpawners::BuildButton(Info);
-		Info.UIAction;
+		Info.UIActionGenerator = FFileTreeContextMenuUIActionSpawner::GeneratePaste();
+		Info.ShowMark = EShowMark::SingleFile | EShowMark::MultiplyFile;
 
-		MenuCommand_General->GenerationInfo.Add(FText(MenuEntry_Paste), Info);
+		MenuCommand_General->GenerationInfo.Add(MenuEntry_Paste.ToText(), Info);
 	}
 	{
 		CreateUICommand(MenuEntry_Duplicate, TEXT("Duplicate"), TEXT("Duplicate files in local folder."), EUserInterfaceActionType::Button, FInputChord());
@@ -99,11 +101,12 @@ void FFileTreeMenuCommands::RegisterCommands()
 		Info.CommandInfo = GetUICommandInfoName(MenuEntry_Duplicate);
 
 		Info.ExtensionHook = FName("ContextMenu.General.Duplicate");
-		Info.Label = FText(MenuEntry_Duplicate);
+		Info.Label = MenuEntry_Duplicate.ToText();
 		Info.Spawner = FFileTreeContextMenuSpawners::BuildButton(Info);
-		Info.UIAction;
+		Info.UIActionGenerator = FFileTreeContextMenuUIActionSpawner::GenerateDuplicate();
+		Info.ShowMark = EShowMark::SingleFile | EShowMark::MultiplyFile | EShowMark::Show;
 
-		MenuCommand_General->GenerationInfo.Add(FText(MenuEntry_Duplicate), Info);
+		MenuCommand_General->GenerationInfo.Add(MenuEntry_Duplicate.ToText(), Info);
 	}
 	{
 		CreateUICommand(MenuEntry_Delete, TEXT("Delete"), TEXT("Delete files."), EUserInterfaceActionType::Button, FInputChord());
@@ -112,11 +115,11 @@ void FFileTreeMenuCommands::RegisterCommands()
 
 
 		Info.ExtensionHook = FName("ContextMenu.General.Delete");
-		Info.Label = FText(MenuEntry_Delete);
+		Info.Label = MenuEntry_Delete.ToText();
 		Info.Spawner = FFileTreeContextMenuSpawners::BuildButton(Info);
-		Info.UIAction;
-
-		MenuCommand_General->GenerationInfo.Add(FText(MenuEntry_Delete), Info);
+		Info.UIActionGenerator = FFileTreeContextMenuUIActionSpawner::GenerateDelete();
+		Info.ShowMark = EShowMark::SingleFile | EShowMark::MultiplyFile | EShowMark::Show;
+		MenuCommand_General->GenerationInfo.Add(MenuEntry_Delete.ToText(), Info);
 	}
 
 	{
@@ -125,11 +128,12 @@ void FFileTreeMenuCommands::RegisterCommands()
 		Info.CommandInfo = GetUICommandInfoName(MenuEntry_CopyTo);
 
 		Info.ExtensionHook = FName("ContextMenu.General.CopyTo");
-		Info.Label = FText(MenuEntry_CopyTo);
+		Info.Label = MenuEntry_CopyTo.ToText();
 		Info.Spawner = FFileTreeContextMenuSpawners::BuildButton(Info);
-		Info.UIAction;
+		Info.UIActionGenerator = FFileTreeContextMenuUIActionSpawner::GenerateCopyTo();
+		Info.ShowMark = EShowMark::SingleFile | EShowMark::MultiplyFile | EShowMark::Show;
 
-		MenuCommand_DragDrop->GenerationInfo.Add(FText(MenuEntry_CopyTo), Info);
+		MenuCommand_DragDrop->GenerationInfo.Add(MenuEntry_CopyTo.ToText(), Info);
 	}
 	{
 		CreateUICommand(MenuEntry_MoveTo, TEXT("MoveTo"), TEXT("Move files to other folder."), EUserInterfaceActionType::Button, FInputChord());
@@ -137,11 +141,12 @@ void FFileTreeMenuCommands::RegisterCommands()
 		Info.CommandInfo = GetUICommandInfoName(MenuEntry_MoveTo);
 
 		Info.ExtensionHook = FName("ContextMenu.General.MoveTo");
-		Info.Label = FText(MenuEntry_MoveTo);
+		Info.Label = MenuEntry_MoveTo.ToText();
 		Info.Spawner = FFileTreeContextMenuSpawners::BuildButton(Info);
-		Info.UIAction;
+		Info.UIActionGenerator = FFileTreeContextMenuUIActionSpawner::GenerateMoveTo();
+		Info.ShowMark = EShowMark::SingleFile | EShowMark::MultiplyFile | EShowMark::Show;
 
-		MenuCommand_DragDrop->GenerationInfo.Add(FText(MenuEntry_MoveTo), Info);
+		MenuCommand_DragDrop->GenerationInfo.Add(MenuEntry_MoveTo.ToText(), Info);
 	}
 }
 

@@ -9,38 +9,25 @@ PREPROCESSOR_TO_STRING(PREPROCESSOR_JOIN(InCommandName, PREPROCESSOR_JOIN(_, InS
 #define PREPROCESSOR_TO_COMMAND_NAME_TCHAR(InCommandName, InSequenceIndex)\
 TEXT(PREPROCESSOR_TO_COMMAND_NAME_ANSI(InCommandName, InSequenceIndex))
 
-#define GenerateToolMenuTextStruct(InCommandName, InNamespace, InKey, InTextLiteral)\
-struct F##InCommandName\
-{\
-	constexpr static const TCHAR* Namespace = TEXT(InNamespace);\
-	constexpr static const TCHAR* Key = TEXT(InKey);\
-	constexpr static const TCHAR* TextLiteral = TEXT(InTextLiteral);\
-	explicit operator FText()\
-	{\
-		return FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(TextLiteral, Namespace, Key);\
-	}\
-};\
-static F##InCommandName InCommandName;
+#define CreateMenuSpawner(InCommandName, Spawner)\
+CreateSpawner(InCommandName.ToText()).Add(Spawner);
 
-#define BindUIAction(InCommandName, InSequenceIndex, UIActionObject)\
-UIActions[FText(InCommandName)][InSequenceIndex] = UIActionObject
-
-#define BindMenuSpawner(InCommandName, MenuExtensionDelegate)\
-MenuEntries[FText(InCommandName)].Add(MenuExtensionDelegate);
+#define CreateUIAction(InCommandName, InSequenceIndex, UIAction)\
+CreateAction(InCommandName.ToText(), InSequenceIndex) = UIAction\
 
 #define CreateUICommand(InCommandName, InSequenceIndex, FriendlyName, InDescription, CommandType, InDefaultChord)\
-TSharedPtr<FUICommandInfo>& InCommandName##_Command_##InSequenceIndex = CreateCommandInfo(FText(InCommandName), InSequenceIndex);\
+TSharedPtr<FUICommandInfo>& InCommandName##_CommandInfo_##InSequenceIndex = CreateCommandInfo(InCommandName.ToText(), InSequenceIndex);\
 MakeUICommand_InternalUseOnly(\
 this,\
-InCommandName##_Command_##InSequenceIndex,\
+InCommandName##_CommandInfo_##InSequenceIndex,\
 InCommandName.Namespace,\
-PREPROCESSOR_TO_COMMAND_NAME_TCHAR(InCommandName##_Command, InSequenceIndex),\
-PREPROCESSOR_TO_COMMAND_NAME_TCHAR(InCommandName##_Command, InSequenceIndex),\
-"." PREPROCESSOR_TO_COMMAND_NAME_ANSI(InCommandName##_Command, InSequenceIndex),\
+PREPROCESSOR_TO_COMMAND_NAME_TCHAR(InCommandName##_CommandInfo, InSequenceIndex),\
+PREPROCESSOR_TO_COMMAND_NAME_TCHAR(InCommandName##_CommandInfo, InSequenceIndex),\
+"." PREPROCESSOR_TO_COMMAND_NAME_ANSI(InCommandName##_CommandInfo, InSequenceIndex),\
 FriendlyName,\
 InDescription,\
 CommandType, \
 InDefaultChord);
 
-#define GetRealCommandName(InCommandName,InSequenceIndex)\
-InCommandName##_Command_##InSequenceIndex
+#define GetRealCommandInfoName(InCommandName,InSequenceIndex)\
+InCommandName##_CommandInfo_##InSequenceIndex

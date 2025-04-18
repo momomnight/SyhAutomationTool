@@ -1,8 +1,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FileTreeType.h"
-#include "FileTreeOperation.h"
 
 //多播绑定，可生成多个菜单按钮
 DECLARE_MULTICAST_DELEGATE_OneParam(FSpawnMenuEntries, FMenuBuilder&);

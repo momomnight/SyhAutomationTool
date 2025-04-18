@@ -6,73 +6,46 @@
 
 void SModalWindowBase::Construct(const FArguments& InArgs)
 {
-	CustomizeContent();
+	ShowArea = InArgs._ShowArea;
+	EnsureArea = InArgs._EnsureArea;
 
-	ChildSlot
-	[
-		SNew(SVerticalBox)
-		+ SVerticalBox::Slot()
-		.AutoHeight()
+	SWindow::Construct(
+		SWindow::FArguments()
+		.Title(InArgs._Title)
+		.SizingRule(ESizingRule::Autosized)
 		[
-			TitleArea.ToSharedRef()
-		]
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		[
-			SNew(SScrollBox)
-				+ SScrollBox::Slot()
+			SNew(SVerticalBox)
+				+ SVerticalBox::Slot()
+				.HAlign(HAlign_Left)
+				.AutoHeight()
 				[
-					ShowArea.ToSharedRef()
+					SNew(SScrollBox)
+						+ SScrollBox::Slot()
+						.HAlign(HAlign_Fill)
+						[
+							SNew(SBorder)		
+							.BorderBackgroundColor(FLinearColor::Transparent)
+							.Padding(FMargin(10.f, 0.f, 10.f, 0.f))
+							[
+								ShowArea.IsValid() ? ShowArea.ToSharedRef() : SNew(STextBlock).Text(LOCTEXT("ShowArea","Please add some widget."))
+							]
+						]
+				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				[
+					EnsureArea.IsValid() ? EnsureArea.ToSharedRef() : SNew(STextBlock).Text(LOCTEXT("ShowArea", "Please add a button."))
 				]
 		]
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		[
-			EnsureArea.ToSharedRef()
-		]
-
-	];
+	);
 }
 
-void SModalWindowBase::CustomizeTitle()
+void SModalWindowBase::CloseWindow()
 {
-	SAssignNew(TitleArea, STextBlock)
-	.Text(LOCTEXT("ModalWindowBase.Title", "Title"));
-}
-
-void SModalWindowBase::CustomizeShowArea()
-{
-	SAssignNew(ShowArea, STextBlock)
-		.Text(LOCTEXT("ModalWindowBase.ShowArea", "The area used to show some message."));
-}
-
-void SModalWindowBase::CustomizeEnsureArea()
-{
-	SAssignNew(EnsureArea, SButton)
-		.Text(LOCTEXT("ModalWindowBase.EnsureArea", "Ok"));
-}
-
-void SModalWindowBase::CustomizeContent()
-{
-	CustomizeTitle();
-	CustomizeShowArea();
-	CustomizeEnsureArea();	
-
-	if (!TitleArea.IsValid())
+	if (this->AsShared().ToSharedPtr() == FSlateApplication::Get().GetActiveModalWindow())
 	{
-		SModalWindowBase::CustomizeTitle();
+		FSlateApplication::Get().GetActiveModalWindow()->RequestDestroyWindow();
 	}
-
-	if (!ShowArea.IsValid())
-	{
-		SModalWindowBase::CustomizeShowArea();
-	}
-
-	if (!EnsureArea.IsValid())
-	{
-		SModalWindowBase::CustomizeEnsureArea();
-	}
-
 }
 
 
