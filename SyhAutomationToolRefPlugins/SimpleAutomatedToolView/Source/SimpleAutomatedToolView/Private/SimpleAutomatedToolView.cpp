@@ -10,7 +10,7 @@
 #include "Widgets/SBoxPanel.h"
 #include "SimpleSlateFileTree.h"
 
-#if WITH_EDITOR
+#if !IS_PROGRAM
 #include "LevelEditor.h"
 #endif
 

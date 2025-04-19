@@ -1,30 +1,24 @@
 #pragma once
-#include "Widget/Core/SAutomatedToolViewWidget.h"
 #include "FileTreeType.h"
+#include "Widgets/SCompoundWidget.h"
 #include <atomic>
 
-class SAutomatedFileDirectory : public SAutomatedToolViewWidget
+class SFileDirectory :public SCompoundWidget
 {
 
 public:
-	SLATE_BEGIN_ARGS(SAutomatedFileDirectory) {}
-
-	SLATE_ARGUMENT(FString, RootPath);
+	SLATE_BEGIN_ARGS(SFileDirectory) {}
 
 	SLATE_END_ARGS()
 
-	SAutomatedFileDirectory();
-	void Construct(const FArguments& InArgs);
+	SIMPLESLATEFILETREE_API SFileDirectory();
 
-	void ConstructChildern();
-
-
-public:
-	void AsyncUpdateFileTree(TSharedPtr<SlateFileTree::FFileTreeBase> InNode);
-
-	FTransform2D GetCurrentContextMenuTransform(const FPointerEvent& MouseEvent);
+	void SIMPLESLATEFILETREE_API Construct(const FArguments& InArgs, const FString& InRootPath);
 
 protected:
+	void AsyncUpdateFileTree(TSharedPtr<SlateFileTree::FFileTreeBase> InNode);
+
+	void ConstructChildern();
 
 	//STreeView
 	TSharedRef<class ITableRow> OnGenerateRow(TSharedPtr<SlateFileTree::FFileTreeBase> InNode, 

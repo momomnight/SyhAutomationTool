@@ -1,5 +1,4 @@
 #include "FileTreeWidget/SFileWidget.h"
-#include "Styling/CoreStyle.h"
 #include "FileTreeType.h"
 #include "Widgets/Text/STextBlock.h"
 

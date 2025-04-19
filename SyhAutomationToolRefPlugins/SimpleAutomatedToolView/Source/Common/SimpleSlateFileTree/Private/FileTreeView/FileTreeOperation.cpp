@@ -1,8 +1,20 @@
-#include "FileTreeOperation.h"
+#include "FileTreeView/FileTreeOperation.h"
 
 
 namespace SlateFileTree
 {
+	const EFileExecutionCode EFileExecutionCode::Empty =			{ FFileExecutionCode::Empty };
+	const EFileExecutionCode EFileExecutionCode::NoEmpty =			{ FFileExecutionCode::NoEmpty };
+	const EFileExecutionCode EFileExecutionCode::ImmediatelyExec =	{ FFileExecutionCode::ImmediatelyExec };
+	const EFileExecutionCode EFileExecutionCode::DelayExec =		{ FFileExecutionCode::DelayExec };
+	const EFileExecutionCode EFileExecutionCode::NoCombineExec =	{ FFileExecutionCode::NoCombineExec };
+	const EFileExecutionCode EFileExecutionCode::CombineExec =		{ FFileExecutionCode::CombineExec };
+	const EFileExecutionCode EFileExecutionCode::Open =				{ FFileExecutionCode::Open };
+	const EFileExecutionCode EFileExecutionCode::Rename =			{ FFileExecutionCode::Rename };
+	const EFileExecutionCode EFileExecutionCode::Delete =			{ FFileExecutionCode::Delete };
+	const EFileExecutionCode EFileExecutionCode::CopyTo =			{ FFileExecutionCode::CopyTo };
+	const EFileExecutionCode EFileExecutionCode::MoveTo =			{ FFileExecutionCode::MoveTo };
+	const EFileExecutionCode EFileExecutionCode::Duplicate =		{ FFileExecutionCode::Duplicate };
 
 	const EFileExecutionCode FReadyMadeExecutionCode::Open = { EFileExecutionCode::Open | EFileExecutionCode::NoEmpty
 		| EFileExecutionCode::ImmediatelyExec | EFileExecutionCode::NoCombineExec };

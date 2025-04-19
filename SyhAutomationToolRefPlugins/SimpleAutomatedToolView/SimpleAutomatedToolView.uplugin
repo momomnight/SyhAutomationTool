@@ -29,6 +29,11 @@
 			"Name": "SimpleSlateFileTree",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "SimpleBlueprintView",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
 	]
 }

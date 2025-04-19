@@ -1,7 +1,7 @@
 #pragma once
 #include "FileTreeEvent.h"
-#include "FileTreeTool.h"
 #include "Misc/EnumClassFlags.h"
+#include "FileTreeTool.h"
 
 
 enum class EShowMark

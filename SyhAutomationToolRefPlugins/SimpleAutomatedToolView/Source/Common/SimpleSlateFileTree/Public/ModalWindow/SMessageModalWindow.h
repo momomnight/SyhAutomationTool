@@ -1,8 +1,5 @@
 #pragma once
-
-#include "CoreMinimal.h"
 #include "ModalWindow/Base/SModalWindowBase.h"
-#include "FileTreeEvent.h"
 
 
 

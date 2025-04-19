@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class SimpleAutomatedToolView : ModuleRules
+public class SimpleBlueprintView : ModuleRules
 {
-	public SimpleAutomatedToolView(ReadOnlyTargetRules Target) : base(Target)
+	public SimpleBlueprintView(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -36,19 +36,15 @@ public class SimpleAutomatedToolView : ModuleRules
 			{
 				"Projects",
 				"InputCore",
-				"ToolMenus",
 				"CoreUObject",
+				"ToolMenus",
 				"Slate",
 				"SlateCore",
-				"SlateReflector",
-				"SimpleAutomatedToolCommon",
-				"SimpleSlateFileTree"
-
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
-		
-		if(Target.Type != TargetType.Program)
+
+		if (Target.Type != TargetType.Program)
 		{
 			PrivateDependencyModuleNames.AddRange(
 				new string[]
@@ -60,7 +56,6 @@ public class SimpleAutomatedToolView : ModuleRules
 				);
 		}
 
-		
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{

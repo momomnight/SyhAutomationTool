@@ -1,4 +1,4 @@
-#include "Widget/DetailPanel/Automated/SAutomatedFileDirectory.h"
+#include "SFileDirectory.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Views/STreeView.h"
 #include "Widgets/Layout/SBox.h"
@@ -7,12 +7,11 @@
 #include "FileTreeWidget/SFolderWidget.h"
 #include "FileTreeWidget/SInvalidWidget.h"
 #include "FileTreeWidget/SNoneWidget.h"
-#include "DllExports/AutomatedExecutionPath.h"
-#include "SFileTreeView.h"
+#include "FileTreeView/SFileTreeView.h"
 
 
 
-#define LOCTEXT_NAMESPACE "SAutomatedFileDirectory"
+#define LOCTEXT_NAMESPACE "SFileDirectory"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -21,20 +20,14 @@
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
 
-SAutomatedFileDirectory::SAutomatedFileDirectory()
+SFileDirectory::SFileDirectory()
 {
 }
 
-void SAutomatedFileDirectory::Construct(const FArguments& InArgs)
+void SFileDirectory::Construct(const FArguments& InArgs, const FString& InRootPath)
 {
-	if (InArgs._RootPath.IsEmpty())
-	{
-		RootPath.SetRootPath(AutomatedExecutionPath::GetCommandPath());
-	}
-	else
-	{
-		RootPath.SetRootPath(InArgs._RootPath);
-	}
+	RootPath.SetRootPath(InRootPath);
+
 	TSharedPtr<SlateFileTree::FFileTree_Folder> Root = MakeShareable(new SlateFileTree::FFileTree_Folder{
 		RootPath.GetCleanFileName(), RootPath.GetRootPath()});
 	SlateFileTree::FindFilesRecursive(Root->GetChildren(), Root);
@@ -44,7 +37,7 @@ void SAutomatedFileDirectory::Construct(const FArguments& InArgs)
 	ConstructChildern();	
 }
 
-void SAutomatedFileDirectory::ConstructChildern()
+void SFileDirectory::ConstructChildern()
 {
 	TSharedRef<SScrollBar> HorizontalScrollBar = SNew(SScrollBar)
 		.Orientation(Orient_Horizontal)
@@ -79,11 +72,11 @@ void SAutomatedFileDirectory::ConstructChildern()
 								[
 									SAssignNew(FileTreeView, SFileTreeView)
 										.TreeItemsSource(&FileTreeDataSource)
-										.OnGenerateRow(this, &SAutomatedFileDirectory::OnGenerateRow)
-										.OnGetChildren(this, &SAutomatedFileDirectory::OnGetChildren)
-										.OnExpansionChanged(this, &SAutomatedFileDirectory::OnExpansionChanged)
+										.OnGenerateRow(this, &SFileDirectory::OnGenerateRow)
+										.OnGetChildren(this, &SFileDirectory::OnGetChildren)
+										.OnExpansionChanged(this, &SFileDirectory::OnExpansionChanged)
 										.ExternalScrollbar(VerticalScrollBar)		
-										.OnRefreshFileTree(FOnRefreshFileTree::CreateSP(this, &SAutomatedFileDirectory::AsyncUpdateFileTree))
+										.OnRefreshFileTree(FOnRefreshFileTree::CreateSP(this, &SFileDirectory::AsyncUpdateFileTree))
 								]
 						]
 						+ SHorizontalBox::Slot()
@@ -126,7 +119,7 @@ void SAutomatedFileDirectory::ConstructChildern()
 	];
 }
 
-void SAutomatedFileDirectory::AsyncUpdateFileTree(TSharedPtr<SlateFileTree::FFileTreeBase> InNode)
+void SFileDirectory::AsyncUpdateFileTree(TSharedPtr<SlateFileTree::FFileTreeBase> InNode)
 {
 	if(!InNode.IsValid()) return;
 
@@ -157,16 +150,7 @@ void SAutomatedFileDirectory::AsyncUpdateFileTree(TSharedPtr<SlateFileTree::FFil
 	}
 }
 
-FTransform2D SAutomatedFileDirectory::GetCurrentContextMenuTransform(const FPointerEvent& MouseEvent)
-{
-	const FGeometry& Geometry = GetCachedGeometry();
-	FVector2D RelativePos = MouseEvent.GetScreenSpacePosition() - Geometry.GetAbsolutePosition();
-	FTransform2D Transform;
-	Transform.SetTranslation(RelativePos);
-	return Transform;
-}
-
-TSharedRef<class ITableRow> SAutomatedFileDirectory::OnGenerateRow(TSharedPtr<SlateFileTree::FFileTreeBase> InNode,
+TSharedRef<class ITableRow> SFileDirectory::OnGenerateRow(TSharedPtr<SlateFileTree::FFileTreeBase> InNode,
 	const TSharedRef<class STableViewBase>& InOwnerTable)
 {
 	if (InNode->GetFileType() == SlateFileTree::EFileType::File)
@@ -191,7 +175,7 @@ TSharedRef<class ITableRow> SAutomatedFileDirectory::OnGenerateRow(TSharedPtr<Sl
 	}
 }
 
-void SAutomatedFileDirectory::OnGetChildren(TSharedPtr<SlateFileTree::FFileTreeBase> InNode, 
+void SFileDirectory::OnGetChildren(TSharedPtr<SlateFileTree::FFileTreeBase> InNode, 
 	TArray<TSharedPtr<SlateFileTree::FFileTreeBase>>& OutChildren)
 {
 	if(!InNode.IsValid() || InNode->GetFileType() == SlateFileTree::EFileType::File) return;
@@ -222,7 +206,7 @@ void SAutomatedFileDirectory::OnGetChildren(TSharedPtr<SlateFileTree::FFileTreeB
 	}
 }
 
-void SAutomatedFileDirectory::OnExpansionChanged(TSharedPtr<SlateFileTree::FFileTreeBase> InNode, bool bIsExpanded)
+void SFileDirectory::OnExpansionChanged(TSharedPtr<SlateFileTree::FFileTreeBase> InNode, bool bIsExpanded)
 {
 	if (InNode->GetFileType() == SlateFileTree::EFileType::Folder)
 	{
@@ -231,18 +215,18 @@ void SAutomatedFileDirectory::OnExpansionChanged(TSharedPtr<SlateFileTree::FFile
 		
 		if (bIsExpanded)
 		{			
-			FolderNode->OperationWidget(FOperationWidget::CreateSP(this, &SAutomatedFileDirectory::GetFileIcon, true));
+			FolderNode->OperationWidget(FOperationWidget::CreateSP(this, &SFileDirectory::GetFileIcon, true));
 			AsyncUpdateFileTree(FolderNode);
 		}
 		else
 		{
-			FolderNode->OperationWidget(FOperationWidget::CreateSP(this, &SAutomatedFileDirectory::GetFileIcon, false));
+			FolderNode->OperationWidget(FOperationWidget::CreateSP(this, &SFileDirectory::GetFileIcon, false));
 		}
 
 	}
 }
 
-void SAutomatedFileDirectory::GetFileIcon(TSharedPtr<SWidget> Widget, bool bIsExpanded) const
+void SFileDirectory::GetFileIcon(TSharedPtr<SWidget> Widget, bool bIsExpanded) const
 {
 	TSharedPtr<SImage> Image = StaticCastSharedPtr<SImage>(Widget);
 
@@ -254,14 +238,14 @@ void SAutomatedFileDirectory::GetFileIcon(TSharedPtr<SWidget> Widget, bool bIsEx
 	}
 }
 
-void SAutomatedFileDirectory::SetItemExpansion(TSharedPtr<SlateFileTree::FFileTreeBase> InNode)
+void SFileDirectory::SetItemExpansion(TSharedPtr<SlateFileTree::FFileTreeBase> InNode)
 {
 	if (InNode.IsValid() && InNode->IsFolder())
 	{
 		TSharedPtr<SlateFileTree::FFileTree_Folder> Folder = InNode->CastTo<SlateFileTree::FFileTree_Folder>();
 		if (Folder->IsExpanded())
 		{
-			Folder->OperationWidget(FOperationWidget::CreateSP(this, &SAutomatedFileDirectory::GetFileIcon, true));
+			Folder->OperationWidget(FOperationWidget::CreateSP(this, &SFileDirectory::GetFileIcon, true));
 			FileTreeView->SetItemExpansion(InNode, true);
 			for (auto& Temp : Folder->GetChildren())
 			{
@@ -271,12 +255,12 @@ void SAutomatedFileDirectory::SetItemExpansion(TSharedPtr<SlateFileTree::FFileTr
 	}
 }
 
-FReply SAutomatedFileDirectory::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+FReply SFileDirectory::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	return FReply::Handled();
 }
 
-FReply SAutomatedFileDirectory::OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+FReply SFileDirectory::OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	return FReply::Handled();
 }

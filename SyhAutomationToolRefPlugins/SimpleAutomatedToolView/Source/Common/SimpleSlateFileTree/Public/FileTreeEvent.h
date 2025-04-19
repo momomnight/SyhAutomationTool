@@ -16,12 +16,6 @@ DECLARE_DELEGATE(FOnEndDragDrop);
 //唤醒情景菜单等操作
 DECLARE_DELEGATE_OneParam(FOnRefreshFileTree, TSharedPtr<SlateFileTree::FFileTreeBase>);
 
-//用于执行具体操作
-DECLARE_DELEGATE_TwoParams(FOnFileTreeContextMenuClicked, TSharedPtr<SWidget>, TWeakPtr<SlateFileTree::FFileTreeBase>);
-
-
-DECLARE_DELEGATE_OneParam(FOnRename, const FText&);
-
 //填充情景菜单
 DECLARE_DELEGATE_OneParam(FSpawnMenuEntry, FMenuBuilder&);
 

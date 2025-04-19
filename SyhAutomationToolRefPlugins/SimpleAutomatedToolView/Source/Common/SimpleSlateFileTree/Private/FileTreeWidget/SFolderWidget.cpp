@@ -1,8 +1,4 @@
 #include "FileTreeWidget/SFolderWidget.h"
-
-#include "Styling/SlateBrush.h"
-#include "Widgets/Input/SButton.h"
-#include "Styling/AppStyle.h"
 #include "Widgets/SBoxPanel.h"
 #include "FileTreeType.h"
 

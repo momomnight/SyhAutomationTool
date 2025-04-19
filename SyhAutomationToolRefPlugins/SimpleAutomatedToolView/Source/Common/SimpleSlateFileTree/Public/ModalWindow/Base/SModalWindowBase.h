@@ -1,6 +1,4 @@
 #pragma once
-
-#include "CoreMinimal.h"
 #include "Widgets/SWindow.h"
 
 

@@ -18,21 +18,21 @@ namespace ModalWindowFactory
 	};
 
 	template <EMessageType MsgType = EMessageType::None>
-	void CreateMessage(const FText& InExplain)
+	void SIMPLESLATEFILETREE_API CreateMessage(const FText& InExplain)
 	{
 		TSharedRef<SWindow> Window =
 			SNew(SMessageModalWindow)
 			.EventExplain(InExplain);
 		FSlateApplication::Get().AddModalWindow(Window, nullptr, false);
 	}
-	template <> void CreateMessage<EMessageType::Display>(const FText& InExplain)
+	template <> void SIMPLESLATEFILETREE_API CreateMessage<EMessageType::Display>(const FText& InExplain)
 	{
 		TSharedRef<SWindow> Window =
 			SNew(SMessageModalWindow)
 			.EventExplain(FText::Format(LOCTEXT("Message.Display","Display: {0}"), InExplain));
 		FSlateApplication::Get().AddModalWindow(Window, nullptr, false);
 	}
-	template <> void CreateMessage<EMessageType::Warning>(const FText& InExplain)
+	template <> void SIMPLESLATEFILETREE_API CreateMessage<EMessageType::Warning>(const FText& InExplain)
 	{
 		TSharedRef<SWindow> Window =
 			SNew(SMessageModalWindow)
@@ -40,7 +40,7 @@ namespace ModalWindowFactory
 			.ColorAndOpacity(FLinearColor::Yellow);
 		FSlateApplication::Get().AddModalWindow(Window, nullptr, false);
 	}
-	template <> void CreateMessage<EMessageType::Error>(const FText& InExplain)
+	template <> void SIMPLESLATEFILETREE_API CreateMessage<EMessageType::Error>(const FText& InExplain)
 	{
 		TSharedRef<SWindow> Window =
 			SNew(SMessageModalWindow)
@@ -56,10 +56,10 @@ namespace ModalWindowFactory
 
 
 	template<class ResultType>
-	void ClearTemplateVariable(TSharedPtr<ResultType> OutResult);
+	void SIMPLESLATEFILETREE_API ClearTemplateVariable(TSharedPtr<ResultType> OutResult);
 
-	template <> void ClearTemplateVariable<FString>(TSharedPtr<FString> OutResult){ OutResult->Empty(); }
-	template <> void ClearTemplateVariable<bool>(TSharedPtr<bool> OutResult) { *OutResult = false; }
+	template <> void SIMPLESLATEFILETREE_API ClearTemplateVariable<FString>(TSharedPtr<FString> OutResult){ OutResult->Empty(); }
+	template <> void SIMPLESLATEFILETREE_API ClearTemplateVariable<bool>(TSharedPtr<bool> OutResult) { *OutResult = false; }
 
 
 	template<class ResultType>
@@ -71,14 +71,14 @@ namespace ModalWindowFactory
 
 
 	template <class ResultType>
-	void CreateSelect(const FText& InTitile, const FText& InExplain, TSharedPtr<ResultType> OutResult);
+	void SIMPLESLATEFILETREE_API CreateSelect(const FText& InTitile, const FText& InExplain, TSharedPtr<ResultType> OutResult);
 
 	//内部链接性
 
 
 	//从模态窗口获取字符串
 	template <>
-	void CreateSelect<FString>(const FText& InTitile, const FText& InHintText, TSharedPtr<FString> OutResult)
+	void SIMPLESLATEFILETREE_API CreateSelect<FString>(const FText& InTitile, const FText& InHintText, TSharedPtr<FString> OutResult)
 	{
 		constexpr auto GetText = [](TSharedPtr<SWidget> InWidget, TSharedPtr<FString> OutResult)
 			{
@@ -101,7 +101,7 @@ namespace ModalWindowFactory
 	}
 
 	template <>
-	void CreateSelect<bool>(const FText& InTitile, const FText& InExplain, TSharedPtr<bool> OutResult)
+	void SIMPLESLATEFILETREE_API CreateSelect<bool>(const FText& InTitile, const FText& InExplain, TSharedPtr<bool> OutResult)
 	{
 		constexpr auto GetText = [](TSharedPtr<SWidget> InWidget, TSharedPtr<bool> OutResult)
 			{

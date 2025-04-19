@@ -1,5 +1,4 @@
 #pragma once
-#include "FileTreeEvent.h"
 #include "Widgets/Views/STableViewBase.h"
 
 class SIMPLESLATEFILETREE_API SFileTreeWidgetBase : public STableRow<TSharedPtr<SlateFileTree::FFileTreeBase>>

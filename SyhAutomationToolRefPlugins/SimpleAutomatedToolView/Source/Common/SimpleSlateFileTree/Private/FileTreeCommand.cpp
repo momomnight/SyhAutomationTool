@@ -1,8 +1,7 @@
 #include "FileTreeCommand.h"
-#include "FileTreeType.h"
-#include "SFileTreeView.h"
+#include "FileTreeView/SFileTreeView.h"
 #include "FileTreeMenuCommands.h"
-#include "FileTreeOperation.h"
+#include "FileTreeView/FileTreeOperation.h"
 
 #define LOCTEXT_NAMESPACE "FileTreeCommand"
 

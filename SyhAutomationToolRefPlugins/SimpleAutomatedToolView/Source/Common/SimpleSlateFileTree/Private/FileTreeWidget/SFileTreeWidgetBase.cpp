@@ -3,7 +3,7 @@
 #include "DragDropDefinition/FileTreeDragDrop.h"
 #include "Widgets/Views/STableViewBase.h"
 #include "Widgets/Text/STextBlock.h"
-#include "SFileTreeView.h"
+#include "FileTreeView/SFileTreeView.h"
 
 #define LOCTEXT_NAMESPACE "FileTreeWidgetBase"
 

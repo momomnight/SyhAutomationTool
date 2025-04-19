@@ -16,6 +16,6 @@ protected:
 	void OnCommandButtonClicked(ECommandProtocol InProtocol);
 
 private:
-	TSharedPtr<class SAutomatedFileDirectory> AutomatedFileDirectory;
+	TSharedPtr<class SFileDirectory> AutomatedFileDirectory;
 	TSharedPtr<class SAutomatedBlueprintOutline> AutomatedBlueprintOutline;
 };

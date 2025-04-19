@@ -11,6 +11,11 @@ namespace SlateFileTree
 	void FindFilesRecursive(TArray<TSharedPtr<FFileTreeBase>>& OutChildren, TSharedPtr<FFileTree_Folder> Parent, 
 		TFunction<bool(const FString&)> Filter)
 	{
+		if (!Parent.IsValid())
+		{
+			return;
+		}
+
 		TArray<FString> Result;
 		IFileManager::Get().FindFiles(Result, *(Parent->GetPath() / TEXT("*")), true, true);
 

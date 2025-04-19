@@ -1,10 +1,10 @@
-#include "SFileTreeView.h"
+#include "FileTreeView/SFileTreeView.h"
 #include "FileTreeMenuCommands.h"
 #include "Misc/LazySingleton.h"
 #include "FileTreeTool.h"
 #include "ModalWindow/SSelectModalWindow.h"
 #include "ModalWindow/ModalWindowFactory.h"
-#include "FileTreeOperation.h"
+#include "FileTreeView/FileTreeOperation.h"
 #include "Misc/ScopeExit.h"
 
 #define LOCTEXT_NAMESPACE "SFileTreeView"

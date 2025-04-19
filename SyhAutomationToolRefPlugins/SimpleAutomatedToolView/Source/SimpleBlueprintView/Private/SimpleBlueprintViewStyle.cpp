@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "SimpleAutomatedToolViewStyle.h"
+#include "SimpleBlueprintViewStyle.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Interfaces/IPluginManager.h"
@@ -11,12 +11,11 @@
 #include "Slate/SlateGameResources.h"
 #endif
 
-
 #define RootToContentDir Style->RootToContentDir
 
-TSharedPtr<FSlateStyleSet> FSimpleAutomatedToolViewStyle::StyleInstance = nullptr;
+TSharedPtr<FSlateStyleSet> FSimpleBlueprintViewStyle::StyleInstance = nullptr;
 
-void FSimpleAutomatedToolViewStyle::Initialize()
+void FSimpleBlueprintViewStyle::Initialize()
 {
 	if (!StyleInstance.IsValid())
 	{
@@ -25,25 +24,25 @@ void FSimpleAutomatedToolViewStyle::Initialize()
 	}
 }
 
-void FSimpleAutomatedToolViewStyle::Shutdown()
+void FSimpleBlueprintViewStyle::Shutdown()
 {
 	FSlateStyleRegistry::UnRegisterSlateStyle(*StyleInstance);
 	ensure(StyleInstance.IsUnique());
 	StyleInstance.Reset();
 }
 
-FName FSimpleAutomatedToolViewStyle::GetStyleSetName()
+FName FSimpleBlueprintViewStyle::GetStyleSetName()
 {
-	static FName StyleSetName(TEXT("SimpleAutomatedToolViewStyle"));
+	static FName StyleSetName(TEXT("SimpleBlueprintViewStyle"));
 	return StyleSetName;
 }
 
 const FVector2D Icon16x16(16.0f, 16.0f);
 const FVector2D Icon20x20(20.0f, 20.0f);
 
-TSharedRef< FSlateStyleSet > FSimpleAutomatedToolViewStyle::Create()
+TSharedRef< FSlateStyleSet > FSimpleBlueprintViewStyle::Create()
 {
-	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("SimpleAutomatedToolViewStyle"));
+	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("SimpleBlueprintViewStyle"));
 	if (TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin("SimpleAutomatedToolView"))
 	{
 		Style->SetContentRoot(Plugin->GetBaseDir() / TEXT("Resources"));
@@ -53,12 +52,12 @@ TSharedRef< FSlateStyleSet > FSimpleAutomatedToolViewStyle::Create()
 		Style->SetContentRoot(FPaths::ProjectDir() / TEXT("Resources"));
 	}
 
-	Style->Set("SimpleAutomatedToolView.OpenPluginWindow", new IMAGE_BRUSH_SVG(TEXT("PlaceholderButtonIcon"), Icon20x20));
+	Style->Set("SimpleBlueprintView.OpenPluginWindow", new IMAGE_BRUSH_SVG(TEXT("PlaceholderButtonIcon"), Icon20x20));
 
 	return Style;
 }
 
-void FSimpleAutomatedToolViewStyle::ReloadTextures()
+void FSimpleBlueprintViewStyle::ReloadTextures()
 {
 	if (FSlateApplication::IsInitialized())
 	{
@@ -66,7 +65,7 @@ void FSimpleAutomatedToolViewStyle::ReloadTextures()
 	}
 }
 
-const ISlateStyle& FSimpleAutomatedToolViewStyle::Get()
+const ISlateStyle& FSimpleBlueprintViewStyle::Get()
 {
 	return *StyleInstance;
 }

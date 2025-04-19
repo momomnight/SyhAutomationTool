@@ -1,6 +1,4 @@
 #pragma once
-
-#include "CoreMinimal.h"
 #include "FileTreeEvent.h"
 #include "FileTreeTypeFwd.h"
 

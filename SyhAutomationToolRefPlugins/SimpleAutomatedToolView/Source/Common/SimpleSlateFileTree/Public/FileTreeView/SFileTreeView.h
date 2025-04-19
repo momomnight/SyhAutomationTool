@@ -1,10 +1,7 @@
 #pragma once
-
-
 #include "Widgets/Views/STreeView.h"
-//#include "FileTreeType.h"
-#include "FileTreeTypeFwd.h"
 #include "FileTreeCommand.h"
+#include "FileTreeOperation.h"
 
 class SIMPLESLATEFILETREE_API SFileTreeView : public STreeView<TSharedPtr<SlateFileTree::FFileTreeBase>>
 {

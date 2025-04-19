@@ -1,8 +1,8 @@
 #include "Widget/DetailPanel/Automated/SAutomatedDetailEditorWidget.h"
 #include "Widget/DetailPanel/Automated/SAutomatedBlueprintOutline.h"
-#include "Widget/DetailPanel/Automated/SAutomatedFileDirectory.h"
+#include "SFileDirectory.h"
 #include "Widgets/SOverlay.h"
-
+#include "DllExports/AutomatedExecutionPath.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -21,7 +21,7 @@ void SAutomatedDetailEditorWidget::Construct(const FArguments& InArgs)
 		SNew(SBorder)
 		.Padding(3.f)
 		[
-			SAssignNew(AutomatedFileDirectory, SAutomatedFileDirectory)
+			SAssignNew(AutomatedFileDirectory, SFileDirectory, AutomatedExecutionPath::GetCommandPath())
 		];
 	TSharedRef<SWidget> ViewGraph =
 		SNew(SBorder)
