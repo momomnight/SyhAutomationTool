@@ -3,6 +3,7 @@
 #include "SFileDirectory.h"
 #include "Widgets/SOverlay.h"
 #include "DllExports/AutomatedExecutionPath.h"
+#include "Widget/BlueprintWidget/SBlueprintFramework.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -27,11 +28,7 @@ void SAutomatedDetailEditorWidget::Construct(const FArguments& InArgs)
 		SNew(SBorder)
 		.Padding(3.f)
 		[
-			SNew(SScrollBox)
-			+ SScrollBox::Slot()
-			[
-				SNew(SImage)
-			]
+			SNew(SBlueprintFramework)
 		];
 
 

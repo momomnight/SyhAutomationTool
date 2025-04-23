@@ -1,6 +1,4 @@
-#include "Widget/BlueprintWidget/SBlueprintGrid.h"
-
-
+#include "Widget/BlueprintWidget/SBlueprintConnection.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -9,10 +7,14 @@
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
 
-void SBlueprintGrid::Construct(const FArguments& InArgs)
+SBlueprintConnection::SBlueprintConnection()
 {
-
 }
+
+void SBlueprintConnection::Construct(const FArguments& InArgs)
+{
+}
+
 
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT

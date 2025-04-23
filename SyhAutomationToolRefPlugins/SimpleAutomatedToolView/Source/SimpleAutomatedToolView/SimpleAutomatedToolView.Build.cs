@@ -42,7 +42,8 @@ public class SimpleAutomatedToolView : ModuleRules
 				"SlateCore",
 				"SlateReflector",
 				"SimpleAutomatedToolCommon",
-				"SimpleSlateFileTree"
+				"SimpleSlateFileTree",
+				"SimpleBlueprintView"
 
 				// ... add private dependencies that you statically link with here ...	
 			}

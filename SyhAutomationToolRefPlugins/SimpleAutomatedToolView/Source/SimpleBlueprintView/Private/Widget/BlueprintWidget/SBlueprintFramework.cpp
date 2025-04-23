@@ -1,5 +1,8 @@
 #include "Widget/BlueprintWidget/SBlueprintFramework.h"
 #include "Widgets/Layout/SConstraintCanvas.h"
+#include "Widget/BlueprintWidget/SBlueprintGrid.h"
+#include "Widget/BlueprintWidget/SNodeSelectedOutline.h"
+#include "Widget/BlueprintWidget/SBlueprintNode.h"
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 #if PLATFORM_WINDOWS
@@ -15,6 +18,48 @@ SBlueprintFramework::SBlueprintFramework() : SBlueprintMoveableWidget(),
 
 void SBlueprintFramework::Construct(const FArguments& InArgs)
 {
+	ChildSlot
+	[
+		SNew(SOverlay)
+		+ SOverlay::Slot()
+		.ZOrder(1)
+		.HAlign(HAlign_Fill)
+		.VAlign(VAlign_Fill)
+		[
+			SAssignNew(BlueprintGrid, SBlueprintGrid)
+		]
+		+ SOverlay::Slot()
+		.HAlign(HAlign_Fill)
+		.VAlign(VAlign_Fill)
+		.ZOrder(0)
+		[
+			SAssignNew(ConstraintCanvas, SConstraintCanvas)
+		]
+		/*+ SOverlay::Slot()
+		.HAlign(HAlign_Fill)
+		.VAlign(VAlign_Fill)
+		[
+			SAssignNew(SelectionArea, SNodeSelectionArea)
+			.Visibility(EVisibility::HitTestInvisible)
+		]*/
+	];
+
+	ConstraintCanvas->AddSlot()
+	.AutoSize(true)
+	.Alignment(FVector2D(0.f))
+	[
+		SAssignNew(SelectedWidget, SNodeSelectedOutline)
+	];
+
+
+	BuildBlueprintNodeSlot();
+	BuildBlueprintNodeSlot();
+	BuildBlueprintNodeSlot();
+
+	SetClipping(EWidgetClipping::ClipToBoundsWithoutIntersecting);
+	ParentWidget = ConstraintCanvas;
+
+
 }
 
 void SBlueprintFramework::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
@@ -66,7 +111,15 @@ FReply SBlueprintFramework::OnMouseButtonUp(const FGeometry& MyGeometry, const F
 {
 	FReply Reply = Super::OnMouseButtonUp(MyGeometry, MouseEvent);
 
-
+	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		Reply = FReply::Handled();
+	}
+	else if (MouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+	{
+		EndMove(MyGeometry, MouseEvent);
+		Reply = FReply::Handled();
+	}
 	return Reply;
 }
 
@@ -74,15 +127,24 @@ FReply SBlueprintFramework::OnMouseButtonDown(const FGeometry& MyGeometry, const
 {
 	FReply Reply = Super::OnMouseButtonDown(MyGeometry, MouseEvent);
 
+	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		Reply = FReply::Handled();
+	}
+	else if (MouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+	{
+		StartMove(MyGeometry, MouseEvent);
+		Reply = FReply::Handled();
+	}
 
 	return Reply;
 }
 
 FReply SBlueprintFramework::OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
+
 	FReply Reply = Super::OnMouseMove(MyGeometry, MouseEvent);
-
-
+	Move(MyGeometry, MouseEvent);
 	return Reply;
 }
 
@@ -110,6 +172,23 @@ void SBlueprintFramework::BuildSlot(TSharedPtr<SWidget> InWidget)
 
 void SBlueprintFramework::BuildBlueprintNodeSlot()
 {
+
+	if (ConstraintCanvas)
+	{
+		auto& NodeRef = Nodes.AddDefaulted_GetRef();
+		NodeRef.Type = EBlueprintWidgetType::Node;
+
+		ConstraintCanvas->AddSlot()
+		.AutoSize(true)//SizeToContent, 主要和AutoHeight等的区别
+		.Alignment(FVector2D(0.f))
+		[
+			SAssignNew(NodeRef.Node, SBlueprintNode)
+			.Framework(this)
+			.PinsLayout(EBlueprintPinsLayout::Separation)
+		];
+
+	}
+
 }
 
 void SBlueprintFramework::AddSlot(TSharedPtr<SWidget>& InWidget)
@@ -125,7 +204,7 @@ void SBlueprintFramework::UpdateChildrenWidgets(TFunction<bool(TSharedRef<SBluep
 {
 }
 
-void SBlueprintFramework::UpdateChildrenNodes(TSharedPtr<SWidget> InNode, TFunction<bool(class FBlueprintWidgetInfo&)> InMethod)
+void SBlueprintFramework::UpdateChildrenNodes(TSharedPtr<SWidget> InNode, TFunction<bool(FBlueprintWidgetInfo&)> InMethod)
 {
 }
 

@@ -3,7 +3,7 @@
 #include "SimpleBlueprintViewType.h"
 
 
-class SBlueprintFramework : public SBlueprintMoveableWidget
+class SIMPLEBLUEPRINTVIEW_API SBlueprintFramework : public SBlueprintMoveableWidget
 {
 	using Super = SBlueprintMoveableWidget;
 
@@ -11,7 +11,7 @@ public:
 	SBlueprintFramework();
 	
 
-	SLATE_USER_ARGS(SBlueprintFramework){}
+	SLATE_BEGIN_ARGS(SBlueprintFramework){}
 
 
 
@@ -29,11 +29,11 @@ public:
 	void EndMoveSelectedWidget(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 
 public:
-	virtual FReply OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& MouseEvent) override;
+	virtual FReply OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override;
 
-	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& MouseEvent) override;
+	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& KeyEvent) override;
 
-	virtual FReply OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent& MouseEvent) override;
+	virtual FReply OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent& KeyEvent) override;
 
 	virtual FReply OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
 
@@ -59,12 +59,13 @@ public:
 public:
 	void UpdateChildrenWidgets(TFunction<bool(TSharedRef<SBlueprintMoveableWidget>)> InMethod);
 
-	void UpdateChildrenNodes(TSharedPtr<SWidget> InNode, TFunction<bool(class FBlueprintWidgetInfo&)> InMethod);
+	void UpdateChildrenNodes(TSharedPtr<SWidget> InNode, TFunction<bool(FBlueprintWidgetInfo&)> InMethod);
 
 
 protected:
 
 	TSharedPtr<class SConstraintCanvas> ConstraintCanvas;
+	TSharedPtr<class SBlueprintGrid> BlueprintGrid;
 	TArray<FBlueprintWidgetInfo> Nodes;
 
 	bool bLeftCtrl;

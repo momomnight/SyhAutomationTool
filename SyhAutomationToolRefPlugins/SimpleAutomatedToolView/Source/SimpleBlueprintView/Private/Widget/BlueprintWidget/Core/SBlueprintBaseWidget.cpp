@@ -32,9 +32,9 @@ void SBlueprintBaseWidget::UpdateRenderTransform(SBlueprintBaseWidget* InWidget,
 		InWidget->CalculateNormalizedSizeAndRatio(WheelDelta, Min, Max);
 	}
 
-	FVector2D NewPosition = InPos / InWidget->ParentRatio;
+	FVector2D NewPosition = InPos;
 
-	InWidget->SetRenderTransform(::Concatenate(FScale2D(InWidget->Ratio), NewPosition));
+	InWidget->SetRenderTransform(::Concatenate(FScale2D(1), NewPosition));
 
 	InWidget->SetOriginPosition(NewPosition);
 }
