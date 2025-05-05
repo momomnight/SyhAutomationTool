@@ -1,6 +1,10 @@
 #include "Widget/BlueprintWidget/SBlueprintNode.h"
 #include "Widget/WidgetCommonMethod.h"
 #include "Widget/BlueprintWidget/SBlueprintPin.h"
+#include "Rendering/RenderingCommon.h"
+#include "Rendering/DrawElementTypes.h"
+#include "Widget/BlueprintWidget/SBlueprintFramework.h"
+#include "Styling/SlateBrush.h"
 
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
@@ -9,17 +13,24 @@
 #endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
-SBlueprintNode::SBlueprintNode() : Super()
+SBlueprintNode::SBlueprintNode() : Super(), bIsSelected(false)
 {
 	NodeName = TEXT("New Node");
+	WidgetType = EBlueprintWidgetType::Node;
 }
 
 
 void SBlueprintNode::Construct(const FArguments& InArgs)
 {
 	PinsLayout = InArgs._PinsLayout;
-	Framework = GetWidgetWP<SBlueprintFramework>(InArgs._Framework);
+	Outer = GetWidgetWP<SBlueprintFramework>(InArgs._Outer);
+
+	HighLightBox = InArgs._HighLightBox;
+
+	SetVisibility(EVisibility::Visible);
 	
+	MoveableWidget = SharedThis(this);
+
 	TSharedPtr<SHorizontalBox> TopLine = 
 		SNew(SHorizontalBox)
 		+ SHorizontalBox::Slot()
@@ -144,6 +155,8 @@ void SBlueprintNode::Construct(const FArguments& InArgs)
 	ChildSlot
 	[
 		SNew(SBorder)
+		.HAlign(HAlign_Fill)
+		.VAlign(VAlign_Fill)
 		.Padding(0.f)
 		.BorderImage(FAppStyle::GetBrush("Graph.StateNode.Body"))
 		[
@@ -153,6 +166,7 @@ void SBlueprintNode::Construct(const FArguments& InArgs)
 			.VAlign(VAlign_Fill)
 			[
 				SNew(SButton)
+				.Visibility(EVisibility::SelfHitTestInvisible)
 			]
 			+ SOverlay::Slot()
 			.HAlign(HAlign_Fill)
@@ -162,26 +176,25 @@ void SBlueprintNode::Construct(const FArguments& InArgs)
 			]
 		]
 	];
-
 	
-	AddPin(TEXT("PinName"), EBlueprintPinType::Exec_Input, EBlueprintPinConnectionDirection::TopToBottom);
-	AddPin(TEXT("PinName"), EBlueprintPinType::Exec_Output, EBlueprintPinConnectionDirection::TopToBottom);
-	AddPin(TEXT("PinName"), EBlueprintPinType::Exec_Output, EBlueprintPinConnectionDirection::TopToBottom);
+	AddPin(TEXT("PinName"), EBlueprintPinType::Exec_Input, EBlueprintExecutionDirection::TopToBottom);
+	AddPin(TEXT("PinName"), EBlueprintPinType::Exec_Output, EBlueprintExecutionDirection::TopToBottom);
+	AddPin(TEXT("PinName"), EBlueprintPinType::Exec_Output, EBlueprintExecutionDirection::TopToBottom);
 
-	AddPin(TEXT("PinName"), EBlueprintPinType::Param_Input, EBlueprintPinConnectionDirection::TopToBottom);
-	AddPin(TEXT("PinName"), EBlueprintPinType::Param_Output, EBlueprintPinConnectionDirection::TopToBottom);
+	AddPin(TEXT("PinName"), EBlueprintPinType::Param_Input, EBlueprintExecutionDirection::TopToBottom);
+	AddPin(TEXT("PinName"), EBlueprintPinType::Param_Output, EBlueprintExecutionDirection::TopToBottom);
 
 }
 
 
 void SBlueprintNode::AddPin(const FString& InPinName, EBlueprintPinType PinViewType, 
-	EBlueprintPinConnectionDirection ConnectionDirection)
+	EBlueprintExecutionDirection ConnectionDirection)
 {
 	EBlueprintPinEdge PinEdge = CalculatePinDirection(PinViewType, ConnectionDirection);
 
 	TSharedPtr<SBlueprintPin> Pin = SNew(SBlueprintPin)
-		.Framework(GetWidgetRaw<SBlueprintFramework>(Framework))
-		.Owner(this)
+		.Framework(GetWidgetRaw<SBlueprintFramework>(Outer))
+		.Outer(this)
 		.PinConnectionDirection(ConnectionDirection)
 		.PinEdge(PinEdge)
 		.PinType(PinViewType)
@@ -248,7 +261,27 @@ void SBlueprintNode::AddPin(const FString& InPinName, EBlueprintPinType PinViewT
 
 bool SBlueprintNode::DoesContainThisPin(SBlueprintPin* InPin) const
 {
+	if(InPin)
+	{
+		for (auto& Temp : AllPins)
+		{
+			if (InPin == GetWidgetRaw<SBlueprintPin>(Temp))
+			{
+				return true;
+			}
+		}
+	}
 	return false;
+}
+
+void SBlueprintNode::OnThisNodeSelected()
+{
+	this->SetThisNodeSelected();
+}
+
+void SBlueprintNode::OnThisNodeNotSelected()
+{
+	this->CancelThisNodeSelected();
 }
 
 FReply SBlueprintNode::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
@@ -256,77 +289,27 @@ FReply SBlueprintNode::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent&
 	return Super::OnDrop(MyGeometry, DragDropEvent);
 }
 
-void SBlueprintNode::AddLeftRightPin(TSharedPtr<class SVerticalBox> InPins, 
-	const FString& InPinName, EBlueprintPinType PinViewType, 
-	EBlueprintPinConnectionDirection ConnectionDirection, EVerticalAlignment Alignment,
-	bool bAuto)
+int32 SBlueprintNode::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, 
+	const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, 
+	const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
 {
-	TSharedPtr<SBlueprintPin> Pin = SNew(SBlueprintPin)
-		.Framework(GetWidgetRaw<SBlueprintFramework>(Framework))
-		.Owner(this)
-		.PinConnectionDirection(ConnectionDirection)
-		.PinEdge(CalculatePinDirection(PinViewType, ConnectionDirection))
-		.PinType(PinViewType)
-		.Name(InPinName);
+	FVector2D LocalSize = AllottedGeometry.GetLocalSize();
+	int32 ReturnLayerId = Super::OnPaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
 
-	if (bAuto)
+	if (bIsSelected)
 	{
-		InPins->AddSlot()
-			.AutoHeight()
-			.Padding(3.f)
-			.VAlign(Alignment)
-			[
-				Pin.ToSharedRef()
-			];
-	}
-	else
-	{
-		InPins->AddSlot()
-			.FillHeight(1.f)
-			.Padding(3.f)
-			.VAlign(Alignment)
-			[
-				Pin.ToSharedRef()
-			];
+		float BorderThickness(3.);
+		TArray<FVector2d> Points{{0,0},{LocalSize.X, 0},{LocalSize.X, LocalSize.Y},{0, LocalSize.Y},{0,0}};
+		FSlateDrawElement::MakeLines(OutDrawElements, ReturnLayerId + 1, AllottedGeometry.ToPaintGeometry(),
+			Points, ESlateDrawEffect::DisabledEffect, FLinearColor::Yellow, true, BorderThickness);
 	}
 
+	return ReturnLayerId;
 }
 
-void SBlueprintNode::AddTopBottomPin(TSharedPtr<class SHorizontalBox> InPins, 
-	const FString& InPinName, EBlueprintPinType PinViewType, 
-	EBlueprintPinConnectionDirection ConnectionDirection, EHorizontalAlignment Alignment, 
-	bool bAuto)
-{
-	TSharedPtr<SBlueprintPin> Pin = SNew(SBlueprintPin)
-		.Framework(GetWidgetRaw<SBlueprintFramework>(Framework))
-		.Owner(this)
-		.PinConnectionDirection(ConnectionDirection)
-		.PinEdge(CalculatePinDirection(PinViewType, ConnectionDirection))
-		.PinType(PinViewType);
-	if (bAuto)
-	{
-		InPins->AddSlot()
-			.AutoWidth()
-			.Padding(3.f)
-			.HAlign(Alignment)
-			[
-				Pin.ToSharedRef()
-			];
-	}
-	else
-	{
-		InPins->AddSlot()
-			.FillWidth(1.f)
-			.Padding(3.f)
-			.HAlign(Alignment)
-			[
-				Pin.ToSharedRef()
-			];
-	}
-}
 
 EBlueprintPinEdge SBlueprintNode::CalculatePinDirection(EBlueprintPinType ViewType, 
-	EBlueprintPinConnectionDirection ConnectionDirection)
+	EBlueprintExecutionDirection ConnectionDirection)
 {
 	switch (PinsLayout)
 	{
@@ -334,7 +317,7 @@ EBlueprintPinEdge SBlueprintNode::CalculatePinDirection(EBlueprintPinType ViewTy
 	{
 		switch (ConnectionDirection)
 		{
-		case EBlueprintPinConnectionDirection::TopToBottom:
+		case EBlueprintExecutionDirection::TopToBottom:
 		{
 			switch (ViewType)
 			{
@@ -360,7 +343,7 @@ EBlueprintPinEdge SBlueprintNode::CalculatePinDirection(EBlueprintPinType ViewTy
 			}
 			break;
 		}
-		case EBlueprintPinConnectionDirection::LeftToRight:
+		case EBlueprintExecutionDirection::LeftToRight:
 		{
 			switch (ViewType)
 			{
@@ -385,7 +368,7 @@ EBlueprintPinEdge SBlueprintNode::CalculatePinDirection(EBlueprintPinType ViewTy
 				break;
 			}
 		}
-		case EBlueprintPinConnectionDirection::None:
+		case EBlueprintExecutionDirection::None:
 		default:
 			break;
 		}
@@ -395,7 +378,7 @@ EBlueprintPinEdge SBlueprintNode::CalculatePinDirection(EBlueprintPinType ViewTy
 	{
 		switch (ConnectionDirection)
 		{
-		case EBlueprintPinConnectionDirection::TopToBottom:
+		case EBlueprintExecutionDirection::TopToBottom:
 		{
 			switch (ViewType)
 			{
@@ -415,7 +398,7 @@ EBlueprintPinEdge SBlueprintNode::CalculatePinDirection(EBlueprintPinType ViewTy
 			}
 			break;
 		}
-		case EBlueprintPinConnectionDirection::LeftToRight:
+		case EBlueprintExecutionDirection::LeftToRight:
 		{
 			switch (ViewType)
 			{
@@ -434,7 +417,7 @@ EBlueprintPinEdge SBlueprintNode::CalculatePinDirection(EBlueprintPinType ViewTy
 				break;
 			}
 		}
-		case EBlueprintPinConnectionDirection::None:
+		case EBlueprintExecutionDirection::None:
 		default:
 			break;
 		}
@@ -446,17 +429,12 @@ EBlueprintPinEdge SBlueprintNode::CalculatePinDirection(EBlueprintPinType ViewTy
 	return EBlueprintPinEdge::None;
 }
 
-void SBlueprintNode::StartMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+
+void SBlueprintNode::InvokeContextMenu()
 {
 
-}
+	//唤醒菜单
 
-void SBlueprintNode::Move(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
-{
-}
-
-void SBlueprintNode::EndMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
-{
 }
 
 FText SBlueprintNode::GetNodeNameText() const
@@ -464,20 +442,6 @@ FText SBlueprintNode::GetNodeNameText() const
 	return FText::FromString(NodeName);
 }
 
-FReply SBlueprintNode::OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
-{
-	return Super::OnMouseButtonUp(MyGeometry, MouseEvent);
-}
-
-FReply SBlueprintNode::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
-{
-	return Super::OnMouseButtonDown(MyGeometry, MouseEvent);
-}
-
-FReply SBlueprintNode::OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
-{
-	return Super::OnMouseMove(MyGeometry, MouseEvent);
-}
 
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT

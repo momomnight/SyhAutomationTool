@@ -32,6 +32,43 @@ static TSharedPtr<ReturnWidget> GetWidgetSP(TSharedPtr<InWidget> SmartPtr)
 	return StaticCastSharedPtr<ReturnWidget>(SmartPtr);
 }
 
+template <class ReturnWidget, class InWidget>
+	requires TIsWidgetConvertible<ReturnWidget, InWidget>
+static TSharedPtr<ReturnWidget> GetWidgetSP(TSharedRef<InWidget> SmartPtr)
+{
+	return StaticCastSharedPtr<ReturnWidget>(SmartPtr.ToSharedPtr());
+}
+
+//SR
+template <class ReturnWidget, class InWidget>
+	requires TIsWidgetConvertible<ReturnWidget, InWidget>
+static TSharedRef<ReturnWidget> GetWidgetSR(InWidget* SmartPtr)
+{
+	check(SmartPtr);
+	return StaticCastSharedRef<ReturnWidget>(SmartPtr->AsShared());
+}
+
+template <class ReturnWidget, class InWidget>
+	requires TIsWidgetConvertible<ReturnWidget, InWidget>
+static TSharedRef<ReturnWidget> GetWidgetSR(TWeakPtr<InWidget> SmartPtr)
+{
+	check(SmartPtr.IsValid())
+	return StaticCastSharedRef<ReturnWidget>(SmartPtr.Pin().ToSharedRef());
+}
+
+template <class ReturnWidget, class InWidget>
+	requires TIsWidgetConvertible<ReturnWidget, InWidget>
+static TSharedRef<ReturnWidget> GetWidgetSR(TSharedPtr<InWidget> SmartPtr)
+{
+	return StaticCastSharedRef<ReturnWidget>(SmartPtr.ToSharedRef());
+}
+
+template <class ReturnWidget, class InWidget>
+	requires TIsWidgetConvertible<ReturnWidget, InWidget>
+static TSharedRef<ReturnWidget> GetWidgetSR(TSharedRef<InWidget> SmartPtr)
+{
+	return StaticCastSharedRef<ReturnWidget>(SmartPtr);
+}
 
 //WP
 template <class ReturnWidget, class InWidget>
@@ -55,6 +92,12 @@ static TWeakPtr<ReturnWidget> GetWidgetWP(TSharedPtr<InWidget> SmartPtr)
 	return StaticCastSharedPtr<ReturnWidget>(SmartPtr);
 }
 
+template <class ReturnWidget, class InWidget>
+	requires TIsWidgetConvertible<ReturnWidget, InWidget>
+static TWeakPtr<ReturnWidget> GetWidgetWP(TSharedRef<InWidget> SmartPtr)
+{
+	return StaticCastSharedPtr<ReturnWidget>(SmartPtr.ToSharedPtr());
+}
 
 //Raw
 template <class ReturnWidget, class InWidget>
@@ -77,4 +120,11 @@ template <class ReturnWidget, class InWidget>
 static ReturnWidget* GetWidgetRaw(TSharedPtr<InWidget> SmartPtr)
 {
 	return static_cast<ReturnWidget*>(SmartPtr.Get());
+}
+
+template <class ReturnWidget, class InWidget>
+	requires TIsWidgetConvertible<ReturnWidget, InWidget>
+static ReturnWidget* GetWidgetRaw(TSharedRef<InWidget> SmartPtr)
+{
+	return static_cast<ReturnWidget*>(SmartPtr.ToSharedPtr().Get());
 }

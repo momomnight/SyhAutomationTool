@@ -14,7 +14,7 @@
 void SBlueprintPin::Construct(const FArguments& InArgs)
 {
 	Framework = GetWidgetWP<SBlueprintFramework>(InArgs._Framework);
-	Owner = GetWidgetWP<SBlueprintNode>(InArgs._Owner);
+	Outer = GetWidgetWP<SBlueprintNode>(InArgs._Outer);
 
 	PinConnectionDirection = InArgs._PinConnectionDirection;
 	PinEdge = InArgs._PinEdge;

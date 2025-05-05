@@ -12,17 +12,17 @@ class SBlueprintPin : public SCompoundWidget
 public:
 	SLATE_BEGIN_ARGS(SBlueprintPin)
 		:_Framework(nullptr),
-		_Owner(nullptr),
-		_PinConnectionDirection(EBlueprintPinConnectionDirection::None),
+		_Outer(nullptr),
+		_PinConnectionDirection(EBlueprintExecutionDirection::None),
 		_PinEdge(EBlueprintPinEdge::None),
 		_PinType(EBlueprintPinType::None)
 		{}
 
 	SLATE_ARGUMENT(SBlueprintFramework*, Framework)
 
-	SLATE_ARGUMENT(SBlueprintNode*, Owner)
+	SLATE_ARGUMENT(SBlueprintNode*, Outer)
 
-	SLATE_ARGUMENT(EBlueprintPinConnectionDirection, PinConnectionDirection)
+	SLATE_ARGUMENT(EBlueprintExecutionDirection, PinConnectionDirection)
 
 	SLATE_ARGUMENT(EBlueprintPinEdge, PinEdge)
 
@@ -49,7 +49,7 @@ public:
 
 
 public:
-	EBlueprintPinConnectionDirection GetPinConnectionDirection() const noexcept {return PinConnectionDirection;}
+	EBlueprintExecutionDirection GetPinConnectionDirection() const noexcept {return PinConnectionDirection;}
 	EBlueprintPinEdge GetPinEdge() const noexcept { return PinEdge; }
 	EBlueprintPinType GetPinType() const noexcept { return PinType; }
 
@@ -57,10 +57,10 @@ public:
 
 protected:
 	TWeakPtr<SBlueprintFramework> Framework;
-	TWeakPtr<SBlueprintNode> Owner;
+	TWeakPtr<SBlueprintNode> Outer;
 	TWeakPtr<SBlueprintConnection> Connection;
 	
-	EBlueprintPinConnectionDirection PinConnectionDirection;
+	EBlueprintExecutionDirection PinConnectionDirection;
 	EBlueprintPinEdge PinEdge;
 	EBlueprintPinType PinType;
 

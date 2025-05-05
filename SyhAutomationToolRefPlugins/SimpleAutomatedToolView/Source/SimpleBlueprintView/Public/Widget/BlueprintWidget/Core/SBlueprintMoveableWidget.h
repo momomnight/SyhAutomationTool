@@ -10,12 +10,6 @@ public:
 	SBlueprintMoveableWidget();
 
 public:
-	static void StartMove(SBlueprintMoveableWidget* InWidget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
-		{ InWidget->StartMove(MyGeometry, MouseEvent); }
-	static void Move(SBlueprintMoveableWidget* InWidget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) 
-		{ InWidget->Move(MyGeometry, MouseEvent); }
-	static void EndMove(SBlueprintMoveableWidget* InWidget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) 
-		{ InWidget->EndMove(MyGeometry, MouseEvent); }
 
 	virtual void StartMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 	virtual void Move(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
@@ -24,18 +18,18 @@ public:
 
 	virtual void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime);
 
+	virtual void ClearAllState();
+
+	void Update();
+
 public:
-	virtual void OnMouseLeave(const FPointerEvent& MouseEvent);
-
-
+	bool IsMoved() const noexcept { return bIsMoved;}
+	bool DoesStartMove() const noexcept { return bStartMove; }
 protected:
 	bool bStartMove;
+	bool bIsMoved;
 
-	FVector2D ViewOffset;
-	FVector2D OldViewOffset;
-
-	FVector2D AbsolutePosition;//防止抖动
-	TWeakPtr<SWidget> ParentWidget;
+	TWeakPtr<SWidget> MoveableWidget;
 
 
 };

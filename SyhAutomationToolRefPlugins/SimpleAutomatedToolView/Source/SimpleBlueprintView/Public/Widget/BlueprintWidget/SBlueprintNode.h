@@ -1,6 +1,7 @@
 #pragma once
 #include "Widget/BlueprintWidget/Core/SBlueprintMoveableWidget.h"
 #include "SimpleBlueprintViewType.h"
+#include "Widget/BlueprintWidget/BlueprintDelegate.h"
 
 class SBlueprintFramework;
 class SBlueprintPin;
@@ -8,14 +9,18 @@ class SIMPLEBLUEPRINTVIEW_API SBlueprintNode : public SBlueprintMoveableWidget
 {
 	using Super = SBlueprintMoveableWidget;
 public:
+
 	SLATE_BEGIN_ARGS(SBlueprintNode)
 		:_PinsLayout(EBlueprintPinsLayout::Aggregation),
-		_Framework(nullptr)
+		_Outer(nullptr),
+		_HighLightBox(nullptr)
 		{}
 
 	SLATE_ARGUMENT(EBlueprintPinsLayout, PinsLayout)
 
-	SLATE_ARGUMENT(SBlueprintFramework*, Framework)
+	SLATE_ARGUMENT(SBlueprintFramework*, Outer)
+
+	SLATE_ARGUMENT(const FSlateBrush*, HighLightBox)
 
 	SLATE_END_ARGS()
 
@@ -25,40 +30,32 @@ public:
 
 public:
 	void AddPin(const FString& InPinName, EBlueprintPinType PinViewType,
-		EBlueprintPinConnectionDirection ConnectionDirection);
-
-
+		EBlueprintExecutionDirection ConnectionDirection);
+	FText GetNodeNameText() const;
 	bool DoesContainThisPin(SBlueprintPin* InPin) const;
+
+	bool IsNodeSelected() const noexcept { return bIsSelected;}
+
+	virtual void OnThisNodeSelected();
+	virtual void OnThisNodeNotSelected();
+
+protected:
+
+	void SetThisNodeSelected() noexcept { bIsSelected = true; }
+	void CancelThisNodeSelected() noexcept { bIsSelected = false; }
+
+	EBlueprintPinEdge CalculatePinDirection(EBlueprintPinType ViewType,
+		EBlueprintExecutionDirection ConnectionDirection);
+public:
+	virtual void InvokeContextMenu() override;
+
+public:
 
 	virtual FReply OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override;
 
-protected:
-	void AddLeftRightPin(TSharedPtr<class SVerticalBox> InPins, const FString& InPinName, 
-		EBlueprintPinType PinViewType, EBlueprintPinConnectionDirection Direction, 
-		EVerticalAlignment Alignment, bool bAuto);
-	void AddTopBottomPin(TSharedPtr<class SHorizontalBox> InPins, const FString& InPinName,
-		EBlueprintPinType PinViewType, EBlueprintPinConnectionDirection ConnectionDirection,
-		EHorizontalAlignment Alignment, bool bAuto);
-
-	EBlueprintPinEdge CalculatePinDirection(EBlueprintPinType ViewType,
-		EBlueprintPinConnectionDirection ConnectionDirection);
-
-public:
-	virtual void StartMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
-	virtual void Move(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
-	virtual void EndMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
-
-public:
-	FText GetNodeNameText() const;
-
-
-public:
-	virtual FReply OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
-
-	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
-
-	virtual FReply OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
-
+	int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
+		const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements,
+		int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const;
 protected:
 	TSharedPtr<SHorizontalBox> TopPins;
 	TSharedPtr<SHorizontalBox> BottomPins;
@@ -69,6 +66,9 @@ protected:
 	TArray<TSharedPtr<SBlueprintPin>> AllPins;
 
 	EBlueprintPinsLayout PinsLayout;
-	TWeakPtr<SBlueprintFramework> Framework;
+	TWeakPtr<SBlueprintFramework> Outer;
 
+	bool bIsSelected;
+
+	const struct FSlateBrush* HighLightBox;
 };

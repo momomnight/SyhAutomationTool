@@ -11,80 +11,59 @@
 
 
 SBlueprintMoveableWidget::SBlueprintMoveableWidget() : SBlueprintBaseWidget(), 
-	bStartMove(false), ParentWidget(nullptr), ViewOffset(0), OldViewOffset(0)
+	bStartMove(false), MoveableWidget(nullptr)
 {
 }
 
 void SBlueprintMoveableWidget::StartMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	this->bStartMove = true;
-	//ScreenSpacePosition以屏幕左上角为原点
-	//MyGeometry.GetAbsolutePosition()目前以屏幕左上角为原点
-
-	if (ParentWidget.IsValid())
-	{
-		if (const TOptional<FSlateRenderTransform>& ParentTransform = ParentWidget.Pin()->GetRenderTransform())
-		{
-			LastOriginPosition = ParentTransform->GetTranslation() * ParentRatio;
-		}
-		else
-		{
-			LastOriginPosition = this->GetOriginPosition() * ParentRatio;
-		}
-	}
-	else
-	{
-		LastOriginPosition = this->GetPosition();
-	}
-
-
-	//AbsolutePosition = this->GetCachedGeometry().GetAbsolutePosition();
-
-	//MouseEvent.GetScreenSpacePosition()	鼠标位置
-	//AbsolutePosition						控件左上角坐标
-	this->SetOffsetPosition(MouseEvent.GetScreenSpacePosition() - AbsolutePosition);
-
-
 }
 
 void SBlueprintMoveableWidget::Move(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {	
-	if (bStartMove)
+	if (bStartMove && MouseEvent.GetCursorDelta() != 0)
 	{
-		ViewOffset = OldViewOffset + MouseEvent.GetCursorDelta() * 3.f;
+		bIsMoved = true;
+		SetOffsetPosition(GetOffsetPosition() + MouseEvent.GetCursorDelta());
 	}
 }
 
 void SBlueprintMoveableWidget::EndMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	bStartMove = false;
+	bIsMoved = false;
 }
 
 void SBlueprintMoveableWidget::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
 {
 	Super::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
+}
 
-	if(ViewOffset != OldViewOffset)
+void SBlueprintMoveableWidget::ClearAllState()
+{
+	bIsMoved = false;
+	bStartMove = false;
+}
+
+void SBlueprintMoveableWidget::Update()
+{
+	if (GetLastOffsetPosition() != GetOffsetPosition())
 	{
-		if (ParentWidget.IsValid())
+
+		if (MoveableWidget.IsValid())
 		{
-			UpdateRenderTransform(GetWidgetRaw<SBlueprintBaseWidget>(ParentWidget), ViewOffset);
+			UpdateRenderTransform(GetWidgetRaw<SWidget>(MoveableWidget), GetOffsetPosition());
 		}
 		else
 		{
-			UpdateRenderTransform(this, ViewOffset);
+			UpdateRenderTransform(this, GetOffsetPosition());
 		}
-		OldViewOffset = ViewOffset;
+		SetOffsetPosition(GetOffsetPosition());
 	}
 
 }
 
-void SBlueprintMoveableWidget::OnMouseLeave(const FPointerEvent& MouseEvent)
-{
-	//if(MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
-
-	bStartMove = false;
-}
 
 
 

@@ -19,7 +19,7 @@ enum class EBlueprintPinsLayout : uint8
 	Aggregation//Pin的输入输出聚合在一起
 };
 
-enum class EBlueprintPinConnectionDirection : uint8
+enum class EBlueprintExecutionDirection : uint8
 {
 	None,
 	TopToBottom,
