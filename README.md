@@ -1,2 +1,0 @@
-# SyhAutomationTool
- a Automation Tool

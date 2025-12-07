@@ -1,8 +1,0 @@
-{
-	"RemapUnityFiles": 
-	{
-		"Module.SimpleAutomatedToolViewCommon.cpp.obj": [
-			"SimpleAutomatedToolViewCommon.cpp.obj"
-		]
-	}
-}

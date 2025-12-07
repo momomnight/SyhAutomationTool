@@ -1,1 +1,0 @@
-start %~dp0Content\Engine\Binaries\Win64\ProtobufProgram.exe -CompressPath=%~dp0Content\google.rz -OutPutProtobufPath=G:\DigitalHuman\Source\DigitalHuman
