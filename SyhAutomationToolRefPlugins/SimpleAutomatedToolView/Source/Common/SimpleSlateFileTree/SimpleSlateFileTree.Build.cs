@@ -42,6 +42,7 @@ public class SimpleSlateFileTree : ModuleRules
 				//"Engine",
 				"Slate",
 				"SlateCore",
+				"SimpleAutomatedToolCommon"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

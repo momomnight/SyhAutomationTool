@@ -40,6 +40,7 @@ public class SimpleAutomatedToolView : ModuleRules
 				"CoreUObject",
 				"Slate",
 				"SlateCore",
+				"Json",
 				"SlateReflector",
 				"SimpleAutomatedToolCommon",
 				"SimpleSlateFileTree",

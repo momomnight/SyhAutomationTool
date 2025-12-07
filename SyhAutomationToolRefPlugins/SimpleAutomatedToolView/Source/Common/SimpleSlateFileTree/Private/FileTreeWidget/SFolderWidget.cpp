@@ -7,7 +7,7 @@
 
 void SFolderWidget::Construct(const FArguments& InArgs, const TSharedRef<class STableViewBase>& InOwnerTable, TSharedPtr<SlateFileTree::FFileTree_Folder> InFolder)
 {
-	SFileTreeWidgetBase::Construct(SFileTreeWidgetBase::FArguments(),
+	SFileTreeWidgetBase::Construct(SFileTreeWidgetBase::FArguments().OnCreateDragDropOp(InArgs._OnCreateDragDropOp),
 		InOwnerTable,
 		InFolder
 	);

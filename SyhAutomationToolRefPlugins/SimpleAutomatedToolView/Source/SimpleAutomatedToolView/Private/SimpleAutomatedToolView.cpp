@@ -9,6 +9,9 @@
 #include "Widget/SAutomatedToolViewMainFrame.h"
 #include "Widgets/SBoxPanel.h"
 #include "SimpleSlateFileTree.h"
+#include "SimpleBlueprintView.h"
+#include "ISlateReflectorModule.h"
+#include "Editor/Base/AutomatedToolEditor.h"
 
 #if !IS_PROGRAM
 #include "LevelEditor.h"
@@ -16,30 +19,37 @@
 
 #define LOCTEXT_NAMESPACE "FSimpleAutomatedToolViewModule"
 
+FString FSimpleAutomatedToolViewModule::EditorLayoutJson = TEXT("");
+FName FSimpleAutomatedToolViewModule::MainLayoutName = "SimpleAutomatedToolView";
 void FSimpleAutomatedToolViewModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	
+	EditorLayoutJson = FPaths::ConvertRelativePathToFull(FPaths::ProjectConfigDir()) / FEditorTabType::MainTabName.ToString() + TEXT("_EditorLayout.json");
+	FPaths::NormalizeFilename(EditorLayoutJson);
+	FPaths::RemoveDuplicateSlashes(EditorLayoutJson);
+
 	FSimpleAutomatedToolViewStyle::Initialize();
 	FSimpleAutomatedToolViewStyle::ReloadTextures();
 
 	FSimpleAutomatedToolViewCommands::Register();
 	
-	PluginCommands = MakeShareable(new FUICommandList);
+	//PluginCommands = MakeShareable(new FUICommandList);
 
-	PluginCommands->MapAction(
-		FSimpleAutomatedToolViewCommands::Get().OpenPluginWindow,
-		FExecuteAction::CreateRaw(this, &FSimpleAutomatedToolViewModule::PluginButtonClicked),
-		FCanExecuteAction());
+	//PluginCommands->MapAction(
+	//	FSimpleAutomatedToolViewCommands::Get().OpenPluginWindow,
+	//	FExecuteAction::CreateRaw(this, &FSimpleAutomatedToolViewModule::PluginButtonClicked),
+	//	FCanExecuteAction());
 
-	//UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FSimpleAutomatedToolViewModule::RegisterMenus));
+	//FEditorTabType::RegisterMainTabSpawner(PluginCommands);
 	
-	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(FSimpleAutomatedToolViewEditorID::TabName, FOnSpawnTab::CreateRaw(this, &FSimpleAutomatedToolViewModule::OnSpawnPluginTab))
-		.SetDisplayName(LOCTEXT("FSimpleAutomatedToolViewTabTitle", "SimpleAutomatedToolView"))
-		.SetMenuType(ETabSpawnerMenuType::Hidden);
 	
 	FSimpleSlateFileTreeModule& AutomatedToolViewModule = FModuleManager::Get().LoadModuleChecked<FSimpleSlateFileTreeModule>("SimpleSlateFileTree");
+	FSimpleBlueprintViewModule& SimpleBlueprintView = FModuleManager::Get().LoadModuleChecked<FSimpleBlueprintViewModule>("SimpleBlueprintView");
 
+
+	EditorInstance = MakeShareable(new FAutomatedToolEditor);
+	EditorInstance->InitializeEditor();
 }
 
 void FSimpleAutomatedToolViewModule::ShutdownModule()
@@ -49,33 +59,51 @@ void FSimpleAutomatedToolViewModule::ShutdownModule()
 
 	FSimpleAutomatedToolViewCommands::Unregister();
 
-	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(FSimpleAutomatedToolViewEditorID::TabName);
+	//FEditorTabType::UnregisterMainTabSpawner();
+
+	//FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(FEditorTabType::MainTabName);
 
 	FModuleManager::Get().UnloadModule("SimpleSlateFileTree");
 }
 
-TSharedRef<SDockTab> FSimpleAutomatedToolViewModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
-{
-	return SNew(SDockTab)
-		.TabRole(ETabRole::NomadTab)
-		[
-			SNew(SVerticalBox)
-				+ SVerticalBox::Slot()
-				.AutoHeight()
-				[
-					SNew(SAutomatedToolMenuBarView).CommandList(PluginCommands)
-				]
-				+ SVerticalBox::Slot()
-				.FillHeight(1.f)
-				[
-					SAssignNew(AutomatedToolViewMainFrame, SAutomatedToolViewMainFrame)
-				]
-		];
-}
-
 void FSimpleAutomatedToolViewModule::PluginButtonClicked()
 {
-	FGlobalTabmanager::Get()->TryInvokeTab(FSimpleAutomatedToolViewEditorID::TabName);
+	FGlobalTabmanager::Get()->TryInvokeTab(FEditorTabType::MainTabName);
+}
+
+TSharedRef<FTabManager::FLayout> FSimpleAutomatedToolViewModule::GetLayout()
+{
+	TSharedRef<FTabManager::FLayout> Layout = FTabManager::NewLayout(MainLayoutName)
+		->AddArea(
+			FTabManager::NewPrimaryArea()
+			->Split
+			(
+				FTabManager::NewSplitter()
+				->Split(
+					FTabManager::NewStack()
+					->AddTab(FEditorTabType::MainTabName, ETabState::OpenedTab)
+					->SetHideTabWell(false)
+				)
+			)
+		)
+		->AddArea
+		(
+			FTabManager::NewArea(1280, 960)
+			->Split
+			(
+				FTabManager::NewSplitter()
+				->Split(
+					FTabManager::NewStack()
+					->AddTab("SlateReflector", ETabState::ClosedTab)
+				)
+			)
+		);
+	return Layout;
+}
+
+TSharedPtr<SDockTab> FSimpleAutomatedToolViewModule::InvokeTab(bool bInvokeAsInactive)
+{
+	return FGlobalTabmanager::Get()->TryInvokeTab(FTabId(FEditorTabType::MainTabName), bInvokeAsInactive);
 }
 
 #undef LOCTEXT_NAMESPACE

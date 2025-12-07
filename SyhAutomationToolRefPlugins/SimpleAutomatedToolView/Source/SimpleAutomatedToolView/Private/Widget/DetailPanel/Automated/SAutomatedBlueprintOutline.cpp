@@ -77,7 +77,7 @@ FReply SAutomatedBlueprintOutline::OnSearch() const
 
 FReply SAutomatedBlueprintOutline::OnClicked(ECommandProtocol InProtocolType)
 {
-	return FReply::Handled();
+	return OnCommandButtonClicked.ExecuteIfBound(InProtocolType) ? FReply::Handled() : FReply::Unhandled();
 }
 
 void SAutomatedBlueprintOutline::OnSearchCommand(const FString& InCommand)

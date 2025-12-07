@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-SimpleProgramDetailView.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\MyProgram\UE Project\MyProject\Intermediate\Build\Win64\x64\MyProjectEditor\Development\UnrealEd\SharedPCH.UnrealEd.Cpp20.h.obj"
+"C:\MyProgram\UE Project\MyProject\Plugins\SimpleProgramDetailView\Intermediate\Build\Win64\x64\UnrealEditor\Development\SimpleProgramDetailView\Module.SimpleProgramDetailView.cpp.obj"
+"C:\MyProgram\UE Project\MyProject\Plugins\SimpleProgramDetailView\Intermediate\Build\Win64\x64\UnrealEditor\Development\SimpleProgramDetailView\Default.rc2.res"
+/OUT:"C:\MyProgram\UE Project\MyProject\Plugins\SimpleProgramDetailView\Intermediate\Build\Win64\x64\UnrealEditor\Development\SimpleProgramDetailView\UnrealEditor-SimpleProgramDetailView.lib"

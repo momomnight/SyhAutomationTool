@@ -1,0 +1,36 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.SimpleProgramObjectReflector.cpp.obj": [
+			"SBoolPropertyWidget.cpp.obj",
+			"SBytePropertyWidget.cpp.obj",
+			"SContainerPropertyWidget.cpp.obj",
+			"SEnumerationTypePropertyWidget.cpp.obj",
+			"SEnumPropertyWidget.cpp.obj",
+			"SNumericPropertyWidget.cpp.obj",
+			"SPropertyWidget.cpp.obj",
+			"SStringPropertyWidget.cpp.obj",
+			"SimpleProgramObjectReflector.cpp.obj",
+			"SimpleProgramObjectReflectorCommands.cpp.obj",
+			"SimpleProgramObjectReflectorStyle.cpp.obj",
+			"SimpleProgramObjectReflectorType.cpp.obj",
+			"BoolPropertyInfo.cpp.obj",
+			"BytelPropertyInfo.cpp.obj",
+			"ClassPropertyInfo.cpp.obj",
+			"ContainerPropertyInfo.cpp.obj",
+			"EnumPropertyInfo.cpp.obj",
+			"NumericPropertyInfo.cpp.obj",
+			"PropertyDataContainer.cpp.obj",
+			"PropertyInfo.cpp.obj",
+			"PropertyInfoRoot.cpp.obj",
+			"StringPropertyInfo.cpp.obj",
+			"PropertyTemplate.cpp.obj",
+			"IPropertyWidgetTableRow.cpp.obj",
+			"PropertyInfoFactory.cpp.obj",
+			"SContainerTableRow.cpp.obj",
+			"SNullTableRow.cpp.obj",
+			"SPropertyWidgetTableRow.cpp.obj",
+			"SSingleItemTableRow.cpp.obj"
+		]
+	}
+}

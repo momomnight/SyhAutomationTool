@@ -26,6 +26,8 @@ SFileDirectory::SFileDirectory()
 
 void SFileDirectory::Construct(const FArguments& InArgs, const FString& InRootPath)
 {
+	OnCreateFileWidgetDragDropOp = InArgs._OnCreateFileWidgetDragDropOp;
+
 	RootPath.SetRootPath(InRootPath);
 
 	TSharedPtr<SlateFileTree::FFileTree_Folder> Root = MakeShareable(new SlateFileTree::FFileTree_Folder{
@@ -76,7 +78,7 @@ void SFileDirectory::ConstructChildern()
 										.OnGetChildren(this, &SFileDirectory::OnGetChildren)
 										.OnExpansionChanged(this, &SFileDirectory::OnExpansionChanged)
 										.ExternalScrollbar(VerticalScrollBar)		
-										.OnRefreshFileTree(FOnRefreshFileTree::CreateSP(this, &SFileDirectory::AsyncUpdateFileTree))
+										.OnRefreshFileTree(FOnRefreshFileTree::CreateSP(this, &SFileDirectory::AsyncUpdateFileTree))		
 								]
 						]
 						+ SHorizontalBox::Slot()
@@ -155,7 +157,8 @@ TSharedRef<class ITableRow> SFileDirectory::OnGenerateRow(TSharedPtr<SlateFileTr
 {
 	if (InNode->GetFileType() == SlateFileTree::EFileType::File)
 	{
-		return SNew(SFileWidget, InOwnerTable, InNode->CastTo<SlateFileTree::FFileTree_File>());
+		return SNew(SFileWidget, InOwnerTable, InNode->CastTo<SlateFileTree::FFileTree_File>())
+					.OnCreateDragDropOp(OnCreateFileWidgetDragDropOp);
 	}
 	else if(InNode->GetFileType() == SlateFileTree::EFileType::Folder)
 	{
@@ -163,7 +166,7 @@ TSharedRef<class ITableRow> SFileDirectory::OnGenerateRow(TSharedPtr<SlateFileTr
 		TSharedPtr<SImage> Image = SNew(SImage);
 		Folder->SetWidget(Image);
 		
-		return SNew(SFolderWidget, InOwnerTable, Folder);
+		return SNew(SFolderWidget, InOwnerTable, Folder).OnCreateDragDropOp(OnCreateFileWidgetDragDropOp);;
 	}
 	else if(InNode->GetFileType() == SlateFileTree::EFileType::Invalid)
 	{

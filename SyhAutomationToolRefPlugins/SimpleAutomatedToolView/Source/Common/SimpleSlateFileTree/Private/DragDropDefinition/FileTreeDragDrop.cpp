@@ -1,12 +1,17 @@
 #include "DragDropDefinition/FileTreeDragDrop.h"
 #include "Widgets/Images/SImage.h"
 #include "FileTreeWidget/SFileTreeWidgetBase.h"
+#include "FileTreeType.h"
 
-FFileTreeDragDrop::FFileTreeDragDrop( TSharedPtr<SWidget> InDragWidget)
-	: FDragDropOperation()
+FFileTreeDragDrop::FFileTreeDragDrop( TSharedRef<SFileTreeWidgetBase> InDragWidget)
+	: FFileDragDropOperation()
 	, DragWidget(InDragWidget)
 {
-	FDragDropOperation::Construct();
+	TSharedPtr<SlateFileTree::FFileTreeBase> FileData = InDragWidget->GetFileDataNode();
+	if (FileData.IsValid())
+	{
+		SetPath(FileData->GetPath());
+	}
 }
 
 FFileTreeDragDrop::~FFileTreeDragDrop()
@@ -30,4 +35,13 @@ TSharedPtr<SWidget> FFileTreeDragDrop::GetDefaultDecorator() const
 	}
 	return SNew(SImage);
 }
+
+TSharedRef<FFileTreeDragDrop> FFileTreeDragDrop::NewFileTreeDragDrop(TSharedRef<SFileTreeWidgetBase> InDragWidget)
+{
+	TSharedRef<FFileTreeDragDrop> Op = MakeShared<FFileTreeDragDrop>(InDragWidget);
+	Op->Construct();
+	return Op;
+}
+
+
 

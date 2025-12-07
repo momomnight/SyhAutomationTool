@@ -13,10 +13,21 @@
 #endif
 #endif // UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 
+void SFileTreeWidgetBase::SetOnCreateDragDropOp(FOnCreateDragDropOp InEvent)
+{
+	OnCreateDragDropOp = InEvent;
+}
+
+FOnCreateDragDropOp SFileTreeWidgetBase::GetOnCreateDragDropOp()
+{
+	return OnCreateDragDropOp;
+}
+
 void SFileTreeWidgetBase::Construct(const FArguments& InArgs, const TSharedRef<class STableViewBase>& InOwnerTable, TSharedPtr<SlateFileTree::FFileTreeBase> InFileNode)
 {
 	check(InFileNode.IsValid());
 	FileDataNode = InFileNode;
+	OnCreateDragDropOp = InArgs._OnCreateDragDropOp;
 	Super::Construct(
 		Super::FArguments()
 		.Content()
@@ -51,10 +62,21 @@ FReply SFileTreeWidgetBase::DragDetected(const FGeometry& MyGeometry, const FPoi
 {
 	if(TSharedPtr<SFileTreeView> FileTreeView = GetOwnerTable())
 	{
-		TSharedRef<FFileTreeDragDrop> DragDropOp = MakeShared<FFileTreeDragDrop>(this->AsShared().ToSharedPtr());
+		TSharedRef<SFileTreeWidgetBase> SharedThis = StaticCastSharedRef<SFileTreeWidgetBase>(this->AsShared());
+		TSharedPtr<FFileTreeDragDrop> DragDropOp = nullptr;
+		
+		if (OnCreateDragDropOp.IsBound())
+		{
+			DragDropOp = OnCreateDragDropOp.Execute(SharedThis);
+		}
+		else
+		{
+			DragDropOp = FFileTreeDragDrop::NewFileTreeDragDrop(SharedThis);
+		}
+
 		FileTreeView->StartDragDrop();
 		DragDropOp->SetOnEndDragDrop(FOnEndDragDrop::CreateLambda([=](){FileTreeView.IsValid() ? FileTreeView->EndDragDrop() : void(0);}));
-		return FReply::Handled().BeginDragDrop(DragDropOp);
+		return FReply::Handled().BeginDragDrop(DragDropOp.ToSharedRef());
 	}
 	return FReply::Unhandled();
 }

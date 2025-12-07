@@ -1,0 +1,22 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.SimpleHTTP.cpp.obj": [
+			"SimpleHTTP.init.gen.cpp.obj",
+			"SimpleHTTPFunctionLibrary.gen.cpp.obj",
+			"SimpleHTTPType.gen.cpp.obj",
+			"HTTPClient.cpp.obj",
+			"SimpleHTTPMethod.cpp.obj",
+			"SimpleHttpActionRequest.cpp.obj",
+			"SimpleHttpActionMultpleRequest.cpp.obj",
+			"SimpleHttpActionSingleRequest.cpp.obj",
+			"SimpleHTTPObject.cpp.obj",
+			"HTTPClientRequest.cpp.obj",
+			"RequestInterface.cpp.obj",
+			"SimpleHTTP.cpp.obj",
+			"SimpleHTTPFunctionLibrary.cpp.obj",
+			"SimpleHTTPLog.cpp.obj",
+			"SimpleHTTPManage.cpp.obj"
+		]
+	}
+}

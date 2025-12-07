@@ -30,8 +30,8 @@ namespace SimpleAutomatedToolViewDelegateFactory
 		WidgetReflector.ExecuteAction.BindLambda(
 			[]()
 			{
-				ISlateReflectorModule& Module = FModuleManager::LoadModuleChecked<ISlateReflectorModule>("SlateReflector");
-				Module.DisplayWidgetReflector();
+				static ISlateReflectorModule* Reflector = &FModuleManager::LoadModuleChecked<ISlateReflectorModule>("SlateReflector");
+				Reflector->DisplayWidgetReflector();
 			}
 		);
 		return WidgetReflector;

@@ -22,7 +22,7 @@
 		},
 		{
 			"Name": "SimpleAutomatedToolCommon",
-			"Type": "Runtime",
+			"Type": "Editor",
 			"LoadingPhase": "Default"
 		},
 		{

@@ -1,0 +1,13 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.SimpleConfig.cpp.obj": [
+			"SimpleConfig.init.gen.cpp.obj",
+			"SimpleConfigBPLibrary.gen.cpp.obj",
+			"SimpleConfig.cpp.obj",
+			"SimpleConfigBPLibrary.cpp.obj",
+			"SimpleConfigMacro.cpp.obj",
+			"SimpleConfigType.cpp.obj"
+		]
+	}
+}

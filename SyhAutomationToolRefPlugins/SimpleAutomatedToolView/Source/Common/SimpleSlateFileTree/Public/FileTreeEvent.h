@@ -21,3 +21,7 @@ DECLARE_DELEGATE_OneParam(FSpawnMenuEntry, FMenuBuilder&);
 
 //用于延迟生成FUIAction，主要是为了传入TWeakPtr<SWidget>参数
 DECLARE_DELEGATE_RetVal_OneParam(FUIAction, FUIActionGenerator, TWeakPtr<SWidget>);
+
+class FFileTreeDragDrop;
+class SFileTreeWidgetBase;
+DECLARE_DELEGATE_RetVal_OneParam(TSharedRef<FFileTreeDragDrop>, FOnCreateDragDropOp, TSharedRef<SFileTreeWidgetBase>)

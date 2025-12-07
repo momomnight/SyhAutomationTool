@@ -9,11 +9,23 @@ class SFileDirectory :public SCompoundWidget
 public:
 	SLATE_BEGIN_ARGS(SFileDirectory) {}
 
+	//当我们需要使用FFileTreeDragDrop的派生类时，通过此代理由外部创建
+	SLATE_EVENT(FOnCreateDragDropOp, OnCreateFileWidgetDragDropOp);
+
 	SLATE_END_ARGS()
 
 	SIMPLESLATEFILETREE_API SFileDirectory();
 
 	void SIMPLESLATEFILETREE_API Construct(const FArguments& InArgs, const FString& InRootPath);
+
+	void SetOnCreateDragDropOp(FOnCreateDragDropOp InEvent)
+	{
+		OnCreateFileWidgetDragDropOp = InEvent;
+	}
+	FOnCreateDragDropOp GetOnCreateDragDropOp()
+	{
+		return OnCreateFileWidgetDragDropOp;
+	}
 
 protected:
 	void AsyncUpdateFileTree(TSharedPtr<SlateFileTree::FFileTreeBase> InNode);
@@ -41,4 +53,6 @@ private:
 
 	SlateFileTree::FFileTree RootPath;
 	std::atomic_bool bIsLoading{false};
+
+	FOnCreateDragDropOp OnCreateFileWidgetDragDropOp;
 };

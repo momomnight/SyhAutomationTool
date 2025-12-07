@@ -22,11 +22,21 @@ public:
 
 	static FName GetStyleSetName();
 
+	class FSimpleBlueprintEditorStyleSet : public FSlateStyleSet
+	{
+	public:
+		FSimpleBlueprintEditorStyleSet();
+		~FSimpleBlueprintEditorStyleSet();
+
+		void Initialize();
+	};
+
 private:
 
-	static TSharedRef< class FSlateStyleSet > Create();
+	static void Create();
+	static TSharedRef< class FSimpleBlueprintEditorStyleSet > CreateEditorStyle();
 
 private:
 
-	static TSharedPtr< class FSlateStyleSet > StyleInstance;
+	static TSharedPtr< class FSimpleBlueprintEditorStyleSet > EditorStyleInstance;
 };

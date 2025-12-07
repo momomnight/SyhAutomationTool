@@ -1,0 +1,35 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.SimpleNetChannel.cpp.obj": [
+			"SimpleController.gen.cpp.obj",
+			"SimpleNetChannel.init.gen.cpp.obj",
+			"SimpleNetChannelBPLibrary.gen.cpp.obj",
+			"SimpleNetChannelType.gen.cpp.obj",
+			"SimpleNetObject.gen.cpp.obj",
+			"SimplePlayer.gen.cpp.obj",
+			"SimpleNetBatchManage.cpp.obj",
+			"SimpleNetCacheManage.cpp.obj",
+			"SimpleNetMsgBatchPackageManage.cpp.obj",
+			"SimpleChannel.cpp.obj",
+			"SimpleConnetion.cpp.obj",
+			"SimpleTCPConnetion.cpp.obj",
+			"SimpleUDPConnetion.cpp.obj",
+			"SimpleEncryptionAndDecryption.cpp.obj",
+			"SimpleNetGlobalInfo.cpp.obj",
+			"SimpleNetChannelLog.cpp.obj",
+			"SimpleNetManage.cpp.obj",
+			"SimpleTCPManage.cpp.obj",
+			"SimpleUDPManage.cpp.obj",
+			"SimpleNetChannel.cpp.obj",
+			"SimpleNetChannelBPLibrary.cpp.obj",
+			"SimpleNetChannelType.cpp.obj",
+			"SimpleIOStream.cpp.obj",
+			"SimpleNetThread.cpp.obj",
+			"SimpleNetThreadManage.cpp.obj",
+			"SimpleNetObject.cpp.obj",
+			"SimpleController.cpp.obj",
+			"SimplePlayer.cpp.obj"
+		]
+	}
+}

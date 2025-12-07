@@ -1,0 +1,19 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simplemysql\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\simplemysql\\module.simplemysql.1.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\engine\\sharedpch.engine.cpp20.h.pch",
+        "Includes": [
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simplemysql\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\simplemysql\\definitions.simplemysql.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simplemysql\\intermediate\\build\\win64\\unrealeditor\\inc\\simplemysql\\uht\\simplemysql.init.gen.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simplemysql\\intermediate\\build\\win64\\unrealeditor\\inc\\simplemysql\\uht\\simplemysqlibrary.gen.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simplemysql\\source\\simplemysql\\public\\simplemysqlibrary.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simplemysql\\source\\simplemysql\\public\\core\\simplemysqllinktype.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simplemysql\\intermediate\\build\\win64\\unrealeditor\\inc\\simplemysql\\uht\\simplemysqllinktype.generated.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simplemysql\\intermediate\\build\\win64\\unrealeditor\\inc\\simplemysql\\uht\\simplemysqlibrary.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

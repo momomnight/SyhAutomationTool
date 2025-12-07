@@ -14,11 +14,14 @@ extern const FTextStruct MenuBar_Editor;
 extern const FTextStruct MenuBar_Debug;
 extern const FTextStruct MenuBar_Help;
 
+//FSimpleAutomatedToolViewCommands代表一个Context
 class FSimpleAutomatedToolViewCommands : public TCommands<FSimpleAutomatedToolViewCommands>
 {
 public:
 
 	FSimpleAutomatedToolViewCommands()
+		//const FName InContextName 上下文名称, const FText& InContextDesc 上下文描述
+		//const FName InContextParent 上级上下文, const FName InStyleSetName 风格集
 		: TCommands<FSimpleAutomatedToolViewCommands>(TEXT("SimpleAutomatedToolView"), NSLOCTEXT("Contexts", "SimpleAutomatedToolView", "SimpleAutomatedToolView Plugin"), NAME_None, FSimpleAutomatedToolViewStyle::GetStyleSetName())
 	{
 	}

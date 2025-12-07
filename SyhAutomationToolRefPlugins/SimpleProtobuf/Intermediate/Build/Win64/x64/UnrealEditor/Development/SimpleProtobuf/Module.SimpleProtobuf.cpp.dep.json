@@ -1,0 +1,24 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\simpleprotobuf\\module.simpleprotobuf.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\coreuobject\\sharedpch.coreuobject.cpp20.h.pch",
+        "Includes": [
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\simpleprotobuf\\definitions.simpleprotobuf.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\intermediate\\build\\win64\\unrealeditor\\inc\\simpleprotobuf\\uht\\simpleprotobuf.init.gen.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\intermediate\\build\\win64\\unrealeditor\\inc\\simpleprotobuf\\uht\\simpleprotobufbplibrary.gen.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\source\\simpleprotobuf\\public\\simpleprotobufbplibrary.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\source\\simpleprotobuf\\public\\simpleprotobuftype.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\intermediate\\build\\win64\\unrealeditor\\inc\\simpleprotobuf\\uht\\simpleprotobuftype.generated.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\intermediate\\build\\win64\\unrealeditor\\inc\\simpleprotobuf\\uht\\simpleprotobufbplibrary.generated.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\intermediate\\build\\win64\\unrealeditor\\inc\\simpleprotobuf\\uht\\simpleprotobuftype.gen.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\source\\simpleprotobuf\\private\\simpleprotobuf.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\source\\simpleprotobuf\\public\\simpleprotobuf.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\source\\simpleprotobuf\\private\\simpleprotobufbplibrary.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleprotobuf\\source\\simpleprotobuf\\private\\simpleprotobuftype.cpp"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

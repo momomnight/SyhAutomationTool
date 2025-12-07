@@ -6,7 +6,7 @@
 #include "ISourceCodeAccessModule.h"
 #include "Styling/StarshipCoreStyle.h"
 #include "SimpleAutomatedToolView.h"
-#include "SimpleAutomatedToolViewEditorID.h"
+#include "Misc/ConfigCacheIni.h"
 
 IMPLEMENT_APPLICATION(SyhToolView, "SyhToolView");
 
@@ -19,8 +19,7 @@ int32 RunSyhToolView(const TCHAR* CommandLine)
 	{ 
 
 		FCoreDelegates::OnExit.Broadcast();
-		FSlateApplication::Shutdown();
-		FModuleManager::Get().UnloadModulesAtShutdown();
+		FSlateApplication::Get().Shutdown();
 		LLM(FLowLevelMemTracker::Get().UpdateStatsPerFrame());
 		RequestEngineExit(TEXT("Exiting"));
 		FEngineLoop::AppPreExit();
@@ -33,8 +32,11 @@ int32 RunSyhToolView(const TCHAR* CommandLine)
 		return Ret;
 	}
 
-	//前处理
+	//
 	{
+		//底层配置系统
+		FConfigCacheIni::InitializeConfigSystem();
+
 		//处理注册的反射信息，将所有的类、结构体、枚举的类型信息初始化
 		ProcessNewlyLoadedUObjects();
 
@@ -46,10 +48,10 @@ int32 RunSyhToolView(const TCHAR* CommandLine)
 
 		//
 		FSlateApplication::InitHighDPI(true);
-	}
+	
 
 	//代码访问器
-	{
+	
 		//
 		ISourceCodeAccessModule& SourceCodeAccessModule = FModuleManager::LoadModuleChecked<ISourceCodeAccessModule>("SourceCodeAccess");
 
@@ -61,26 +63,17 @@ int32 RunSyhToolView(const TCHAR* CommandLine)
 		IModuleInterface& VisualStudioSourceCodeAccessModule = FModuleManager::LoadModuleChecked<IModuleInterface>("VisualStudioSourceCodeAccess");
 		SourceCodeAccessModule.SetAccessor(FName("VisualStudioSourceCodeAccess"));
 #endif
+		
+		//独立程序可用Style
+		FGlobalTabmanager::Get()->SetApplicationTitle(LOCTEXT("AppTitle", "Starship Slate Viewer"));
+		FAppStyle::SetAppStyleSetName(FStarshipCoreStyle::GetCoreStyle().GetStyleSetName());
 	}
 
 	//设置布局
 	{
-		FGlobalTabmanager::Get()->SetApplicationTitle(LOCTEXT("AppTile", "Syh Tool Viewer"));
-		FAppStyle::SetAppStyleSetName(FStarshipCoreStyle::GetCoreStyle().GetStyleSetName());
 	
 		FSimpleAutomatedToolViewModule& AutomatedToolViewModule = FModuleManager::Get().LoadModuleChecked<FSimpleAutomatedToolViewModule>("SimpleAutomatedToolView");
 
-		TSharedRef<FTabManager::FLayout> Layout = FTabManager::NewLayout("Syh_View_Layout")
-			->AddArea(
-					FTabManager::NewArea(1280, 920)
-					->Split
-					(
-						FTabManager::NewStack()
-						->AddTab(FSimpleAutomatedToolViewEditorID::TabName, ETabState::OpenedTab)
-						->SetForegroundTab(FSimpleAutomatedToolViewEditorID::TabName)
-					)
-				);
-		FGlobalTabmanager::Get()->RestoreFrom(Layout, nullptr);
 	}
 
 
@@ -103,7 +96,8 @@ int32 RunSyhToolView(const TCHAR* CommandLine)
 		//当存在模态窗口或帧内调试会话时，推送操作系统消息
 		FSlateApplication::Get().PumpMessages();
 
-		//
+		//Tick中会调用TickPlatform，TickPlatform中会调用FWindowsApplication::ProcessDeferredEvents(DeltaTime);
+		//FWindowsApplication::ProcessDeferredEvents(DeltaTime)会调用PumpMessages()
 		FSlateApplication::Get().Tick();
 
 		//
@@ -113,7 +107,6 @@ int32 RunSyhToolView(const TCHAR* CommandLine)
 		GFrameCounter++;
 
 	}
-
 
 	return 0;
 }

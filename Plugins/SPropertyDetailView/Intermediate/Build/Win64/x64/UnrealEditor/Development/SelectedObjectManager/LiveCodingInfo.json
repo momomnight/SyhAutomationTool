@@ -1,0 +1,16 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.SelectedObjectManager.cpp.obj": [
+			"GlobalSelectedObjectManagers.gen.cpp.obj",
+			"SelectedObjectManager.gen.cpp.obj",
+			"SelectedObjectManager.init.gen.cpp.obj",
+			"SelectedObject.cpp.obj",
+			"SelectedObjectManager.cpp.obj",
+			"GlobalSelectedObjectManagers.cpp.obj",
+			"SelectedObjectManagerCommands.cpp.obj",
+			"SelectedObjectManagerModule.cpp.obj",
+			"SelectedObjectManagerStyle.cpp.obj"
+		]
+	}
+}

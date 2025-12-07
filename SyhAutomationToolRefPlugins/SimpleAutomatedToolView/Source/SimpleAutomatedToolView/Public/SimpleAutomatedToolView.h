@@ -7,6 +7,7 @@
 
 class FToolBarBuilder;
 class FMenuBuilder;
+class FAutomatedToolEditor;
 
 class FSimpleAutomatedToolViewModule : public IModuleInterface
 {
@@ -19,6 +20,16 @@ public:
 	/** This function will be bound to Command (by default it will bring up plugin window) */
 	void PluginButtonClicked();
 	
+	TSharedRef<FTabManager::FLayout> GetLayout();
+
+	TSharedPtr<SDockTab> InvokeTab(bool bInvokeAsInactive = false);
+
+public:
+	static FString EditorLayoutJson;
+	static FName MainLayoutName;
+
+	TSharedPtr<FAutomatedToolEditor> EditorInstance;
+
 private:
 
 	TSharedRef<class SDockTab> OnSpawnPluginTab(const class FSpawnTabArgs& SpawnTabArgs);
@@ -26,4 +37,6 @@ private:
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;
 	TSharedPtr<class SAutomatedToolViewMainFrame> AutomatedToolViewMainFrame;
+
+
 };

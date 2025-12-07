@@ -1,0 +1,13 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.SPropertyDetailView.cpp.obj": [
+			"SPropertyDetailView.init.gen.cpp.obj",
+			"Test.gen.cpp.obj",
+			"SPropertyDetailView.cpp.obj",
+			"SPropertyDetailViewCommands.cpp.obj",
+			"SPropertyDetailViewStyle.cpp.obj",
+			"Test.cpp.obj"
+		]
+	}
+}

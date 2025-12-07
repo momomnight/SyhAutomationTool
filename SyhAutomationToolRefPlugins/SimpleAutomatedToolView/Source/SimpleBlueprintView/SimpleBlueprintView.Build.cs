@@ -40,6 +40,7 @@ public class SimpleBlueprintView : ModuleRules
 				"ToolMenus",
 				"Slate",
 				"SlateCore",
+				"SimpleAutomatedToolCommon"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
@@ -52,6 +53,7 @@ public class SimpleBlueprintView : ModuleRules
 					"EditorFramework",
 					"UnrealEd",
 					"Engine",
+					"EditorStyle"
 				}
 				);
 		}

@@ -1,0 +1,309 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+/*===========================================================================
+	Generated code exported from UnrealHeaderTool.
+	DO NOT modify this manually! Edit the corresponding .h files instead!
+===========================================================================*/
+
+// IWYU pragma: private, include "Test.h"
+#include "UObject/ObjectMacros.h"
+#include "UObject/ScriptMacros.h"
+
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+#ifdef SPROPERTYDETAILVIEW_Test_generated_h
+#error "Test.generated.h already included, missing '#pragma once' in Test.h"
+#endif
+#define SPROPERTYDETAILVIEW_Test_generated_h
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_27_DELEGATE \
+SPROPERTYDETAILVIEW_API int32 FTestDynamicDelegate_DelegateWrapper(const FScriptDelegate& TestDynamicDelegate, bool Boolean);
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_28_DELEGATE \
+SPROPERTYDETAILVIEW_API void FTestMulticastDynamicDelegate_DelegateWrapper(const FMulticastScriptDelegate& TestMulticastDynamicDelegate, bool Boolean);
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_29_DELEGATE \
+SPROPERTYDETAILVIEW_API void FTestDelegateClass_DelegateWrapper(const FMulticastScriptDelegate& TestDelegateClass, bool Boolean);
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_32_DELEGATE \
+SPROPERTYDETAILVIEW_API void FTestDynamic_DelegateWrapper(const FScriptDelegate& TestDynamic, int32 Int32);
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_40_DELEGATE \
+static SPROPERTYDETAILVIEW_API void FTestClassDynamic_DelegateWrapper(const FScriptDelegate& TestClassDynamic, int32 Int32);
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_SPARSE_DATA
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_RPC_WRAPPERS_NO_PURE_DECLS \
+ \
+	DECLARE_FUNCTION(execFunTest);
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_INCLASS_NO_PURE_DECLS \
+private: \
+	static void StaticRegisterNativesUTestDelegate(); \
+	friend struct Z_Construct_UClass_UTestDelegate_Statics; \
+public: \
+	DECLARE_CLASS(UTestDelegate, UObject, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/SPropertyDetailView"), NO_API) \
+	DECLARE_SERIALIZER(UTestDelegate)
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_ENHANCED_CONSTRUCTORS \
+	/** Standard constructor, called after all reflected properties have been initialized */ \
+	NO_API UTestDelegate(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
+private: \
+	/** Private move- and copy-constructors, should never be used */ \
+	NO_API UTestDelegate(UTestDelegate&&); \
+	NO_API UTestDelegate(const UTestDelegate&); \
+public: \
+	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, UTestDelegate); \
+	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UTestDelegate); \
+	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UTestDelegate) \
+	NO_API virtual ~UTestDelegate();
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_35_PROLOG
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_GENERATED_BODY \
+PRAGMA_DISABLE_DEPRECATION_WARNINGS \
+public: \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_SPARSE_DATA \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_INCLASS_NO_PURE_DECLS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_38_ENHANCED_CONSTRUCTORS \
+private: \
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+
+template<> SPROPERTYDETAILVIEW_API UClass* StaticClass<class UTestDelegate>();
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_SPARSE_DATA
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_RPC_WRAPPERS_NO_PURE_DECLS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_INCLASS_NO_PURE_DECLS \
+private: \
+	static void StaticRegisterNativesUTestViewSubClass(); \
+	friend struct Z_Construct_UClass_UTestViewSubClass_Statics; \
+public: \
+	DECLARE_CLASS(UTestViewSubClass, UObject, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/SPropertyDetailView"), NO_API) \
+	DECLARE_SERIALIZER(UTestViewSubClass)
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_ENHANCED_CONSTRUCTORS \
+	/** Standard constructor, called after all reflected properties have been initialized */ \
+	NO_API UTestViewSubClass(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
+private: \
+	/** Private move- and copy-constructors, should never be used */ \
+	NO_API UTestViewSubClass(UTestViewSubClass&&); \
+	NO_API UTestViewSubClass(const UTestViewSubClass&); \
+public: \
+	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, UTestViewSubClass); \
+	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UTestViewSubClass); \
+	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UTestViewSubClass) \
+	NO_API virtual ~UTestViewSubClass();
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_61_PROLOG
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_GENERATED_BODY \
+PRAGMA_DISABLE_DEPRECATION_WARNINGS \
+public: \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_SPARSE_DATA \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_INCLASS_NO_PURE_DECLS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_64_ENHANCED_CONSTRUCTORS \
+private: \
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+
+template<> SPROPERTYDETAILVIEW_API UClass* StaticClass<class UTestViewSubClass>();
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_SPARSE_DATA
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_RPC_WRAPPERS_NO_PURE_DECLS \
+ \
+	DECLARE_FUNCTION(execFun);
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_INCLASS_NO_PURE_DECLS \
+private: \
+	static void StaticRegisterNativesUTestViewClass(); \
+	friend struct Z_Construct_UClass_UTestViewClass_Statics; \
+public: \
+	DECLARE_CLASS(UTestViewClass, UObject, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/SPropertyDetailView"), NO_API) \
+	DECLARE_SERIALIZER(UTestViewClass)
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_ENHANCED_CONSTRUCTORS \
+private: \
+	/** Private move- and copy-constructors, should never be used */ \
+	NO_API UTestViewClass(UTestViewClass&&); \
+	NO_API UTestViewClass(const UTestViewClass&); \
+public: \
+	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, UTestViewClass); \
+	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UTestViewClass); \
+	DEFINE_DEFAULT_CONSTRUCTOR_CALL(UTestViewClass) \
+	NO_API virtual ~UTestViewClass();
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_108_PROLOG
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_GENERATED_BODY \
+PRAGMA_DISABLE_DEPRECATION_WARNINGS \
+public: \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_SPARSE_DATA \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_INCLASS_NO_PURE_DECLS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_111_ENHANCED_CONSTRUCTORS \
+private: \
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+
+template<> SPROPERTYDETAILVIEW_API UClass* StaticClass<class UTestViewClass>();
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_SPARSE_DATA
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_RPC_WRAPPERS_NO_PURE_DECLS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_INCLASS_NO_PURE_DECLS \
+private: \
+	static void StaticRegisterNativesUTestViewDerivedClass(); \
+	friend struct Z_Construct_UClass_UTestViewDerivedClass_Statics; \
+public: \
+	DECLARE_CLASS(UTestViewDerivedClass, UTestViewClass, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/SPropertyDetailView"), NO_API) \
+	DECLARE_SERIALIZER(UTestViewDerivedClass)
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_ENHANCED_CONSTRUCTORS \
+private: \
+	/** Private move- and copy-constructors, should never be used */ \
+	NO_API UTestViewDerivedClass(UTestViewDerivedClass&&); \
+	NO_API UTestViewDerivedClass(const UTestViewDerivedClass&); \
+public: \
+	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, UTestViewDerivedClass); \
+	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UTestViewDerivedClass); \
+	DEFINE_DEFAULT_CONSTRUCTOR_CALL(UTestViewDerivedClass) \
+	NO_API virtual ~UTestViewDerivedClass();
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_168_PROLOG
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_GENERATED_BODY \
+PRAGMA_DISABLE_DEPRECATION_WARNINGS \
+public: \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_SPARSE_DATA \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_INCLASS_NO_PURE_DECLS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_171_ENHANCED_CONSTRUCTORS \
+private: \
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+
+template<> SPROPERTYDETAILVIEW_API UClass* StaticClass<class UTestViewDerivedClass>();
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_180_GENERATED_BODY \
+	friend struct Z_Construct_UScriptStruct_FTestViewSubStruct_Statics; \
+	SPROPERTYDETAILVIEW_API static class UScriptStruct* StaticStruct();
+
+
+template<> SPROPERTYDETAILVIEW_API UScriptStruct* StaticStruct<struct FTestViewSubStruct>();
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_197_GENERATED_BODY \
+	friend struct Z_Construct_UScriptStruct_FTestViewStruct_Statics; \
+	SPROPERTYDETAILVIEW_API static class UScriptStruct* StaticStruct();
+
+
+template<> SPROPERTYDETAILVIEW_API UScriptStruct* StaticStruct<struct FTestViewStruct>();
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_SPARSE_DATA
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_RPC_WRAPPERS_NO_PURE_DECLS \
+	virtual void TestFunction2_Implementation(int32 Int32, float Float, const FString& String); \
+ \
+	DECLARE_FUNCTION(execTestFunction2); \
+	DECLARE_FUNCTION(execTestFunction1);
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_ACCESSORS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_CALLBACK_WRAPPERS
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_INCLASS_NO_PURE_DECLS \
+private: \
+	static void StaticRegisterNativesUTestFunction(); \
+	friend struct Z_Construct_UClass_UTestFunction_Statics; \
+public: \
+	DECLARE_CLASS(UTestFunction, UObject, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/SPropertyDetailView"), NO_API) \
+	DECLARE_SERIALIZER(UTestFunction)
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_ENHANCED_CONSTRUCTORS \
+	/** Standard constructor, called after all reflected properties have been initialized */ \
+	NO_API UTestFunction(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
+private: \
+	/** Private move- and copy-constructors, should never be used */ \
+	NO_API UTestFunction(UTestFunction&&); \
+	NO_API UTestFunction(const UTestFunction&); \
+public: \
+	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, UTestFunction); \
+	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UTestFunction); \
+	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UTestFunction) \
+	NO_API virtual ~UTestFunction();
+
+
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_292_PROLOG
+#define FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_GENERATED_BODY \
+PRAGMA_DISABLE_DEPRECATION_WARNINGS \
+public: \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_SPARSE_DATA \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_ACCESSORS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_CALLBACK_WRAPPERS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_INCLASS_NO_PURE_DECLS \
+	FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h_295_ENHANCED_CONSTRUCTORS \
+private: \
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+
+template<> SPROPERTYDETAILVIEW_API UClass* StaticClass<class UTestFunction>();
+
+#undef CURRENT_FILE_ID
+#define CURRENT_FILE_ID FID_MyProgram_UE_Project_MyProject_Plugins_SPropertyDetailView_Source_SPropertyDetailView_Public_Test_h
+
+
+#define FOREACH_ENUM_ETESTVIEWENUMBYTE(op) \
+	op(ETestViewEnumByte::Enum_1) \
+	op(ETestViewEnumByte::Enum_2) \
+	op(ETestViewEnumByte::All) 
+
+enum class ETestViewEnumByte : uint8;
+template<> struct TIsUEnumClass<ETestViewEnumByte> { enum { Value = true }; };
+template<> SPROPERTYDETAILVIEW_API UEnum* StaticEnum<ETestViewEnumByte>();
+
+#define FOREACH_ENUM_ETESTVIEWENUM1(op) \
+	op(ETestViewEnum1::Enum_1) \
+	op(ETestViewEnum1::Enum_2) \
+	op(ETestViewEnum1::All) 
+
+namespace ETestViewEnum1 { enum Type : int32; }
+template<> SPROPERTYDETAILVIEW_API UEnum* StaticEnum<ETestViewEnum1::Type>();
+
+PRAGMA_ENABLE_DEPRECATION_WARNINGS

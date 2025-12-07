@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-UClassFinder.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\MyProgram\UE Project\MyProject\Intermediate\Build\Win64\x64\MyProjectEditor\Development\CoreUObject\SharedPCH.CoreUObject.Cpp20.h.obj"
+"C:\MyProgram\UE Project\MyProject\Plugins\SimpleProgramObjectReflector\Intermediate\Build\Win64\x64\UnrealEditor\Development\UClassFinder\Module.UClassFinder.cpp.obj"
+"C:\MyProgram\UE Project\MyProject\Plugins\SimpleProgramObjectReflector\Intermediate\Build\Win64\x64\UnrealEditor\Development\UClassFinder\Default.rc2.res"
+/OUT:"C:\MyProgram\UE Project\MyProject\Plugins\SimpleProgramObjectReflector\Intermediate\Build\Win64\x64\UnrealEditor\Development\UClassFinder\UnrealEditor-UClassFinder.lib"

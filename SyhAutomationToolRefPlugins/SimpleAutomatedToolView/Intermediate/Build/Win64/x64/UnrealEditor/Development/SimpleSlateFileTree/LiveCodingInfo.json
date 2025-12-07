@@ -1,0 +1,25 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.SimpleSlateFileTree.cpp.obj": [
+			"FileTreeDragDrop.cpp.obj",
+			"FileTreeCommand.cpp.obj",
+			"FileTreeMenuCommands.cpp.obj",
+			"FileTreeMenuStyle.cpp.obj",
+			"FileTreeType.cpp.obj",
+			"FileTreeOperation.cpp.obj",
+			"SFileTreeView.cpp.obj",
+			"SFileTreeWidgetBase.cpp.obj",
+			"SFileWidget.cpp.obj",
+			"SFolderWidget.cpp.obj",
+			"SInvalidWidget.cpp.obj",
+			"SNoneWidget.cpp.obj",
+			"SModalWindowBase.cpp.obj",
+			"ModalWindowFactory.cpp.obj",
+			"SMessageModalWindow.cpp.obj",
+			"SSelectModalWindow.cpp.obj",
+			"SFileDirectory.cpp.obj",
+			"SimpleSlateFileTree.cpp.obj"
+		]
+	}
+}

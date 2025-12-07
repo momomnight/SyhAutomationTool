@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-SPropertyDetailView-Win64-DebugGame.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\MyProgram\UE Project\MyProject\Intermediate\Build\Win64\x64\MyProjectEditor\DebugGame\Slate\SharedPCH.Slate.NonOptimized.Cpp20.h.obj"
+"C:\MyProgram\UE Project\MyProject\Plugins\SPropertyDetailView\Intermediate\Build\Win64\x64\UnrealEditor\DebugGame\SPropertyDetailView\Module.SPropertyDetailView.cpp.obj"
+"C:\MyProgram\UE Project\MyProject\Plugins\SPropertyDetailView\Intermediate\Build\Win64\x64\UnrealEditor\DebugGame\SPropertyDetailView\Default.rc2.res"
+/OUT:"C:\MyProgram\UE Project\MyProject\Plugins\SPropertyDetailView\Intermediate\Build\Win64\x64\UnrealEditor\DebugGame\SPropertyDetailView\UnrealEditor-SPropertyDetailView-Win64-DebugGame.lib"

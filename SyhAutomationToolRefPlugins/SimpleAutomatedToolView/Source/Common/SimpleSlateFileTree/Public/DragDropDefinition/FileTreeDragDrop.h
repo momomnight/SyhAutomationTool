@@ -1,15 +1,16 @@
 
 #pragma once
-#include "Input/DragAndDrop.h"
 #include "FileTreeEvent.h"
+#include "DllExports/CommonDragDropOperationDefinition.h"
 
+class SFileTreeWidgetBase;
 
-class SIMPLESLATEFILETREE_API FFileTreeDragDrop : public FDragDropOperation
+class SIMPLESLATEFILETREE_API FFileTreeDragDrop : public FFileDragDropOperation
 {
 public:
-	DRAG_DROP_OPERATOR_TYPE(FFileTreeDragDrop, FDragDropOperation);
+	DRAG_DROP_OPERATOR_TYPE(FFileTreeDragDrop, FFileDragDropOperation);
 
-	FFileTreeDragDrop(TSharedPtr<SWidget> InDragWidget);
+	FFileTreeDragDrop(TSharedRef<SFileTreeWidgetBase> InDragWidget);
 
 	~FFileTreeDragDrop();
 
@@ -23,6 +24,8 @@ public:
 	{
 		return StaticCastSharedPtr<WidgetObject>(DragWidget.Pin());
 	}
+
+	static TSharedRef<FFileTreeDragDrop> NewFileTreeDragDrop(TSharedRef<SFileTreeWidgetBase> InDragWidget);
 
 private:
 	TWeakPtr<SWidget> DragWidget;

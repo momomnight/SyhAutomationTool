@@ -1,0 +1,23 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\simpleconfig\\module.simpleconfig.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\coreuobject\\sharedpch.coreuobject.cpp20.h.pch",
+        "Includes": [
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\simpleconfig\\definitions.simpleconfig.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\intermediate\\build\\win64\\unrealeditor\\inc\\simpleconfig\\uht\\simpleconfig.init.gen.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\intermediate\\build\\win64\\unrealeditor\\inc\\simpleconfig\\uht\\simpleconfigbplibrary.gen.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\source\\simpleconfig\\public\\simpleconfigbplibrary.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\intermediate\\build\\win64\\unrealeditor\\inc\\simpleconfig\\uht\\simpleconfigbplibrary.generated.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\source\\simpleconfig\\private\\simpleconfig.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\source\\simpleconfig\\public\\simpleconfig.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\source\\simpleconfig\\private\\simpleconfigbplibrary.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\source\\simpleconfig\\public\\simpleconfigtype.h",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\source\\simpleconfig\\private\\simpleconfigmacro.cpp",
+            "c:\\myprogram\\unrealengine-5.3.2-release\\engine\\plugins\\syhautomationtoolrefplugins\\simpleconfig\\source\\simpleconfig\\private\\simpleconfigtype.cpp"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

@@ -1,0 +1,3 @@
+#include "SimpleProgramObjectReflectorLog.h"
+
+DEFINE_LOG_CATEGORY(LogSimpleProgramObjectReflector);

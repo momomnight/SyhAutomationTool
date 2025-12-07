@@ -1,0 +1,13 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.SimpleProtobuf.cpp.obj": [
+			"SimpleProtobuf.init.gen.cpp.obj",
+			"SimpleProtobufBPLibrary.gen.cpp.obj",
+			"SimpleProtobufType.gen.cpp.obj",
+			"SimpleProtobuf.cpp.obj",
+			"SimpleProtobufBPLibrary.cpp.obj",
+			"SimpleProtobufType.cpp.obj"
+		]
+	}
+}

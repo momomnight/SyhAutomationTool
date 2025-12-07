@@ -10,7 +10,9 @@ class SAutomatedBlueprintOutline : public SAutomatedToolViewWidget
 {
 public:
 	SLATE_BEGIN_ARGS(SAutomatedBlueprintOutline) {}
+
 	SLATE_EVENT(FSimpleCommandProtocolDelegate, OnCommandButtonClicked);
+
 	SLATE_END_ARGS()
 
 	SAutomatedBlueprintOutline();
