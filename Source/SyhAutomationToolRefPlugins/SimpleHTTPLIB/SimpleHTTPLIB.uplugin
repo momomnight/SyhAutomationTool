@@ -1,0 +1,27 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "SimpleHTTPLIB",
+	"Description": "High concurrency HTTP server.",
+	"Category": "Other",
+	"CreatedBy": "RenZhai",
+	"CreatedByURL": "https://renzhai.net/",
+	"DocsURL": "https://renzhai.net/",
+	"MarketplaceURL": "https://www.aboutcg.org/courseDetails/1866/introduce?fxid=3sq4lc1i",
+	"SupportURL": "https://renzhai.net/",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "SimpleHTTPLIB",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen",
+			"WhitelistPlatforms": [
+				"Win64"
+			]
+		}
+	]
+}

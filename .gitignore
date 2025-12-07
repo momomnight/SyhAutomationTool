@@ -1,51 +1,40 @@
-# Ignore all files by default, but scan all directories.
-*
-!*/
+# ======================
+# 补充的逐文件类型规则
+# ======================
 
-# Do not ignore git files in the root of the repo.
-!/.git*
+# 其他
+**/Intermediate/
 
-# Do not ignore current project's `.uproject`.
-!/*.uproject
+# 编译中间产物
+*.obj
+*.pch
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.dll
+*.exe
 
-# Do not ignore source, config and plugins dirs.
-!/Source/**
-!/Config/**
-!/Plugins/**
+# 缓存与状态文件
+*.VC.db
+*.sdf
+*.opensdf
 
-# Only allow .uasset and .umap files from /Content dir.
-# They're tracked by git-lfs, don't forget to track other
-# files if adding them here.
-!/Content/**/*.uasset
-!/Content/**/*.umap
+# 项目文件（Windows）
+*.sln
+*.suo
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
 
-# Allow any files from /RawContent dir.
-# Any file in /RawContent dir will be managed by git lfs.
-!/RawContent/**/*
+# 项目文件（其他）
+*.xcodeproj
+*.workspace
+Makefile
+CMakeLists.txt
 
-# OS/platform generated files.
-
-# Windows
-ehthumbs.db
-Thumbs.db
-
-# Mac OS X
-.DS_Store
-.DS_Store?
-.AppleDouble
-.LSOverride
-._*
-
-# Linux
-*~
-.directory
-
-# vim
-[._]*.s[a-w][a-z]
-[._]s[a-w][a-z]
-*.un~
-Session.vim
-.netrwhist
-
-# Visual Studio
-.vs
+# 日志与临时文件
+*.log
+*.tmp
+*.bak
+~*
